@@ -1,0 +1,166 @@
+// prisma/schema.prisma
+// Mystic Egypt Tourism Platform - Prisma 7 schema
+// NOTE: Database URL is configured in prisma.config.ts (not in this file), per Prisma 7 conventions.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/core/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql" // MariaDB compatible
+}
+
+// --- Enums ---
+enum Role {
+  CLIENT
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  PENDING_RECEIPT_REVIEW
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum Currency {
+  USD
+  GBP
+  EUR
+}
+
+// --- Models ---
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password_hash String? // Nullable because OTP users might not have a password initially
+  role          Role      @default(CLIENT)
+  phone         String?
+  is_2fa_verified Boolean @default(false) // للمديرين فقط
+  created_at    DateTime  @default(now())
+
+  bookings         Booking[]
+  custom_requests  CustomizationRequest[]
+  wishlist         Tour[] @relation("UserWishlist")
+
+  @@map("users")
+}
+
+model Tour {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  description   String    @db.Text
+  base_price    Float
+  currency      Currency  @default(USD)
+  status        String    @default("open") // open, closed
+  created_by    String // Admin ID
+  created_at    DateTime  @default(now())
+
+  itinerary        TourItinerary[]
+  images           TourImage[]
+  bookings         Booking[]
+  wishlist_users   User[]  @relation("UserWishlist")
+  custom_requests  CustomizationRequest[]
+
+  @@map("tours")
+}
+
+model TourItinerary {
+  id          String  @id @default(uuid())
+  tour_id     String
+  day_number  Int
+  title       String
+  description String  @db.Text
+
+  tour        Tour    @relation(fields: [tour_id], references: [id], onDelete: Cascade)
+
+  @@map("tour_itineraries")
+}
+
+model TourImage {
+  id          String  @id @default(uuid())
+  tour_id     String
+  image_url   String
+  is_primary  Boolean @default(false)
+
+  tour        Tour    @relation(fields: [tour_id], references: [id], onDelete: Cascade)
+
+  @@map("tour_images")
+}
+
+model Addon {
+  id          String   @id @default(uuid())
+  name        String
+  description String?  @db.Text
+  price       Float
+  currency    Currency @default(USD)
+
+  booking_addons BookingAddon[]
+
+  @@map("addons")
+}
+
+model Booking {
+  id                String        @id @default(uuid())
+  user_id           String
+  tour_id           String
+  tour_date         DateTime
+  num_people        Int
+  total_amount      Float
+  currency          Currency      @default(USD)
+  status            BookingStatus @default(PENDING_PAYMENT)
+  payment_method    String // "stripe" or "bank_transfer"
+  receipt_image_url String? // للتحويلات البنكية
+  created_at        DateTime      @default(now())
+
+  user        User           @relation(fields: [user_id], references: [id])
+  tour        Tour           @relation(fields: [tour_id], references: [id])
+  addons      BookingAddon[]
+  invoice     Invoice?
+
+  @@map("bookings")
+}
+
+model BookingAddon {
+  id               String  @id @default(uuid())
+  booking_id       String
+  addon_id         String
+  quantity         Int
+  price_at_time    Float // حفظ السعر وقت الحجز لتجنب تغيرات الأسعار المستقبلية
+
+  booking          Booking @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  addon            Addon   @relation(fields: [addon_id], references: [id])
+
+  @@map("booking_addons")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  booking_id     String   @unique
+  invoice_number String   @unique
+  pdf_url        String? // يمكن تركها فارغة إذا كان التوليد يتم في الـ Frontend فقط
+  issued_at      DateTime @default(now())
+
+  booking        Booking  @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+
+  @@map("invoices")
+}
+
+model CustomizationRequest {
+  id         String   @id @default(uuid())
+  user_id    String
+  tour_id    String
+  message    String   @db.Text
+  budget     Float?
+  status     String   @default("pending") // pending, reviewed, rejected
+  created_at DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id])
+  tour       Tour     @relation(fields: [tour_id], references: [id])
+
+  @@map("customization_requests")
+}
