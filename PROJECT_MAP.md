@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 5 COMPLETE
+## Status: MILESTONE 6 IN PROGRESS (Step 1/8)
 **Last Updated:** August 29, 2026
 
 ---
@@ -14,7 +14,7 @@
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
-| 6 | Admin Panel | ⏳ PENDING | Admin placeholder only; 2FA gate deferred |
+| 6 | Admin Panel | 🔄 IN PROGRESS | Step 1: Admin Layout & Shell COMPLETE |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
@@ -273,6 +273,16 @@ Client → FormData → Route Handler → Validate (type, size)
   milestone is reached.
 - **Bank-transfer invoice timing:** Invoices for bank-transfer bookings become available only after
   admin approval (M6), since they are not CONFIRMED until then.
+
+### Documented Decisions / Deviations (Recorded during M6)
+- **Admin panel technology choices:** Tiptap (CMS rich text), Recharts (analytics charts),
+  @hello-pangea/dnd (Kanban board, already installed), TOTP for 2FA (otplib + qrcode).
+- **Admin layout mirrors dashboard pattern:** Server component with requireAdmin(), two-column
+  responsive layout (sidebar + main), sidebar has Admin badge, user info, sign-out, and AdminNav.
+- **Admin nav items:** Overview, Tours, Bookings, CMS, Admins (5 sections per PRD §4.4).
+- **Admin overview page:** Stats cards (revenue, bookings, pending, active tours) as placeholders
+  — real data fetching in Step 3.
+- **shadcn components added:** `badge` and `dropdown-menu` for admin UI elements.
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural
