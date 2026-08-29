@@ -17,12 +17,17 @@
 ### 2. Resend (Email Service)
 - [ ] Create Resend account at https://resend.com
 - [ ] Get **API Key** (re_...)
+- [ ] Set `RESEND_API_KEY` in `.env` (Milestone 2 requires a real key for email
+      verification & password-reset emails to actually send. Code handles the placeholder
+      gracefully, but no email is delivered until this is set.)
+- [ ] Set `APP_EMAIL_FROM` in `.env` (e.g. `Mystic Egypt <noreply@mysticegypt.net>`)
 - [ ] Verify domain: `mysticegypt.net`
 - [ ] Configure DNS records (SPF, DKIM, DMARC)
 
 ### 3. NextAuth Secret
 - [ ] Generate a secure random string: `openssl rand -base64 32`
 - [ ] Store as `NEXTAUTH_SECRET` in `.env`
+- [ ] Set `NEXTAUTH_URL` (e.g. `http://localhost:3000` locally, `https://mysticegypt.net` in prod)
 
 ### 4. Google Analytics 4
 - [ ] Create GA4 property for mysticegypt.net

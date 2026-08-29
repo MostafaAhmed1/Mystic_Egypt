@@ -17,16 +17,19 @@ const ADMIN_NAME = process.env.SEED_ADMIN_NAME ?? "Site Administrator";
 
 async function main() {
   // --- Admin user ---
-  const existingAdmin = await prisma.user.findUnique({
+  const admin = await prisma.user.upsert({
     where: { email: ADMIN_EMAIL },
-  });
-
-  const admin = existingAdmin ?? await prisma.user.create({
-    data: {
+    update: {
+      role: "ADMIN",
+      email_verified: true,
+      is_2fa_verified: false,
+    },
+    create: {
       name: ADMIN_NAME,
       email: ADMIN_EMAIL,
       password_hash: await bcrypt.hash(ADMIN_PASSWORD, 10),
       role: "ADMIN",
+      email_verified: true,
       is_2fa_verified: false,
     },
   });

@@ -41,34 +41,43 @@ This plan breaks the entire project into **8 independent milestones**, each with
 ---
 
 ## MILESTONE 2: Authentication System (Auth Feature)
-**Goal:** Full auth system with OTP login, session management, and role-based access.
+**Goal:** Full auth system with password login, email verification, password reset, sessions, and role-based access.
 **Estimated Effort:** 2-3 sessions
-**Verifiable Output:** User can register, login via OTP, see session, admin 2FA flow works.
+**Verifiable Output:** User can register, verify email, log in, reset password; sessions persist; protected routes work.
+
+> **Note (user decision):** Supersedes the original OTP-primary design. Chosen model = password
+> (bcrypt) + Resend for email verification / password reset / notifications. Sessions = NextAuth v4
+> JWT strategy + Credentials provider (NO Prisma adapter — its peerDeps exclude Prisma 7).
 
 ### Deliverables:
-1. Configure NextAuth.js with Prisma adapter and Resend OTP provider
-2. Create `src/features/auth/` module:
-   - `lib/auth.ts` — NextAuth configuration with OTP
-   - `components/LoginForm.tsx` — Email input + OTP request
-   - `components/OTPVerify.tsx` — 6-digit OTP verification
-   - `components/RegisterForm.tsx` — Name, email, phone registration
-3. Create `src/app/(auth)/login/page.tsx`
-4. Create `src/app/(auth)/register/page.tsx`
-5. Create `src/core/lib/providers.tsx` — SessionProvider + QueryClientProvider wrapper
-6. Update `src/app/layout.tsx` to use Providers
-7. Create auth middleware for protected routes:
-   - `(dashboard)` — requires session
-   - `(admin)` — requires session + `is_2fa_verified === true`
-8. Create `src/features/auth/actions/` — server actions for register, request OTP, verify OTP
-9. Create `src/core/constants/roles.ts` — Role enum constants
+1. Configure NextAuth.js (`src/core/lib/auth.ts`): Credentials provider, bcrypt compare in
+   `authorize`, JWT session, callbacks persist `id` / `role` / `email_verified`.
+2. Prisma: add `User.email_verified`, new `OtpCode` model + `OtpType` enum; `db push`.
+3. `src/core/lib/{otp,resend}.ts` + `src/core/lib/session.ts` (DAL: getCurrentUser/requireUser/requireAdmin).
+4. `src/features/auth/`:
+   - `actions.ts` — server actions: register, verifyEmail, resendVerification, forgotPassword, resetPassword
+   - `emails.ts` — HTML templates for verification & reset
+   - `components/` — LoginForm, RegisterForm, VerifyEmailForm, ForgotPasswordForm, ResetPasswordForm, SubmitButton
+5. `src/app/(auth)/login|register|forgot-password|reset-password|verify-email` pages + group layout.
+6. `src/proxy.ts` (Next 16 replaces middleware.ts) — optimistic route protection via `getToken`.
+7. Protect `(dashboard)` (session) and `(admin)` (session + role ADMIN) with minimal placeholder pages.
+8. `src/app/api/auth/[...nextauth]/route.ts` + `/api/auth/me` (DAL-backed DTO).
+9. SessionProvider in `src/shared/components/session-provider.tsx`, wrapped in root layout.
 
-### Acceptance Criteria:
-- [ ] User can register with name, email, phone
-- [ ] User receives OTP via email (Resend)
-- [ ] OTP verification creates session
-- [ ] Unauthenticated users redirected from `/dashboard` to `/login`
-- [ ] Non-admin users blocked from `/admin` routes
-- [ ] Session persists across page refreshes
+### Acceptance Criteria (all verified 2026-08-28):
+- [x] User can register (name, email, password) → user created with `email_verified=false` + OTP record
+- [x] Email verification OTP: create / verify / single-use / expiry / attempt limit all work (real DB test)
+- [x] Password reset OTP flow works (real DB test)
+- [x] Login via credentials (bcrypt) creates a session (NextAuth `signIn` verified: role + email_verified in session)
+- [x] Unauthenticated `/dashboard` & `/admin` → 307 redirect to `/login` (proxy)
+- [x] Non-admin users blocked from `/admin` (proxy + DAL)
+- [x] Logged-in users redirected away from auth pages
+- [x] Admin session renders `/admin` and `/dashboard` (200)
+- [x] Session persists / `tsc --noEmit` 0 errors / `npm run lint` 0 / `npm run build` green
+
+### Deferred (declared, not yet implemented):
+- [ ] Admin 2FA (`is_2fa_verified`) enforcement — deferred to 2FA/Admin milestone (M6)
+- [ ] Real Resend API key (placeholder blocks actual delivery, not the code path)
 
 ---
 

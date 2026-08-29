@@ -17,6 +17,11 @@ enum Role {
   ADMIN
 }
 
+enum OtpType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
 enum BookingStatus {
   PENDING_PAYMENT
   PENDING_RECEIPT_REVIEW
@@ -39,14 +44,31 @@ model User {
   password_hash String? // Nullable because OTP users might not have a password initially
   role          Role      @default(CLIENT)
   phone         String?
+  email_verified Boolean  @default(false)
   is_2fa_verified Boolean @default(false) // للمديرين فقط
   created_at    DateTime  @default(now())
 
   bookings         Booking[]
   custom_requests  CustomizationRequest[]
   wishlist         Tour[] @relation("UserWishlist")
+  otp_codes        OtpCode[]
 
   @@map("users")
+}
+
+model OtpCode {
+  id         String   @id @default(uuid())
+  user_id    String
+  type       OtpType
+  code_hash  String
+  expires_at DateTime
+  used_at    DateTime?
+  attempts   Int      @default(0)
+  created_at DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("otp_codes")
 }
 
 model Tour {

@@ -4,12 +4,9 @@
 
 export const API_ENDPOINTS = {
   AUTH: {
-    REGISTER: "/api/auth/register",
-    LOGIN: "/api/auth/login",
-    REQUEST_OTP: "/api/auth/request-otp",
-    VERIFY_OTP: "/api/auth/verify-otp",
-    FORGOT_PASSWORD: "/api/auth/forgot-password",
-    RESET_PASSWORD: "/api/auth/reset-password",
+    // NextAuth.js built-in endpoints (sign in / out / session / csrf / callback).
+    LOGIN: "/api/auth/signin",
+    LOGOUT: "/api/auth/signout",
     ME: "/api/auth/me",
   },
   TOURS: {
