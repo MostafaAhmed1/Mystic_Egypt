@@ -11,6 +11,7 @@ import { TourGallery } from "@/features/tour/components/TourGallery";
 import { ItineraryAccordion } from "@/features/tour/components/ItineraryAccordion";
 import { TourMapClient } from "@/features/tour/components/TourMapClient";
 import { CustomizeTourDialog } from "@/features/tour/components/CustomizeTourDialog";
+import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 
 export const dynamicParams = true;
 export const revalidate = 300;
@@ -136,6 +137,7 @@ export default async function TourPage({
                 Book now
               </Link>
               <CustomizeTourDialog tourId={tour.id} tourTitle={tour.title} />
+              <WishlistButton tourId={tour.id} />
             </div>
           </div>
         </div>

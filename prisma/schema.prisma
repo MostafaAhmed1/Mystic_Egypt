@@ -46,6 +46,7 @@ model User {
   phone         String?
   email_verified Boolean  @default(false)
   is_2fa_verified Boolean @default(false) // للمديرين فقط
+  notifications_enabled Boolean @default(true) // Profile email-notification preference (PRD §4.3)
   created_at    DateTime  @default(now())
 
   bookings         Booking[]

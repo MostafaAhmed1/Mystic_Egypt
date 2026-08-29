@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 4 COMPLETE
+## Status: MILESTONE 5 COMPLETE
 **Last Updated:** August 29, 2026
 
 ---
@@ -13,7 +13,7 @@
 | 2 | Authentication System | ✅ COMPLETE | Password (bcrypt) + Email Verification + Password Reset + NextAuth JWT |
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
-| 5 | Client Dashboard & Invoice | ⏳ PENDING | Dashboard placeholder only |
+| 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ⏳ PENDING | Admin placeholder only; 2FA gate deferred |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
@@ -227,7 +227,8 @@ Client → FormData → Route Handler → Validate (type, size)
 ## [ORPHANS & PENDING]
 
 ### Disconnected Pieces (Recorded during M1)
-- `src/features/tour/` now implemented (M3). `booking` & `invoice` remain EMPTY (built in M4/M5).
+- `src/features/tour/` now implemented (M3). `booking` (M4), `invoice` (M5), `dashboard` (M5),
+  `wishlist` (M5) are all implemented.
 - `src/features/auth/` now holds the auth feature (actions, emails, components).
 - `src/shared/hooks/` empty (shared hooks added when needed).
 - `public/locales/` empty (i18n files created in M7).
@@ -236,7 +237,7 @@ Client → FormData → Route Handler → Validate (type, size)
 - `src/core/lib/{i18n}` not yet created (M7 i18n). `resend`, `auth`, `otp`, `session` created (M2).
 - `src/app/` has `(auth)` group complete (M2); `(public)` home is scaffold; `(dashboard)` &
   `(admin)` are minimal placeholders (filled in M5/M6).
-- API route handlers: only `api/auth/**` exist (M2); tours/bookings/admin routes pending (M3-M6).
+- API route handlers: `api/auth/**` (M2), `api/tours/**` (M3), `api/bookings/**` + `api/webhooks/stripe` (M4), `api/wishlist` (M5), `api/invoices/**` pending. Admin routes in M6.
 
 ### Disconnected Pieces / Pending (Recorded during M3)
 - **`/tours/[slug]/book` route is a dangling pointer** — the "Book now" buttons link to
@@ -253,6 +254,26 @@ Client → FormData → Route Handler → Validate (type, size)
 - **Migrations baseline debt** — project uses `prisma db push`; `prisma/migrations` is empty.
   A baseline migration should be introduced (M8 / before first production deploy).
 
+### Documented Decisions / Deviations (Recorded during M5)
+- **User.notifications_enabled added for PRD §4.3:** `Boolean @default(true)` field on User model
+  for "إعدادات الإشعارات" (notification settings). Applied via `db push`, client regenerated.
+- **Invoice row creation wired into `confirmBookingFromStripe`:** Invoices are created when a booking
+  transitions to CONFIRMED (Stripe webhook path). Bank-transfer invoices will be created when admin
+  approves in M6. `getOrCreateInvoiceForOwnedBooking` lazily ensures invoice exists for detail/invoices
+  pages. Invoice numbers: `ME-YYYYMMDD-XXXXXX`.
+- **Wishlist uses SSG-compatible client fetch pattern:** Tour pages are SSG and cannot read per-user
+  session at build time. `WishlistButton` component fetches saved state on mount via
+  `GET /api/wishlist` and mutates via `toggleWishlistAction` server action. Auth-gated GET endpoint
+  returns 401 for unauthenticated requests.
+- **GDPR delete account:** Hard-deletes personal activity (OTP codes, customization requests,
+  wishlist relations) + anonymizes the user row (name/email/phone scrubbed, password nulled) to keep
+  booking/invoice financial records intact — standard GDPR-compliant approach.
+- **Booking cancellation deferred:** Not in M5 scope (PRD does not mention client-initiated
+  cancellation in §4.3). Will be addressed when the admin panel (M6) or a dedicated cancellation
+  milestone is reached.
+- **Bank-transfer invoice timing:** Invoices for bank-transfer bookings become available only after
+  admin approval (M6), since they are not CONFIRMED until then.
+
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural
   code (PaymentIntent, Elements, confirmPayment, webhook sig-verify) is complete and the client
@@ -263,12 +284,16 @@ Client → FormData → Route Handler → Validate (type, size)
   Resend key exists (placeholder-safe — sendEmail never throws).
 - **No admin UI yet** to review PENDING_RECEIPT_REVIEW bookings or approve them → CONFIRMED — belongs
   to Admin panel (M6).
-- **Invoice row not yet created** on booking confirmation / receipt approval — deferred to M5
-  (Client Dashboard & Invoice).
-- **Client Dashboard is still a bare placeholder** — bookings, invoice download, and profile live in M5.
+- **Invoice row creation RESOLVED** — invoices are created when booking becomes CONFIRMED (via
+  `confirmBookingFromStripe`). Bank-transfer invoices deferred to M6 admin approval.
+- **Invoice generation (`@react-pdf/renderer`)** — client-side PDF generation works. `InvoicePDF`
+  component renders company logo, invoice number, dates, line items, and totals. Triggered from
+  booking detail and invoices list pages.
+- **Client Dashboard RESOLVED** — fully implemented in M5: overview stats, bookings list/detail, invoice PDF download, wishlist/favourites, profile (name, email change w/ OTP, password, notifications, GDPR delete).
 
 ### Disconnected Pieces / Pending (Recorded during M2)
-- **Dashboard & Admin are bare placeholders** (auth gate verified only). Real dashboards = M5/M6.
+- **Dashboard RESOLVED (M5)** — full client dashboard with overview, bookings, invoices, wishlist,
+  and profile pages. **Admin placeholder** remains — to be filled in M6.
 - **Admin 2FA (`is_2fa_verified`) declared but not enforced** — deferred to the 2FA / Admin milestone.
 - **Resend has no real API key** (`.env` = `re_placeholder`). Code paths work but emails are not
   actually delivered until a real key is provided (see MANUAL_STEPS.md).
@@ -302,6 +327,12 @@ Client → FormData → Route Handler → Validate (type, size)
   Stripe graceful degradation on placeholder keys, full bank-transfer E2E (booking created + receipt
   uploaded → PENDING_RECEIPT_REVIEW), confirmed against the real MariaDB via a tsx Prisma query.
   Temp verify script removed after use. No new skills installed.
+- M5 verification: browser-based QA via chrome-devtools — dashboard overview (stats + recent bookings),
+  bookings list/detail (status, invoice number, price breakdown), invoice PDF generation (PDFDownloadLink
+  renders and downloads ME-YYYYMMDD-XXXXXX.pdf), invoices list, wishlist toggle on tour page (button
+  flips), profile page (name, email, password, notifications, GDPR delete), direct DB queries via tsx
+  (notifications column, invoice creation, wishlist toggle), `npx tsc --noEmit` + `npm run lint` +
+  `npm run build` all clean. Temp verify script cleaned up.
 
 ### Document References
 1. `docs/PRD.md` — Source of truth for all features

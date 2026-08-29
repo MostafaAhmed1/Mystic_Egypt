@@ -179,6 +179,22 @@ export async function confirmBookingFromStripe(
     data: { status: "CONFIRMED" },
   });
 
+  if (updated.count > 0) {
+    const { ensureInvoiceForBooking } = await import("@/features/invoice/service");
+    let invoiceOk = true;
+    try {
+      invoiceOk = (await ensureInvoiceForBooking(bookingId)) !== null;
+    } catch {
+      // A failed invoice creation must not break the payment confirmation.
+      invoiceOk = false;
+    }
+    if (!invoiceOk) {
+      console.error(
+        `[invoice] could not create invoice for confirmed booking ${bookingId}`,
+      );
+    }
+  }
+
   return { ok: updated.count > 0 };
 }
 
