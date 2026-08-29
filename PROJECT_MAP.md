@@ -1,7 +1,7 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 2 COMPLETE
-**Last Updated:** August 28, 2026
+## Status: MILESTONE 3 COMPLETE
+**Last Updated:** August 29, 2026
 
 ---
 
@@ -11,7 +11,7 @@
 |---|-----------|--------|-------|
 | 1 | Initialization & Core Foundation | ✅ COMPLETE | Next/TS/Tailwind, shadcn, Prisma 7, core layer, seed, git |
 | 2 | Authentication System | ✅ COMPLETE | Password (bcrypt) + Email Verification + Password Reset + NextAuth JWT |
-| 3 | Tour Feature (Public SSG) | ⏳ PENDING | — |
+| 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ⏳ PENDING | — |
 | 5 | Client Dashboard & Invoice | ⏳ PENDING | Dashboard placeholder only |
 | 6 | Admin Panel | ⏳ PENDING | Admin placeholder only; 2FA gate deferred |
@@ -80,6 +80,25 @@
   fetch API routes, per simplicity & no-orphan-endpoints. `endpoints.ts` AUTH section updated to match.
 - **Form validation:** Manual inline validation in server actions (no zod dependency added) —
   minimal, explicit, and fulfills PRD §5.1 password rule (min 8, number, letter).
+
+### Documented Decisions / Deviations (Recorded during M3)
+- **Schema additions (PRD §4.1 / blueprint):** `TourPoint` model (order, name, lat/lng, day) for the
+  itinerary route map; `CustomizationRequest.people Int?` (number of travellers); `Tour.inclusions` &
+  `Tour.exclusions` optional `@db.Text` fields (newline-delimited lists). All applied via `prisma db
+  push`; client regenerated. No migrations committed (project continues the `db push` baseline; see
+  migrations-debt note below / M8).
+- **Leaflet loaded client-side only (SSG-safe):** `src/features/tour/components/TourMapClient.tsx`
+  wraps the Leaflet/react-leaflet map and is rendered via `next/dynamic` with `ssr:false` (through
+  `TourMap.tsx`). Prevents window/document SSR errors on static generation.
+- **Reviews/Testimonials nav links removed:** No `Review`/`Testimonial` data model exists yet.
+  Showing fake testimonials would violate "no fake content". Deferred to PRD §4.1 reviews
+  implementation (M7 content/SEO, or when a model is added).
+- **Customization request = server action, not fetch API route:** `customizeTourAction` in
+  `src/features/tour/actions.ts` is auth-gated (`getCurrentUser` → redirect /login), validates inline,
+  and creates a `CustomizationRequest`. Keeps with the M2 decision to avoid orphan fetch endpoints.
+- **Placeholder tour images:** Generated locally with `sharp` at
+  `public/uploads/tours/{nile-cruise-cairo,white-desert}.jpg` (small JPGs). Replaced by
+  admin-uploaded real photos in M6.
 
 ---
 
@@ -172,7 +191,7 @@ Client → FormData → Route Handler → Validate (type, size)
 ## [ORPHANS & PENDING]
 
 ### Disconnected Pieces (Recorded during M1)
-- `src/features/{booking,tour,invoice}` folders exist but are EMPTY (features built in M3-M5).
+- `src/features/tour/` now implemented (M3). `booking` & `invoice` remain EMPTY (built in M4/M5).
 - `src/features/auth/` now holds the auth feature (actions, emails, components).
 - `src/shared/hooks/` empty (shared hooks added when needed).
 - `public/locales/` empty (i18n files created in M7).
@@ -183,6 +202,21 @@ Client → FormData → Route Handler → Validate (type, size)
   `(admin)` are minimal placeholders (filled in M5/M6).
 - API route handlers: only `api/auth/**` exist (M2); tours/bookings/admin routes pending (M3-M6).
 
+### Disconnected Pieces / Pending (Recorded during M3)
+- **`/tours/[slug]/book` route is a dangling pointer** — the "Book now" buttons link to
+  `/tours/[slug]/book`, which does NOT exist yet. This is the Milestone 4 entry point. Next.js
+  link-prefetch logs a 404 until M4 lands.
+- **`public/uploads/tours/*.jpg` are local placeholder JPGs** (generated with sharp). Real tour
+  images to be uploaded by admin in M6.
+- **Reviews/Testimonials deferred** — homepage/listing don't render testimonials because no
+  `Review`/`Testimonial` model exists. Will surface with PRD §4.1 reviews (M7 or a dedicated model).
+- **Homepage search** supports destination keyword + max budget only. A tour-date field comes with
+  the Booking flow (M4).
+- **CustomizationRequest records** are created but there is no admin UI yet to review/respond to
+  them — that belongs to the Admin panel (M6).
+- **Migrations baseline debt** — project uses `prisma db push`; `prisma/migrations` is empty.
+  A baseline migration should be introduced (M8 / before first production deploy).
+
 ### Disconnected Pieces / Pending (Recorded during M2)
 - **Dashboard & Admin are bare placeholders** (auth gate verified only). Real dashboards = M5/M6.
 - **Admin 2FA (`is_2fa_verified`) declared but not enforced** — deferred to the 2FA / Admin milestone.
@@ -192,7 +226,8 @@ Client → FormData → Route Handler → Validate (type, size)
   in production (MANUAL_STEPS.md).
 - **OTP email delivery** cannot be end-to-end verified until Resend key + verified domain exist;
   OTP DB/business logic is verified against the real DB.
-- **Homepage** (`/`) still renders the create-next-app scaffold — real public homepage = M3.
+- **Homepage** (`/`) renders the real public homepage (M3): hero, search, featured tours, why-us,
+  trust badges. Old create-next-app scaffold deleted.
 - **`useActionState`-driven forms** rely on React 19; both client and server flows verified via
   NextAuth `signIn` + server actions against local dev server and the real MariaDB.
 
@@ -208,8 +243,10 @@ Client → FormData → Route Handler → Validate (type, size)
 - [ ] Real tour images for `public/uploads/tours/`
 
 ### Skills Used
-- None installed this milestone. Candidates for later milestones:
-  `ui-ux-pro-max` (UI/design polish), `careful` (prod/deploy safety M8), `browse`/`qa` (M8 testing).
+- M3 verification: browser-based QA via chrome-devtools (homepage, listing, tour detail, Leaflet
+  map, customize dialog, login auth gate, DB write-back check). No new skills installed. Candidates
+  for later milestones: `ui-ux-pro-max` (UI/design polish), `careful` (prod/deploy safety M8),
+  `browse`/`qa` (M8 testing).
 
 ### Document References
 1. `docs/PRD.md` — Source of truth for all features

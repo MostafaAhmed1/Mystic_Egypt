@@ -76,6 +76,8 @@ model Tour {
   title         String
   slug          String    @unique
   description   String    @db.Text
+  inclusions    String?   @db.Text // Newline-delimited "what's included" list (PRD §4.1)
+  exclusions    String?   @db.Text // Newline-delimited "what's not included" list (PRD §4.1)
   base_price    Float
   currency      Currency  @default(USD)
   status        String    @default("open") // open, closed
@@ -84,11 +86,26 @@ model Tour {
 
   itinerary        TourItinerary[]
   images           TourImage[]
+  route            TourPoint[]
   bookings         Booking[]
   wishlist_users   User[]  @relation("UserWishlist")
   custom_requests  CustomizationRequest[]
 
   @@map("tours")
+}
+
+model TourPoint {
+  id        String @id @default(uuid())
+  tour_id   String
+  order     Int
+  label     String
+  lat       Float // Latitude (WGS84)
+  lng       Float // Longitude (WGS84)
+  is_stop   Boolean @default(false) // Notable stop vs. transit waypoint
+
+  tour      Tour   @relation(fields: [tour_id], references: [id], onDelete: Cascade)
+
+  @@map("tour_points")
 }
 
 model TourItinerary {
@@ -173,16 +190,17 @@ model Invoice {
 }
 
 model CustomizationRequest {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   user_id    String
   tour_id    String
-  message    String   @db.Text
-  budget     Float?
-  status     String   @default("pending") // pending, reviewed, rejected
-  created_at DateTime @default(now())
+  message    String    @db.Text
+  people     Int? // Optional number of travellers (PRD §4.1)
+  budget     Float? // Approximate budget in tour currency (PRD §4.1)
+  status     String    @default("pending") // pending, reviewed, rejected
+  created_at DateTime  @default(now())
 
-  user       User     @relation(fields: [user_id], references: [id])
-  tour       Tour     @relation(fields: [tour_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
+  tour       Tour      @relation(fields: [tour_id], references: [id])
 
   @@map("customization_requests")
 }

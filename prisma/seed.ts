@@ -49,6 +49,10 @@ async function main() {
       slug: "classic-nile-cruise-cairo",
       description:
         "A timeless journey along the Nile, from the pyramids of Giza to the temples of Luxor and Aswan. Includes guided tours, Nile cruise accommodation, and local expert guides.",
+      inclusions:
+        "4-night Nile cruise accommodation\nLicensed Egyptologist tour guides\nAirport transfers & domestic flights\nDaily breakfast & select meals\nAll entrance fees to listed sites",
+      exclusions:
+        "International flights\nTravel insurance (recommended)\nVisa fees\nPersonal expenses & gratuities",
       base_price: 1499,
       currency: "USD",
       status: "open",
@@ -80,6 +84,39 @@ async function main() {
           },
         ],
       },
+      route: {
+        create: [
+          { order: 1, label: "Cairo", lat: 30.0444, lng: 31.2357, is_stop: true },
+          {
+            order: 2,
+            label: "Giza Pyramids",
+            lat: 29.9792,
+            lng: 31.1342,
+            is_stop: true,
+          },
+          {
+            order: 3,
+            label: "Luxor",
+            lat: 25.6872,
+            lng: 32.6396,
+            is_stop: true,
+          },
+          {
+            order: 4,
+            label: "Karnak Temple",
+            lat: 25.7188,
+            lng: 32.6573,
+            is_stop: true,
+          },
+          {
+            order: 5,
+            label: "Aswan",
+            lat: 24.0889,
+            lng: 32.8998,
+            is_stop: true,
+          },
+        ],
+      },
     },
   });
 
@@ -89,6 +126,10 @@ async function main() {
       slug: "white-desert-bahariya",
       description:
         "Camp under the stars in Egypt's surreal White Desert, explore crystal mountains, and unwind at Bahariya Oasis hot springs.",
+      inclusions:
+        "4x4 desert safari transfers\nPrivate licensed desert guide\nCamping equipment & tents\nMeals in the desert\nBottled water & cold drinks",
+      exclusions:
+        "International flights\nTravel insurance (recommended)\nVisa fees\nTips & personal expenses",
       base_price: 899,
       currency: "USD",
       status: "open",
@@ -112,6 +153,32 @@ async function main() {
           {
             image_url: "/uploads/tours/white-desert.jpg",
             is_primary: true,
+          },
+        ],
+      },
+      route: {
+        create: [
+          { order: 1, label: "Cairo", lat: 30.0444, lng: 31.2357, is_stop: true },
+          {
+            order: 2,
+            label: "Bahariya Oasis",
+            lat: 28.3366,
+            lng: 28.8609,
+            is_stop: true,
+          },
+          {
+            order: 3,
+            label: "Black Desert",
+            lat: 27.9556,
+            lng: 28.5295,
+            is_stop: true,
+          },
+          {
+            order: 4,
+            label: "White Desert",
+            lat: 27.3721,
+            lng: 28.2309,
+            is_stop: true,
           },
         ],
       },
