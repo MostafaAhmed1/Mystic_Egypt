@@ -36,6 +36,48 @@ async function main() {
 
   console.log(`Admin ready: ${admin.email}`);
 
+  // --- Sample Add-ons (upsert so they exist even when tours are already seeded) ---
+  const sampleAddons = [
+    {
+      name: "Airport transfer (round trip)",
+      description: "Private transfer from Cairo airport to your hotel and back.",
+      price: 60,
+    },
+    {
+      name: "Nile dinner cruise",
+      description: "Evening dinner cruise with live entertainment on the Nile.",
+      price: 75,
+    },
+    {
+      name: "Hot air balloon (Luxor)",
+      description: "Sunrise hot air balloon ride over the Valley of the Kings.",
+      price: 120,
+    },
+    {
+      name: "Photo & drone package",
+      description: "Professional photography and licensed drone footage of your trip.",
+      price: 90,
+    },
+  ] as const;
+
+  for (const addon of sampleAddons) {
+    await prisma.addon.upsert({
+      where: { id: addon.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") },
+      update: {
+        description: addon.description,
+        price: addon.price,
+      },
+      create: {
+        id: addon.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        name: addon.name,
+        description: addon.description,
+        price: addon.price,
+        currency: "USD",
+      },
+    });
+  }
+  console.log("Sample add-ons ready.");
+
   // --- Sample Tours ---
   const existingTours = await prisma.tour.count();
   if (existingTours > 0) {

@@ -43,3 +43,6 @@ yarn-error.log*
 
 # prisma generated client
 /src/core/generated/
+
+# user-uploaded booking receipts (data + test artifacts)
+/public/uploads/receipts/

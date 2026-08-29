@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 3 COMPLETE
+## Status: MILESTONE 4 COMPLETE
 **Last Updated:** August 29, 2026
 
 ---
@@ -12,7 +12,7 @@
 | 1 | Initialization & Core Foundation | ✅ COMPLETE | Next/TS/Tailwind, shadcn, Prisma 7, core layer, seed, git |
 | 2 | Authentication System | ✅ COMPLETE | Password (bcrypt) + Email Verification + Password Reset + NextAuth JWT |
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
-| 4 | Booking & Payment | ⏳ PENDING | — |
+| 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ⏳ PENDING | Dashboard placeholder only |
 | 6 | Admin Panel | ⏳ PENDING | Admin placeholder only; 2FA gate deferred |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
@@ -100,6 +100,38 @@
   `public/uploads/tours/{nile-cruise-cairo,white-desert}.jpg` (small JPGs). Replaced by
   admin-uploaded real photos in M6.
 
+### Documented Decisions / Deviations (Recorded during M4)
+- **Stripe degraded gracefully (no real keys yet):** `.env` Stripe keys are placeholders
+  (`pk_test_placeholder`, `sk_test_placeholder`, `whsec_placeholder`) per security rules. All Stripe
+  code paths are structurally complete (PaymentIntent with `metadata.booking_id`, Elements +
+  `confirmPayment` redirect `if_required`, and a signature-verified webhook) but cannot be exercised
+  end-to-end. The client create step catches the inaccessibility and returns a friendly error
+  ("Stripe could not be reached..."), so the booking form degrades to bank transfer without crashing.
+  Real-test-keys E2E is a pending item (MANUAL_STEPS.md).
+- **PaymentIntent id stored via `metadata.booking_id` (no DB field):** lightweight link between a
+  Stripe PaymentIntent and our Booking row without schema change. `confirmBookingFromStripe` is
+  idempotent (PENDING_PAYMENT → CONFIRMED only), the webhook payload says `payment_intent` confirmed.
+- **No schema changes in M4:** `Addon`, `Booking`, `BookingAddon`, `Invoice` already existed from the
+  blueprint. `db push` re-ran (idempotent). Invoice row creation deferred to M5.
+- **4 add-ons seeded idempotently** (`npx prisma db seed`): Airport transfer $60, Nile dinner cruise
+  $75, Hot air balloon $120, Photo & drone package $90 — with slug-like uuid ids.
+- **Booking payment methods:** `PAYMENT_METHODS` constant (`stripe`, `bank_transfer`); stock
+  `BookingStatus` enum drives transition PENDING_PAYMENT → PENDING_RECEIPT_REVIEW (bank) or CONFIRMED
+  (Stripe webhook).
+- **Booking = fetch API route, not server action:** distinct from M2/M3 (which used server actions).
+  Rationale: the receipt upload needs `multipart/form-data` + ownership check + callback from the
+  Stripe webhook — a Route Handler with unified JSON responses is the right seam. Order-creation,
+  receipt-upload, and Stripe webhook all live in `app/api/bookings/**` + `api/webhooks/stripe` and
+  delegate to `src/features/booking/service.ts`.
+- **Auth-gated bookings:** `createBooking` requires a session (401 otherwise). The `/book` page is
+  `force-dynamic` + `requireUser()`. Receipt upload additionally checks booking ownership.
+- **Receipt storage:** `src/core/lib/receipt-upload.ts` validates (jpeg/png/pdf, ≤5MB) and saves to
+  `public/uploads/receipts/<uuid>.<ext>` returning the URL to store on `Booking.receipt_image_url`.
+  Nginx PHP/script-exec block for `public/uploads` already required in deploy (M8).
+- **Booking success / email:** bank transfer lands on a "Booking submitted for review" success screen.
+  `bookingConfirmationEmailHtml` is defined in `src/features/booking/emails.ts` (uses existing
+  `sendEmail`, graceful on placeholder key).
+
 ---
 
 ## [SYSTEM_FLOW]
@@ -129,9 +161,13 @@ Browser ← JSON Response ← Next.js API Routes
 
 ### Payment Flow
 ```
-Client selects tour → Stripe Checkout / Bank Transfer
-├── Stripe: PaymentIntent → Webhook → Booking Confirmed
-└── Bank Transfer: Upload receipt → Pending Review → Admin approves → Confirmed
+Client on /tours/[slug]/book → date + people + add-ons (Zustand cart)
+→ login required → payment method
+├── Stripe Elements: create PaymentIntent (metadata.booking_id) → client
+│     confirmPayment → Webhook (signature) → booking CONFIRMED
+└── Bank Transfer: create booking PENDING_PAYMENT → upload receipt
+      (multipart, ownership-checked) → PENDING_RECEIPT_REVIEW → admin approves (M6) → CONFIRMED
+→ Success screen ("Booking submitted for review" for bank)
 ```
 
 ---
@@ -217,6 +253,20 @@ Client → FormData → Route Handler → Validate (type, size)
 - **Migrations baseline debt** — project uses `prisma db push`; `prisma/migrations` is empty.
   A baseline migration should be introduced (M8 / before first production deploy).
 
+### Disconnected Pieces / Pending (Recorded during M4)
+- **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural
+  code (PaymentIntent, Elements, confirmPayment, webhook sig-verify) is complete and the client
+  degrades gracefully to bank transfer. Needs real test keys for full E2E (MANUAL_STEPS.md).
+- **`/tours/[slug]/book` dangling pointer RESOLVED** — the book page + booking API now exist (M4); the
+  M3 "Book now" links resolve correctly.
+- **Booking emails** (`bookingConfirmationEmailHtml`) are defined but not delivered until a real
+  Resend key exists (placeholder-safe — sendEmail never throws).
+- **No admin UI yet** to review PENDING_RECEIPT_REVIEW bookings or approve them → CONFIRMED — belongs
+  to Admin panel (M6).
+- **Invoice row not yet created** on booking confirmation / receipt approval — deferred to M5
+  (Client Dashboard & Invoice).
+- **Client Dashboard is still a bare placeholder** — bookings, invoice download, and profile live in M5.
+
 ### Disconnected Pieces / Pending (Recorded during M2)
 - **Dashboard & Admin are bare placeholders** (auth gate verified only). Real dashboards = M5/M6.
 - **Admin 2FA (`is_2fa_verified`) declared but not enforced** — deferred to the 2FA / Admin milestone.
@@ -247,6 +297,11 @@ Client → FormData → Route Handler → Validate (type, size)
   map, customize dialog, login auth gate, DB write-back check). No new skills installed. Candidates
   for later milestones: `ui-ux-pro-max` (UI/design polish), `careful` (prod/deploy safety M8),
   `browse`/`qa` (M8 testing).
+- M4 verification: browser-based QA via chrome-devtools on `/tours/[slug]/book` — checkout form
+  renders (date/people/add-ons/payment/terms), add-on totals update, form validation (date + terms),
+  Stripe graceful degradation on placeholder keys, full bank-transfer E2E (booking created + receipt
+  uploaded → PENDING_RECEIPT_REVIEW), confirmed against the real MariaDB via a tsx Prisma query.
+  Temp verify script removed after use. No new skills installed.
 
 ### Document References
 1. `docs/PRD.md` — Source of truth for all features

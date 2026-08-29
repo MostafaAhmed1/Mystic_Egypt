@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
 import { Icon, type LatLngExpression, type Map as LeafletMap } from "leaflet";
 import { CircleDot } from "lucide-react";
@@ -23,18 +23,16 @@ const MARKER_ICON = new Icon({
 
 export function TourMap({ route }: { route: TourPointDto[] }) {
   const mapRef = useRef<LeafletMap | null>(null);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (mapRef.current && route.length > 1) {
+    const map = mapRef.current;
+    if (map && route.length > 1) {
       const coords: LatLngExpression[] = route.map((p) => [p.lat, p.lng]);
-      mapRef.current.fitBounds(coords as [number, number][], { padding: [40, 40] });
+      map.whenReady(() => {
+        map.fitBounds(coords as [number, number][], { padding: [40, 40] });
+      });
     }
-  }, [route, ready]);
+  }, [route]);
 
   const { position, line, stops } = useMemo(() => {
     return {
@@ -51,10 +49,6 @@ export function TourMap({ route }: { route: TourPointDto[] }) {
         Route map not available for this tour yet.
       </div>
     );
-  }
-
-  if (!ready) {
-    return <div className="h-72 w-full rounded-2xl border bg-muted/30" />;
   }
 
   return (
