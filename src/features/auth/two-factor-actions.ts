@@ -1,13 +1,17 @@
 "use server";
 
 import { requireAdmin } from "@/core/lib/session";
+import { prisma } from "@/core/lib/prisma";
 import {
   generateTwoFactorSecret,
   verifyTwoFactorToken,
   enableTwoFactor,
   disableTwoFactor,
   getTwoFactorStatus,
+  getTwoFactorSecret,
 } from "@/features/auth/two-factor";
+
+const TWO_FACTOR_SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function generateTwoFactorSetupAction(): Promise<{
   ok: boolean;
@@ -60,24 +64,80 @@ export async function disableTwoFactorAction(): Promise<{
   }
 }
 
+/**
+ * Verify 2FA TOTP code during login flow.
+ * Creates a verified TwoFactorSession so the next signIn call bypasses 2FA.
+ */
 export async function verifyTwoFactorLoginAction(
   token: string,
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const admin = await requireAdmin();
-    const { getTwoFactorSecret } = await import("@/features/auth/two-factor");
-    const secret = await getTwoFactorSecret(admin.id);
+    const session = await import("next-auth/next").then((m) =>
+      m.getServerSession(
+        (await import("@/core/lib/auth")).authOptions,
+      ),
+    );
+
+    if (!session?.user?.id) {
+      return { ok: false, error: "Not authenticated." };
+    }
+
+    const userId = session.user.id;
+    const secret = await getTwoFactorSecret(userId);
     if (!secret) {
       return { ok: false, error: "2FA is not set up." };
     }
+
     const valid = verifyTwoFactorToken(secret, token);
     if (!valid) {
-      return { ok: false, error: "Invalid code." };
+      return { ok: false, error: "Invalid code. Please try again." };
     }
+
+    // Create a verified 2FA session (expires in 5 minutes)
+    await prisma.twoFactorSession.create({
+      data: {
+        user_id: userId,
+        verified: true,
+        expires_at: new Date(Date.now() + TWO_FACTOR_SESSION_TTL_MS),
+      },
+    });
+
     return { ok: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown error";
     console.error("[verifyTwoFactorLoginAction]", msg);
+    return { ok: false, error: msg };
+  }
+}
+
+export async function verifyTwoFactorLoginByUserIdAction(
+  userId: string,
+  token: string,
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const secret = await getTwoFactorSecret(userId);
+    if (!secret) {
+      return { ok: false, error: "2FA is not set up." };
+    }
+
+    const valid = verifyTwoFactorToken(secret, token);
+    if (!valid) {
+      return { ok: false, error: "Invalid code. Please try again." };
+    }
+
+    // Create a verified 2FA session (expires in 5 minutes)
+    await prisma.twoFactorSession.create({
+      data: {
+        user_id: userId,
+        verified: true,
+        expires_at: new Date(Date.now() + TWO_FACTOR_SESSION_TTL_MS),
+      },
+    });
+
+    return { ok: true };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Unknown error";
+    console.error("[verifyTwoFactorLoginByUserIdAction]", msg);
     return { ok: false, error: msg };
   }
 }

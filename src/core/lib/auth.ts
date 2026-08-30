@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
 import { prisma } from "@/core/lib/prisma";
 
+const TWO_FACTOR_SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
@@ -37,12 +39,50 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        const has2FA = user.is_2fa_verified && Boolean(user.totp_secret);
+
+        if (has2FA) {
+          // Check if there's a recently verified 2FA session
+          const recentSession = await prisma.twoFactorSession.findFirst({
+            where: {
+              user_id: user.id,
+              verified: true,
+              expires_at: { gt: new Date() },
+            },
+            orderBy: { created_at: "desc" },
+          });
+
+          if (recentSession) {
+            // 2FA was recently verified — clean up and allow login
+            await prisma.twoFactorSession.delete({ where: { id: recentSession.id } });
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+              email_verified: user.email_verified,
+              requires_2fa: false,
+            };
+          }
+
+          // 2FA enabled but not verified in this session
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            email_verified: user.email_verified,
+            requires_2fa: true,
+          };
+        }
+
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
           email_verified: user.email_verified,
+          requires_2fa: false,
         };
       },
     }),
@@ -53,6 +93,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.email_verified = user.email_verified;
+        token.requires_2fa = (user as Record<string, unknown>).requires_2fa;
       }
       return token;
     },
@@ -61,6 +102,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.email_verified = token.email_verified;
+        session.user.requires_2fa = token.requires_2fa;
       }
       return session;
     },

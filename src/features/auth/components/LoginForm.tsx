@@ -36,10 +36,15 @@ export function LoginForm() {
     }
 
     const session = await getSession();
-    const userEmail = session?.user?.email ?? email;
 
     if (session?.user && !session.user.email_verified) {
+      const userEmail = session.user.email ?? email;
       router.push(`/verify-email?email=${encodeURIComponent(userEmail)}`);
+      return;
+    }
+
+    if (session?.user?.requires_2fa) {
+      router.push("/verify-2fa");
       return;
     }
 

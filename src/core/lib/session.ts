@@ -17,6 +17,7 @@ export interface CurrentUser {
   role: "CLIENT" | "ADMIN";
   email_verified: boolean;
   is_2fa_verified: boolean;
+  requires_2fa?: boolean;
 }
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
@@ -37,7 +38,12 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     },
   });
 
-  return user;
+  if (!user) return null;
+
+  return {
+    ...user,
+    requires_2fa: session.user.requires_2fa,
+  };
 });
 
 /** Redirect to the login page when there is no authenticated session. */
@@ -48,6 +54,9 @@ export async function requireUser(): Promise<CurrentUser> {
   }
   if (!user.email_verified) {
     redirect(`/verify-email?email=${encodeURIComponent(user.email)}`);
+  }
+  if (user.requires_2fa) {
+    redirect("/verify-2fa");
   }
   return user;
 }
