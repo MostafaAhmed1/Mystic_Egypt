@@ -2,12 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowRight, Search, Wallet } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Search, Wallet } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 
 export function TourSearchBar() {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const [query, setQuery] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
@@ -31,7 +33,7 @@ export function TourSearchBar() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Destination or tour — e.g. Cairo, Luxor, Nile"
+          placeholder={t("tours.searchTours")}
           className="h-9 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
         />
       </label>
@@ -43,12 +45,12 @@ export function TourSearchBar() {
           min={0}
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
-          placeholder="Max budget (USD)"
+          placeholder={t("tours.maxBudget", "Max budget (USD)")}
           className="h-9 w-36 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
         />
       </label>
       <Button type="submit" size="lg" className="h-10 shrink-0 sm:ml-1">
-        Search tours
+        {t("tours.searchTours")}
       </Button>
     </form>
   );

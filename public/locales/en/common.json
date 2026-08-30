@@ -1,5 +1,6 @@
 {
   "nav": {
+    "home": "Home",
     "tours": "Tours",
     "whyUs": "Why Us",
     "whatsapp": "WhatsApp",
@@ -23,6 +24,9 @@
     "from": "from",
     "perPerson": "per person",
     "days": "days",
+    "oneDay": "1 day",
+    "daysCount": "{{count}} days",
+    "day": "Day",
     "bookNow": "Book now",
     "requestCustom": "Request a custom tour",
     "savedToFavourites": "Saved to favourites",
@@ -33,6 +37,7 @@
     "readyToExplore": "Ready to explore",
     "transparentPricing": "Transparent local pricing, UK-registered guarantees, and a dedicated local team from the first enquiry to the last milestone.",
     "searchTours": "Search tours...",
+    "maxBudget": "Max budget (USD)",
     "allStatuses": "All statuses",
     "filter": "Filter",
     "noToursFound": "No tours found."
@@ -176,6 +181,12 @@
     "title": "Favourites",
     "subtitle": "Tours you have saved for later.",
     "viewTour": "View tour"
+  },
+  "wishlist": {
+    "added": "Added to your favourites.",
+    "removed": "Removed from your favourites.",
+    "signInRequired": "Please sign in to save tours to your favourites.",
+    "save": "Save to favourites"
   },
   "profile": {
     "title": "Profile",

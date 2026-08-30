@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
 import { API_ENDPOINTS } from "@/core/api/endpoints";
@@ -12,6 +13,7 @@ import { toggleWishlistAction } from "@/features/wishlist/actions";
 // GET /api/wishlist and mutations go through the server action.
 export function WishlistButton({ tourId }: { tourId: string }) {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const [saved, setSaved] = useState(false);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -46,12 +48,12 @@ export function WishlistButton({ tourId }: { tourId: string }) {
       setSaved(result.inWishlist);
       toast.success(
         result.inWishlist
-          ? "Added to your favourites."
-          : "Removed from your favourites.",
+          ? t("wishlist.added", "Added to your favourites.")
+          : t("wishlist.removed", "Removed from your favourites."),
       );
       router.refresh();
     } catch {
-      toast.error("Please sign in to save tours to your favourites.");
+      toast.error(t("wishlist.signInRequired", "Please sign in to save tours to your favourites."));
     } finally {
       setBusy(false);
     }
@@ -64,7 +66,7 @@ export function WishlistButton({ tourId }: { tourId: string }) {
         aria-hidden
       >
         <Heart className="size-4" />
-        Loading…
+        {t("common.loading")}
       </span>
     );
   }
@@ -81,7 +83,7 @@ export function WishlistButton({ tourId }: { tourId: string }) {
       }
     >
       <Heart className={`size-4 ${saved ? "fill-current" : ""}`} aria-hidden />
-      {saved ? "Saved to favourites" : "Save to favourites"}
+      {saved ? t("tours.savedToFavourites") : t("wishlist.save", "Save to favourites")}
     </button>
   );
 }

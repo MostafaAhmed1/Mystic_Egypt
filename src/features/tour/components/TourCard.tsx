@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { TourImage } from "@/features/tour/components/TourImage";
@@ -6,6 +9,7 @@ import { formatCurrency } from "@/core/utils";
 import type { TourSummary } from "@/features/tour/types";
 
 export function TourCard({ tour }: { tour: TourSummary }) {
+  const { t } = useTranslation("common");
   return (
     <Card className="group/card overflow-hidden">
       <div className="relative aspect-[4/3] w-full">
@@ -27,7 +31,7 @@ export function TourCard({ tour }: { tour: TourSummary }) {
         <p className="line-clamp-2 text-sm text-muted-foreground">{tour.description}</p>
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
           <span className="text-sm text-muted-foreground">
-            from{" "}
+            {t("tours.from")}{" "}
             <span className="font-semibold text-foreground">
               {formatCurrency(tour.base_price, tour.currency)}
             </span>
@@ -36,7 +40,7 @@ export function TourCard({ tour }: { tour: TourSummary }) {
             href={`/tours/${tour.slug}`}
             className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
-            View tour
+            {t("favourites.viewTour")}
             <ArrowRight className="size-4" aria-hidden />
           </Link>
         </div>

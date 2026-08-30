@@ -93,7 +93,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.email_verified = user.email_verified;
-        token.requires_2fa = (user as Record<string, unknown>).requires_2fa;
+        token.requires_2fa = (user as unknown as Record<string, unknown>).requires_2fa;
       }
 
       // Check if 2FA was verified (remove requires_2fa flag)

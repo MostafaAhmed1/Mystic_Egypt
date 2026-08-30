@@ -1,7 +1,7 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 6 COMPLETE ✅
-**Last Updated:** August 29, 2026
+## Status: MILESTONE 7 IN PROGRESS
+**Last Updated:** August 30, 2026
 
 ---
 
@@ -15,7 +15,7 @@
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
-| 7 | i18n, SEO & Polish | ⏳ PENDING | — |
+| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | SEO files + i18n wiring for public pages (Step 1 complete) |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
 ---
@@ -231,10 +231,10 @@ Client → FormData → Route Handler → Validate (type, size)
   `wishlist` (M5) are all implemented.
 - `src/features/auth/` now holds the auth feature (actions, emails, components).
 - `src/shared/hooks/` empty (shared hooks added when needed).
-- `public/locales/` empty (i18n files created in M7).
+- `public/locales/` now has 3 locale files (en, ar, de) with comprehensive translations (M7).
 - `public/uploads/tours/*.jpg` referenced by seed DO NOT exist yet (placeholder image paths;
   real tour images uploaded via admin in M6).
-- `src/core/lib/{i18n}` not yet created (M7 i18n). `resend`, `auth`, `otp`, `session` created (M2).
+- `src/core/lib/i18n.ts` created (M7). `resend`, `auth`, `otp`, `session` created (M2).
 - `src/app/` has `(auth)` group complete (M2); `(public)` home is scaffold; `(dashboard)` &
   `(admin)` are minimal placeholders (filled in M5/M6).
 - API route handlers: `api/auth/**` (M2), `api/tours/**` (M3), `api/bookings/**` + `api/webhooks/stripe` (M4), `api/wishlist` (M5), `api/invoices/**` pending. Admin routes in M6.
@@ -318,6 +318,33 @@ Client → FormData → Route Handler → Validate (type, size)
   Create admin page with name, email, password form. `deleteAdmin` service function prevents
   self-deletion. `createAdmin` creates user with ADMIN role + email_verified=true. Admin nav
   includes all 6 sections: Overview, Tours, Bookings, CMS, Admins, Settings.
+
+### Documented Decisions / Deviations (Recorded during M7 - Step 1)
+- **SEO files created:** `src/app/sitemap.ts` (dynamic sitemap with tour pages) and `src/app/robots.txt`
+  (crawler directives disallowing /admin, /dashboard, /api). Both generate as static files.
+- **OpenGraph metadata added:** Homepage, tours listing, and tour detail pages now have `openGraph`
+  and `twitter` metadata for social sharing.
+- **i18n wiring approach:** Server components (tour detail, tours list, book page) use client
+  component wrappers (`TourContent`, `ToursListClient`, `BookPageClient`) that call `useTranslation`.
+  This preserves SSG/SSR benefits while enabling client-side i18n.
+- **Components converted to client for i18n:** `TourCard`, `TourSearchBar`, `ItineraryAccordion`,
+  `CustomizeTourDialog`, `WishlistButton` now use `"use client"` + `useTranslation("common")`.
+- **Translation keys added:** `nav.home`, `tours.oneDay`, `tours.daysCount`, `tours.day`,
+  `tours.maxBudget`, `wishlist.added`, `wishlist.removed`, `wishlist.signInRequired`, `wishlist.save`
+  added to all 3 locale files (en, ar, de).
+- **Pre-existing TS error fixed:** `auth.ts:96` cast `(user as Record<string, unknown>)` changed to
+  `(user as unknown as Record<string, unknown>)` to satisfy strict TypeScript.
+
+### Disconnected Pieces / Pending (Recorded during M7)
+- **Auth pages i18n NOT wired** — login, register, forgot-password, reset-password, verify-email,
+  verify-2fa pages still have hardcoded English text. Translation keys exist but are not used.
+- **Dashboard pages i18n NOT wired** — overview, bookings, invoices, wishlist, profile pages
+  still have hardcoded English text.
+- **Admin pages i18n NOT wired** — admin pages still have hardcoded English text.
+- **No middleware for server-side locale detection** — locale is cookie-based only, no
+  `Accept-Language` header detection. RTL support is client-side only (flash on Arabic).
+- **No hreflang alternate links** — since there's no locale-based URL routing, hreflang cannot
+  be properly implemented yet.
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural

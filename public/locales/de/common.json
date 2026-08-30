@@ -1,5 +1,6 @@
 {
   "nav": {
+    "home": "Startseite",
     "tours": "Touren",
     "whyUs": "Warum wir",
     "whatsapp": "WhatsApp",
@@ -23,6 +24,9 @@
     "from": "ab",
     "perPerson": "pro Person",
     "days": "Tage",
+    "oneDay": "1 Tag",
+    "daysCount": "{{count}} Tage",
+    "day": "Tag",
     "bookNow": "Jetzt buchen",
     "requestCustom": "Individuelle Tour anfragen",
     "savedToFavourites": "Zu Favoriten hinzugefügt",
@@ -33,6 +37,7 @@
     "readyToExplore": "Bereit zu erkunden",
     "transparentPricing": "Transparente lokale Preise, UK-registrierte Garantien und ein engagiertes lokales Team von der ersten Anfrage bis zum letzten Meilenstein.",
     "searchTours": "Touren suchen...",
+    "maxBudget": "Max. Budget (USD)",
     "allStatuses": "Alle Status",
     "filter": "Filtern",
     "noToursFound": "Keine Touren gefunden."
@@ -176,6 +181,12 @@
     "title": "Favoriten",
     "subtitle": "Touren, die Sie für später gespeichert haben.",
     "viewTour": "Tour anzeigen"
+  },
+  "wishlist": {
+    "added": "Zu Favoriten hinzugefügt.",
+    "removed": "Aus Favoriten entfernt.",
+    "signInRequired": "Bitte melden Sie sich an, um Touren zu Ihren Favoriten hinzuzufügen.",
+    "save": "Zu Favoriten hinzufügen"
   },
   "profile": {
     "title": "Profil",
