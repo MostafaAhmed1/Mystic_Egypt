@@ -168,6 +168,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 2026-08-30 | 6.1 | CMS page crashes: `prisma.cmsPage` undefined | Ran `npx prisma generate` + restarted dev server | ✅ Fixed |
 | 2026-08-30 | 1.8 | i18n not implemented (HIGH) | Added i18n infrastructure: 3 locales, language switcher, I18nProvider, refactored header/footer/homepage with translation keys | ✅ Fixed |
 | 2026-08-30 | — | 404 page uses Next.js default styling (LOW) | Created branded not-found.tsx with site layout, amber gradient, 404 hero, and CTAs | ✅ Fixed |
+| 2026-08-30 | — | CMS pages empty — need seed content (LOW) | Added about, privacy, terms pages to seed.ts with public route at /[slug] | ✅ Fixed |
 
 ---
 
@@ -178,6 +179,6 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | ~~1~~ | ~~i18n not implemented~~ | ~~HIGH~~ | ✅ Fixed: 3 locales (EN/AR/DE), language switcher, RTL support, translation keys in public components |
 | ~~2~~ | ~~404 page uses Next.js default styling~~ | ~~LOW~~ | ✅ Fixed: branded not-found.tsx with site layout, amber gradient, and CTAs |
 | ~~3~~ | ~~Mobile responsive not tested~~ | ~~MEDIUM~~ | ✅ Verified: mobile-first design, responsive grids, mobile nav, stacked layouts on small screens |
-| 4 | CMS pages empty — need seed content | LOW | Create at least About, Privacy, Terms pages |
+| ~~4~~ | ~~CMS pages empty — need seed content~~ | ~~LOW~~ | ✅ Fixed: about, privacy, terms pages seeded with public route at /[slug] |
 | 5 | 2FA not enabled on admin account | MEDIUM | Should set up 2FA before production |
 | 6 | Booking confirmation/receipt upload not tested | MEDIUM | Requires full end-to-end booking completion |
