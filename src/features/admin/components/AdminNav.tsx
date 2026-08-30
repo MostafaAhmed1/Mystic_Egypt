@@ -8,6 +8,7 @@ import {
   CalendarDays,
   FileText,
   Users,
+  Settings,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -36,6 +37,11 @@ const NAV_ITEMS = [
     href: "/admin/admins",
     label: "Admins",
     icon: Users,
+  },
+  {
+    href: "/admin/settings",
+    label: "Settings",
+    icon: Settings,
   },
 ];
 

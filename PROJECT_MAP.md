@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 6 IN PROGRESS (Step 6/8)
+## Status: MILESTONE 6 IN PROGRESS (Step 7/8)
 **Last Updated:** August 29, 2026
 
 ---
@@ -14,7 +14,7 @@
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
-| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-6: Layout + API + Dashboard + Tours + Orders + CMS |
+| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-7: Layout + API + Dashboard + Tours + Orders + CMS + 2FA |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
@@ -308,6 +308,12 @@ Client → FormData → Route Handler → Validate (type, size)
   toolbar (headings, bold/italic/strike, lists, task lists, links, images, code, horizontal
   rule). Admin CMS list with search/filter, create/edit pages with Tiptap, toggle publish
   status, delete with confirmation. Public API route for published pages.
+- **2FA (TOTP):** Custom TOTP implementation using Node.js crypto (RFC 6238). Schema:
+  `User.totp_secret` (encrypted) + `is_2fa_verified`. QR code generation via `qrcode` package.
+  Setup flow: generate secret → show QR → verify 6-digit code → enable. Disable flow with
+  confirmation. Admin settings page (`/admin/settings`) with account info + 2FA toggle.
+  Server actions: generate, enable, disable, verify, get status. ±1 time window tolerance
+  (90 seconds).
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural
