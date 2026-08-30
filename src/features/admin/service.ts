@@ -469,6 +469,8 @@ export async function listBookings(params: {
   status?: string;
   payment_method?: string;
   search?: string;
+  date_from?: string;
+  date_to?: string;
   page?: number;
   limit?: number;
 }): Promise<{ items: BookingListItem[]; total: number; page: number; limit: number }> {
@@ -489,6 +491,16 @@ export async function listBookings(params: {
       { user: { email: { contains: params.search } } },
       { tour: { title: { contains: params.search } } },
     ];
+  }
+  if (params.date_from || params.date_to) {
+    const created: Record<string, Date> = {};
+    if (params.date_from) created.gte = new Date(params.date_from);
+    if (params.date_to) {
+      const to = new Date(params.date_to);
+      to.setHours(23, 59, 59, 999);
+      created.lte = to;
+    }
+    where.created_at = created;
   }
 
   const [rows, total] = await Promise.all([
