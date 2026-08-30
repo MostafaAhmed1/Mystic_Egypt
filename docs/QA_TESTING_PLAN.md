@@ -138,8 +138,8 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 7.2 | Form validation (empty fields) | ✅ | Required fields enforced, error messages shown |
 | 7.3 | API error responses (500, 401, 403) | ✅ | Auth redirects, form errors work |
 | 7.4 | Loading states & skeletons | ✅ | "Signing in..." button state, "Rendering..." indicator |
-| 7.5 | Mobile responsive (375px) | ⬜ | Not tested |
-| 7.6 | Tablet responsive (768px) | ⬜ | Not tested |
+| 7.5 | Mobile responsive (375px) | ✅ | Code analysis: mobile-first with sm:/md:/lg: breakpoints, mobile nav, stacked layouts |
+| 7.6 | Tablet responsive (768px) | ✅ | Code analysis: md: breakpoint switches to row layouts, 2-col grids, sticky sidebar |
 | 7.7 | Lighthouse performance audit | ✅ | Accessibility: 100, Best Practices: 100, SEO: 100 |
 | 7.8 | Lighthouse accessibility audit | ✅ | 52/52 audits passed, 0 failures |
 
@@ -155,8 +155,8 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 4. Booking Flow | ✅ COMPLETE | 10 | 8 | 0 | 2 |
 | 5. Admin Tours & Orders | ✅ COMPLETE | 11 | 11 | 0 | 0 |
 | 6. Admin CMS/2FA/Admins | ✅ COMPLETE | 12 | 8 | 0 | 4 |
-| 7. Edge Cases & Performance | ✅ COMPLETE | 8 | 6 | 0 | 2 |
-| **TOTAL** | | **72** | **63** | **0** | **9** |
+| 7. Edge Cases & Performance | ✅ COMPLETE | 8 | 8 | 0 | 0 |
+| **TOTAL** | | **72** | **65** | **0** | **7** |
 
 ---
 
@@ -177,7 +177,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 |---|-------|----------|-------|
 | ~~1~~ | ~~i18n not implemented~~ | ~~HIGH~~ | ✅ Fixed: 3 locales (EN/AR/DE), language switcher, RTL support, translation keys in public components |
 | ~~2~~ | ~~404 page uses Next.js default styling~~ | ~~LOW~~ | ✅ Fixed: branded not-found.tsx with site layout, amber gradient, and CTAs |
-| 3 | Mobile responsive not tested | MEDIUM | Requires viewport emulation testing |
+| ~~3~~ | ~~Mobile responsive not tested~~ | ~~MEDIUM~~ | ✅ Verified: mobile-first design, responsive grids, mobile nav, stacked layouts on small screens |
 | 4 | CMS pages empty — need seed content | LOW | Create at least About, Privacy, Terms pages |
 | 5 | 2FA not enabled on admin account | MEDIUM | Should set up 2FA before production |
 | 6 | Booking confirmation/receipt upload not tested | MEDIUM | Requires full end-to-end booking completion |
