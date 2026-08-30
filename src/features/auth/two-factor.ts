@@ -23,12 +23,27 @@ function base32Encode(buffer: Buffer): string {
   return result;
 }
 
+function base32Decode(str: string): Buffer {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = "";
+  for (const char of str.toUpperCase()) {
+    const val = alphabet.indexOf(char);
+    if (val === -1) continue;
+    bits += val.toString(2).padStart(5, "0");
+  }
+  const bytes: number[] = [];
+  for (let i = 0; i + 8 <= bits.length; i += 8) {
+    bytes.push(parseInt(bits.slice(i, i + 8), 2));
+  }
+  return Buffer.from(bytes);
+}
+
 function generateSecret(): string {
   return base32Encode(randomBytes(20));
 }
 
 function generateTOTP(secret: string, timeStep?: number): string {
-  const key = Buffer.from(secret, "base64");
+  const key = base32Decode(secret);
   const time = timeStep ?? Math.floor(Date.now() / 1000 / PERIOD);
   const timeBuffer = Buffer.alloc(8);
   timeBuffer.writeBigInt64BE(BigInt(time));
