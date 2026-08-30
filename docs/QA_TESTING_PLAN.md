@@ -170,6 +170,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 2026-08-30 | — | 404 page uses Next.js default styling (LOW) | Created branded not-found.tsx with site layout, amber gradient, 404 hero, and CTAs | ✅ Fixed |
 | 2026-08-30 | — | CMS pages empty — need seed content (LOW) | Added about, privacy, terms pages to seed.ts with public route at /[slug] | ✅ Fixed |
 | 2026-08-30 | — | 2FA not enabled on admin account (MEDIUM) | Fixed base32/base64 encoding mismatch in TOTP verification + fixed seed to always run CMS pages | ✅ Fixed |
+| 2026-08-30 | — | 2FA not enforced during login (HIGH) | Implemented two-step login: authorize flags requires_2fa → /verify-2fa page → verify TOTP → re-sign in | ✅ Fixed |
 
 ---
 
@@ -182,4 +183,5 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | ~~3~~ | ~~Mobile responsive not tested~~ | ~~MEDIUM~~ | ✅ Verified: mobile-first design, responsive grids, mobile nav, stacked layouts on small screens |
 | ~~4~~ | ~~CMS pages empty — need seed content~~ | ~~LOW~~ | ✅ Fixed: about, privacy, terms pages seeded with public route at /[slug] |
 | ~~5~~ | ~~2FA not enabled on admin account~~ | ~~MEDIUM~~ | ✅ Fixed: base32/base64 encoding bug in TOTP verification. Admin can now enable 2FA via /admin/settings |
-| 6 | Booking confirmation/receipt upload not tested | MEDIUM | Requires full end-to-end booking completion |
+| ~~6~~ | ~~2FA not enforced during login~~ | ~~HIGH~~ | ✅ Fixed: two-step login flow with /verify-2fa page and TwoFactorSession tracking |
+| 7 | Booking confirmation/receipt upload not tested | MEDIUM | Requires full end-to-end booking completion |
