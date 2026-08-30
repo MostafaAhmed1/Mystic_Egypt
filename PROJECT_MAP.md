@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 6 IN PROGRESS (Step 5/8)
+## Status: MILESTONE 6 IN PROGRESS (Step 6/8)
 **Last Updated:** August 29, 2026
 
 ---
@@ -14,7 +14,7 @@
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
-| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-5: Layout + API + Dashboard + Tours + Order Management |
+| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-6: Layout + API + Dashboard + Tours + Orders + CMS |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
@@ -304,6 +304,10 @@ Client → FormData → Route Handler → Validate (type, size)
   search (customer/tour), status, payment method, date range. Quick actions: approve, reject,
   complete. Booking detail page with customer, tour, payment, addons, receipt link. Date range
   filtering added to `listBookings` service function.
+- **CMS:** CmsPage model (title, slug, content, published). Tiptap rich text editor with
+  toolbar (headings, bold/italic/strike, lists, task lists, links, images, code, horizontal
+  rule). Admin CMS list with search/filter, create/edit pages with Tiptap, toggle publish
+  status, delete with confirmation. Public API route for published pages.
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural

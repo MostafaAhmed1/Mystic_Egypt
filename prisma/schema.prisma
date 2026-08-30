@@ -51,6 +51,7 @@ model User {
 
   bookings         Booking[]
   custom_requests  CustomizationRequest[]
+  cms_pages        CmsPage[]
   wishlist         Tour[] @relation("UserWishlist")
   otp_codes        OtpCode[]
 
@@ -217,4 +218,19 @@ model CustomizationRequest {
   tour       Tour      @relation(fields: [tour_id], references: [id])
 
   @@map("customization_requests")
+}
+
+model CmsPage {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.LongText
+  published   Boolean  @default(false)
+  created_by  String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  creator     User     @relation(fields: [created_by], references: [id])
+
+  @@map("cms_pages")
 }

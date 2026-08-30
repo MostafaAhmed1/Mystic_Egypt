@@ -862,3 +862,165 @@ export async function toggleTourDate(
   });
   return newClosed;
 }
+
+// ---------------------------------------------------------------------------
+// CMS Management
+// ---------------------------------------------------------------------------
+
+export interface CmsPageListItem {
+  id: string;
+  title: string;
+  slug: string;
+  published: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface CmsPageDetail {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  published: boolean;
+  created_by: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export async function listCmsPages(params: {
+  search?: string;
+  published?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{ items: CmsPageListItem[]; total: number; page: number; limit: number }> {
+  const page = Math.max(1, params.page ?? 1);
+  const limit = Math.min(100, Math.max(1, params.limit ?? 20));
+  const skip = (page - 1) * limit;
+
+  const where: Record<string, unknown> = {};
+  if (params.search) {
+    where.OR = [
+      { title: { contains: params.search } },
+      { slug: { contains: params.search } },
+    ];
+  }
+  if (params.published !== undefined && params.published !== "") {
+    where.published = params.published === "true";
+  }
+
+  const [rows, total] = await Promise.all([
+    prisma.cmsPage.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        published: true,
+        created_at: true,
+        updated_at: true,
+      },
+      orderBy: { updated_at: "desc" },
+      skip,
+      take: limit,
+    }),
+    prisma.cmsPage.count({ where }),
+  ]);
+
+  return { items: rows, total, page, limit };
+}
+
+export async function getCmsPageBySlug(slug: string): Promise<CmsPageDetail | null> {
+  const page = await prisma.cmsPage.findUnique({ where: { slug } });
+  if (!page) return null;
+  return {
+    id: page.id,
+    title: page.title,
+    slug: page.slug,
+    content: page.content,
+    published: page.published,
+    created_by: page.created_by,
+    created_at: page.created_at,
+    updated_at: page.updated_at,
+  };
+}
+
+export async function getCmsPageById(id: string): Promise<CmsPageDetail | null> {
+  const page = await prisma.cmsPage.findUnique({ where: { id } });
+  if (!page) return null;
+  return {
+    id: page.id,
+    title: page.title,
+    slug: page.slug,
+    content: page.content,
+    published: page.published,
+    created_by: page.created_by,
+    created_at: page.created_at,
+    updated_at: page.updated_at,
+  };
+}
+
+export async function createCmsPage(params: {
+  title: string;
+  slug: string;
+  content: string;
+  published?: boolean;
+  created_by: string;
+}): Promise<CmsPageDetail> {
+  const page = await prisma.cmsPage.create({
+    data: {
+      title: params.title,
+      slug: params.slug,
+      content: params.content,
+      published: params.published ?? false,
+      created_by: params.created_by,
+    },
+  });
+  return {
+    id: page.id,
+    title: page.title,
+    slug: page.slug,
+    content: page.content,
+    published: page.published,
+    created_by: page.created_by,
+    created_at: page.created_at,
+    updated_at: page.updated_at,
+  };
+}
+
+export async function updateCmsPage(
+  id: string,
+  params: { title?: string; slug?: string; content?: string; published?: boolean },
+): Promise<CmsPageDetail> {
+  const page = await prisma.cmsPage.update({
+    where: { id },
+    data: params,
+  });
+  return {
+    id: page.id,
+    title: page.title,
+    slug: page.slug,
+    content: page.content,
+    published: page.published,
+    created_by: page.created_by,
+    created_at: page.created_at,
+    updated_at: page.updated_at,
+  };
+}
+
+export async function deleteCmsPage(id: string): Promise<void> {
+  await prisma.cmsPage.delete({ where: { id } });
+}
+
+export async function toggleCmsPagePublished(id: string): Promise<boolean> {
+  const page = await prisma.cmsPage.findUnique({ where: { id }, select: { published: true } });
+  if (!page) throw new Error("CMS page not found.");
+  const newPublished = !page.published;
+  await prisma.cmsPage.update({ where: { id }, data: { published: newPublished } });
+  return newPublished;
+}
+
+export async function getPublishedCmsPage(slug: string): Promise<{ title: string; content: string } | null> {
+  const page = await prisma.cmsPage.findFirst({ where: { slug, published: true } });
+  if (!page) return null;
+  return { title: page.title, content: page.content };
+}
