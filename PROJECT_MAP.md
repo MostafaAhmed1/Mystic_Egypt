@@ -15,7 +15,7 @@
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
-| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-2 complete: SEO + i18n wired to all public, auth, and dashboard pages |
+| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-3 complete: SEO + i18n wired to all public, auth, dashboard, and admin pages |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
 ---
@@ -345,9 +345,21 @@ Client → FormData → Route Handler → Validate (type, size)
   `dashboard.noBookingsYet/trackBookings/noInvoicesYet/noFavouritesYet`,
   `booking.person`, `profile.deleteAccount` added to all 3 locale files.
 
+### Documented Decisions / Deviations (Recorded during M7 - Step 3)
+- **Admin pages i18n wired:** All 6 admin pages (overview, tours, bookings, cms, admins, settings)
+  now use client component wrappers with `useTranslation("common")`.
+- **Admin client components created:** `AdminOverviewClient`, `AdminToursClient`, `AdminBookingsClient`,
+  `AdminCmsClient`, `AdminAdminsClient`, `AdminSettingsClient` in their respective page directories.
+- **TwoFactorSettings i18n:** Updated to use `useTranslation("common")` with all 2FA-related keys.
+- **TourActions component created:** Extracted `ToggleTourStatusButton` to avoid `"use server"` inside
+  `"use client"` (which caused Turbopack build errors). Uses existing `toggleTourStatusAction`.
+- **Translation keys added (Step 3):** All admin keys added to all 3 locale files including
+  `admin.totalBookingsCount`, `admin.showingRange` (with interpolation), `admin.tableView/kanbanView`,
+  `admin.bankTransfer`, `admin.published/draft`, `admin.2fa*` keys, `admin.scanQrCode`, etc.
+- **Type alignment:** Client component interfaces updated to match actual service return types
+  (`RevenueChartPoint`, `TopTour`, `BookingListItem`).
+
 ### Disconnected Pieces / Pending (Recorded during M7)
-- **Admin pages i18n NOT wired** — admin pages still have hardcoded English text. Lower priority
-  since admin is internal-only and typically English-only.
 - **No middleware for server-side locale detection** — locale is cookie-based only, no
   `Accept-Language` header detection. RTL support is client-side only (flash on Arabic).
 - **No hreflang alternate links** — since there's no locale-based URL routing, hreflang cannot
