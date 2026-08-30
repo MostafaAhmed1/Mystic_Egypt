@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 6 IN PROGRESS (Step 1/8)
+## Status: MILESTONE 6 IN PROGRESS (Step 4/8)
 **Last Updated:** August 29, 2026
 
 ---
@@ -14,7 +14,7 @@
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
-| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-3: Layout + API + Dashboard Analytics COMPLETE |
+| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-4: Layout + API + Dashboard + Tour Management |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
@@ -296,6 +296,10 @@ Client → FormData → Route Handler → Validate (type, size)
   donut chart. Client components ("use client") with server-side data fetching.
 - **Dashboard page:** Server component fetches all data in parallel (Promise.all), passes to
   client chart components. Stats cards show real DB aggregates (revenue, bookings, pending, active).
+- **Tour Management:** Tour list with search/filter/pagination, 4-step wizard (Basic Info,
+  Itinerary, Images, Pricing & Dates). TourDate model for per-date booking close. Status toggle
+  from list view. `getTourById` returns full tour with tour_dates. `listTours` supports
+  search by title/slug and filter by status.
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural

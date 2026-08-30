@@ -88,6 +88,7 @@ model Tour {
   itinerary        TourItinerary[]
   images           TourImage[]
   route            TourPoint[]
+  tour_dates       TourDate[]
   bookings         Booking[]
   wishlist_users   User[]  @relation("UserWishlist")
   custom_requests  CustomizationRequest[]
@@ -107,6 +108,18 @@ model TourPoint {
   tour      Tour   @relation(fields: [tour_id], references: [id], onDelete: Cascade)
 
   @@map("tour_points")
+}
+
+model TourDate {
+  id        String   @id @default(uuid())
+  tour_id   String
+  date      DateTime @db.Date
+  is_closed Boolean  @default(false)
+
+  tour      Tour     @relation(fields: [tour_id], references: [id], onDelete: Cascade)
+
+  @@unique([tour_id, date])
+  @@map("tour_dates")
 }
 
 model TourItinerary {

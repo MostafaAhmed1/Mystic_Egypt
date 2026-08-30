@@ -47,3 +47,5 @@ yarn-error.log*
 # user-uploaded booking receipts (data + test artifacts)
 /public/uploads/receipts/
 dev-server.*.log
+cookies.txt
+next-env.d.ts

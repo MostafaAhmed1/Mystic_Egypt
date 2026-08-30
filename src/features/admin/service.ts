@@ -34,6 +34,7 @@ export interface TourDetail {
   itinerary: { id: string; day_number: number; title: string; description: string }[];
   images: { id: string; image_url: string; is_primary: boolean }[];
   route: { id: string; order: number; label: string; lat: number; lng: number; is_stop: boolean }[];
+  tour_dates: { id: string; date: Date; is_closed: boolean }[];
 }
 
 export interface CreateTourParams {
@@ -220,6 +221,7 @@ export async function getTourById(id: string): Promise<TourDetail | null> {
       itinerary: { orderBy: { day_number: "asc" } },
       images: { orderBy: { is_primary: "desc" } },
       route: { orderBy: { order: "asc" } },
+      tour_dates: { orderBy: { date: "asc" } },
     },
   });
   if (!tour) return null;
@@ -253,6 +255,11 @@ export async function getTourById(id: string): Promise<TourDetail | null> {
       lat: r.lat,
       lng: r.lng,
       is_stop: r.is_stop,
+    })),
+    tour_dates: tour.tour_dates.map((td) => ({
+      id: td.id,
+      date: td.date,
+      is_closed: td.is_closed,
     })),
   };
 }
@@ -299,6 +306,7 @@ export async function createTour(
       itinerary: { orderBy: { day_number: "asc" } },
       images: { orderBy: { is_primary: "desc" } },
       route: { orderBy: { order: "asc" } },
+      tour_dates: { orderBy: { date: "asc" } },
     },
   });
 
@@ -332,6 +340,11 @@ export async function createTour(
       lat: r.lat,
       lng: r.lng,
       is_stop: r.is_stop,
+    })),
+    tour_dates: tour.tour_dates.map((td) => ({
+      id: td.id,
+      date: td.date,
+      is_closed: td.is_closed,
     })),
   };
 }
@@ -393,6 +406,7 @@ export async function updateTour(
       itinerary: { orderBy: { day_number: "asc" } },
       images: { orderBy: { is_primary: "desc" } },
       route: { orderBy: { order: "asc" } },
+      tour_dates: { orderBy: { date: "asc" } },
     },
   });
 
@@ -426,6 +440,11 @@ export async function updateTour(
       lat: r.lat,
       lng: r.lng,
       is_stop: r.is_stop,
+    })),
+    tour_dates: updated.tour_dates.map((td) => ({
+      id: td.id,
+      date: td.date,
+      is_closed: td.is_closed,
     })),
   };
 }
@@ -774,4 +793,60 @@ export async function createAdmin(
     is_2fa_verified: admin.is_2fa_verified,
     created_at: admin.created_at,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Tour Date Management
+// ---------------------------------------------------------------------------
+
+export interface TourDateItem {
+  id: string;
+  date: Date;
+  is_closed: boolean;
+}
+
+export async function listTourDates(tourId: string): Promise<TourDateItem[]> {
+  const dates = await prisma.tourDate.findMany({
+    where: { tour_id: tourId },
+    orderBy: { date: "asc" },
+  });
+  return dates.map((d) => ({
+    id: d.id,
+    date: d.date,
+    is_closed: d.is_closed,
+  }));
+}
+
+export async function setTourDates(
+  tourId: string,
+  dates: { date: string; is_closed?: boolean }[],
+): Promise<TourDateItem[]> {
+  // Replace all dates for this tour
+  await prisma.tourDate.deleteMany({ where: { tour_id: tourId } });
+  if (dates.length > 0) {
+    await prisma.tourDate.createMany({
+      data: dates.map((d) => ({
+        tour_id: tourId,
+        date: new Date(d.date),
+        is_closed: d.is_closed ?? false,
+      })),
+    });
+  }
+  return listTourDates(tourId);
+}
+
+export async function toggleTourDate(
+  tourId: string,
+  dateId: string,
+): Promise<boolean> {
+  const tourDate = await prisma.tourDate.findFirst({
+    where: { id: dateId, tour_id: tourId },
+  });
+  if (!tourDate) throw new Error("Tour date not found.");
+  const newClosed = !tourDate.is_closed;
+  await prisma.tourDate.update({
+    where: { id: dateId },
+    data: { is_closed: newClosed },
+  });
+  return newClosed;
 }
