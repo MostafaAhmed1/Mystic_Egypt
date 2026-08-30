@@ -33,6 +33,7 @@ export function TourGallery({
         src={active.image_url}
         alt={title}
         sizes="(min-width: 768px) 60vw, 100vw"
+        fill
         className="aspect-[16/9] w-full rounded-2xl object-cover"
         fallbackLabel={title}
       />
