@@ -247,11 +247,11 @@ export function CheckoutForm({
             />
             <span className="text-muted-foreground">
               I agree to the{" "}
-              <a href="#" className="underline underline-offset-4">
+              <a href="/terms" target="_blank" className="underline underline-offset-4">
                 terms &amp; conditions
               </a>{" "}
               and{" "}
-              <a href="#" className="underline underline-offset-4">
+              <a href="/terms" target="_blank" className="underline underline-offset-4">
                 cancellation policy
               </a>
               .
