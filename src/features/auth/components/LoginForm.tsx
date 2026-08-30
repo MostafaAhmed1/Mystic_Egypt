@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { signIn, getSession } from "next-auth/react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -11,6 +12,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/c
 
 export function LoginForm() {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const [error, setError] = useState<string | undefined>(undefined);
   const [pending, setPending] = useState(false);
 
@@ -30,7 +32,7 @@ export function LoginForm() {
     });
 
     if (result?.error) {
-      setError("Invalid email or password.");
+      setError(t("auth.invalidCredentials"));
       setPending(false);
       return;
     }
@@ -56,17 +58,17 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-center text-2xl">Welcome back</CardTitle>
+        <CardTitle className="text-center text-2xl">{t("auth.welcomeBack")}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input id="email" name="email" type="email" autoComplete="email" required />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Input
               id="password"
               name="password"
@@ -79,21 +81,21 @@ export function LoginForm() {
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" disabled={pending} className="w-full">
-            {pending ? "Signing in..." : "Sign in"}
+            {pending ? t("auth.signingIn") : t("auth.signIn")}
           </Button>
         </form>
 
         <div className="mt-4 text-center text-sm">
           <Link href="/forgot-password" className="font-medium text-primary hover:underline">
-            Forgot your password?
+            {t("auth.forgotPassword")}
           </Link>
         </div>
       </CardContent>
       <CardFooter className="justify-center text-sm text-muted-foreground">
         <span>
-          New to Mystic Egypt?{" "}
+          {t("auth.newToMystic")}{" "}
           <Link href="/register" className="font-medium text-primary hover:underline">
-            Create an account
+            {t("auth.createAccount")}
           </Link>
         </span>
       </CardFooter>

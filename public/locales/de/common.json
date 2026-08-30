@@ -116,7 +116,17 @@
     "resetCode": "Rücksetzcode",
     "newPassword": "Neues Passwort",
     "resetPassword": "Passwort zurücksetzen",
-    "requestNewCode": "Neuen Code anfordern"
+    "requestNewCode": "Neuen Code anfordern",
+    "creatingAccount": "Konto erstellen...",
+    "sending": "Senden...",
+    "resetting": "Zurücksetzen...",
+    "verifyTitle": "E-Mail verifizieren",
+    "verifyDescription": "Wir haben einen 6-stelligen Code gesendet an",
+    "verifyEnter": "Geben Sie ihn unten ein, um Ihr Konto zu verifizieren.",
+    "verificationCode": "Verifizierungscode",
+    "verifying": "Verifizieren...",
+    "verifyEmail": "E-Mail verifizieren",
+    "resendCode": "Code erneut senden"
   },
   "dashboard": {
     "hello": "Hallo,",
@@ -132,7 +142,11 @@
     "invoices": "Rechnungen",
     "favourites": "Favoriten",
     "profile": "Profil",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "noBookingsYet": "Sie haben noch keine Buchungen.",
+    "trackBookings": "Verfolgen Sie den Status Ihrer Tourenbuchungen.",
+    "noInvoicesYet": "Sie haben noch keine Rechnungen. Rechnungen werden ausgestellt, sobald eine Buchung bestätigt ist.",
+    "noFavouritesYet": "Sie haben noch keine gespeicherten Touren. Tippen Sie auf das Herz bei einer Tour, um sie hier zu speichern."
   },
   "booking": {
     "title": "Buchungsdetails",
@@ -140,6 +154,7 @@
     "reference": "Referenz #",
     "tourDate": "Tourdatum",
     "travellers": "Reisende",
+    "person": "Person",
     "people": "Personen",
     "paymentMethod": "Zahlungsmethode",
     "total": "Gesamt",
@@ -202,7 +217,8 @@
     "passwordHint": "Mindestens 8 Zeichen mit einer Zahl und einem Buchstaben.",
     "notifications": "Benachrichtigungen",
     "emailNotifications": "E-Mail-Benachrichtigungen",
-    "emailNotificationsDesc": "Erhalten Sie Buchungsaktualisierungen und Bestätigungen per E-Mail."
+    "emailNotificationsDesc": "Erhalten Sie Buchungsaktualisierungen und Bestätigungen per E-Mail.",
+    "deleteAccount": "Konto löschen"
   },
   "admin": {
     "overview": "Übersicht",

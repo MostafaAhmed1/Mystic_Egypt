@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { VerifyEmailForm } from "@/features/auth/components/VerifyEmailForm";
 
 export const metadata = {
@@ -18,7 +19,7 @@ export default async function VerifyEmailPage({
       {email ? (
         <VerifyEmailForm email={email} />
       ) : (
-        <p className="text-center text-muted-foreground">No email provided. Please <a className="font-medium text-primary hover:underline" href="/forgot-password">request a code</a>.</p>
+        <p className="text-center text-muted-foreground">No email provided. Please <Link className="font-medium text-primary hover:underline" href="/forgot-password">request a code</Link>.</p>
       )}
     </Suspense>
   );

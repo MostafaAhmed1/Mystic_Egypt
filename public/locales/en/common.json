@@ -116,7 +116,17 @@
     "resetCode": "Reset code",
     "newPassword": "New password",
     "resetPassword": "Reset password",
-    "requestNewCode": "Request a new code"
+    "requestNewCode": "Request a new code",
+    "creatingAccount": "Creating account...",
+    "sending": "Sending...",
+    "resetting": "Resetting...",
+    "verifyTitle": "Verify your email",
+    "verifyDescription": "We sent a 6-digit code to",
+    "verifyEnter": "Enter it below to verify your account.",
+    "verificationCode": "Verification code",
+    "verifying": "Verifying...",
+    "verifyEmail": "Verify email",
+    "resendCode": "Resend code"
   },
   "dashboard": {
     "hello": "Hello,",
@@ -132,7 +142,11 @@
     "invoices": "Invoices",
     "favourites": "Favourites",
     "profile": "Profile",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "noBookingsYet": "You have no bookings yet.",
+    "trackBookings": "Track the status of your tour bookings.",
+    "noInvoicesYet": "You have no invoices yet. Invoices are issued once a booking is confirmed.",
+    "noFavouritesYet": "You have no saved tours yet. Tap the heart on any tour to save it here."
   },
   "booking": {
     "title": "Booking details",
@@ -140,6 +154,7 @@
     "reference": "Reference #",
     "tourDate": "Tour date",
     "travellers": "Travellers",
+    "person": "person",
     "people": "people",
     "paymentMethod": "Payment method",
     "total": "Total",
@@ -202,7 +217,8 @@
     "passwordHint": "At least 8 characters with a number and a letter.",
     "notifications": "Notifications",
     "emailNotifications": "Email notifications",
-    "emailNotificationsDesc": "Receive booking updates and confirmations by email."
+    "emailNotificationsDesc": "Receive booking updates and confirmations by email.",
+    "deleteAccount": "Delete account"
   },
   "admin": {
     "overview": "Overview",

@@ -15,7 +15,7 @@
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
-| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | SEO files + i18n wiring for public pages (Step 1 complete) |
+| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-2 complete: SEO + i18n wired to all public, auth, and dashboard pages |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
 ---
@@ -335,12 +335,19 @@ Client → FormData → Route Handler → Validate (type, size)
 - **Pre-existing TS error fixed:** `auth.ts:96` cast `(user as Record<string, unknown>)` changed to
   `(user as unknown as Record<string, unknown>)` to satisfy strict TypeScript.
 
+### Documented Decisions / Deviations (Recorded during M7 - Step 2)
+- **Auth pages i18n wired:** `LoginForm`, `RegisterForm`, `ForgotPasswordForm`, `ResetPasswordForm`,
+  `VerifyEmailForm` all now use `useTranslation("common")`. Page wrappers unchanged (metadata only).
+- **Dashboard pages i18n wired:** Overview, bookings, invoices, wishlist, profile pages all use
+  client component wrappers (`DashboardOverviewClient`, `DashboardBookingsClient`, etc.).
+- **Translation keys added (Step 2):** `auth.creatingAccount`, `auth.sending`, `auth.resetting`,
+  `auth.verifyTitle/verifyDescription/verifyEnter/verificationCode/verifying/verifyEmail/resendCode`,
+  `dashboard.noBookingsYet/trackBookings/noInvoicesYet/noFavouritesYet`,
+  `booking.person`, `profile.deleteAccount` added to all 3 locale files.
+
 ### Disconnected Pieces / Pending (Recorded during M7)
-- **Auth pages i18n NOT wired** — login, register, forgot-password, reset-password, verify-email,
-  verify-2fa pages still have hardcoded English text. Translation keys exist but are not used.
-- **Dashboard pages i18n NOT wired** — overview, bookings, invoices, wishlist, profile pages
-  still have hardcoded English text.
-- **Admin pages i18n NOT wired** — admin pages still have hardcoded English text.
+- **Admin pages i18n NOT wired** — admin pages still have hardcoded English text. Lower priority
+  since admin is internal-only and typically English-only.
 - **No middleware for server-side locale detection** — locale is cookie-based only, no
   `Accept-Language` header detection. RTL support is client-side only (flash on Arabic).
 - **No hreflang alternate links** — since there's no locale-based URL routing, hreflang cannot

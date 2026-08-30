@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { resetPasswordAction } from "@/features/auth/actions";
 import { SubmitButton } from "@/features/auth/components/SubmitButton";
 import { Input } from "@/shared/components/ui/input";
@@ -11,21 +12,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
+  const { t } = useTranslation("common");
   const initialEmail = searchParams.get("email") ?? "";
   const [state, formAction] = useActionState(resetPasswordAction, undefined);
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-center text-2xl">Choose a new password</CardTitle>
+        <CardTitle className="text-center text-2xl">{t("auth.chooseNewPassword")}</CardTitle>
         <CardDescription className="text-center">
-          Enter the code we emailed you along with your new password.
+          {t("auth.chooseDescription")}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               name="email"
@@ -40,7 +42,7 @@ export function ResetPasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="code">Reset code</Label>
+            <Label htmlFor="code">{t("auth.resetCode")}</Label>
             <Input
               id="code"
               name="code"
@@ -57,7 +59,7 @@ export function ResetPasswordForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">New password</Label>
+            <Label htmlFor="password">{t("auth.newPassword")}</Label>
             <Input
               id="password"
               name="password"
@@ -70,12 +72,12 @@ export function ResetPasswordForm() {
             )}
           </div>
 
-          <SubmitButton pendingText="Resetting...">Reset password</SubmitButton>
+          <SubmitButton pendingText={t("auth.resetting", "Resetting...")}>{t("auth.resetPassword")}</SubmitButton>
         </form>
 
         <div className="mt-4 text-center text-sm">
           <Link href="/forgot-password" className="font-medium text-primary hover:underline">
-            Request a new code
+            {t("auth.requestNewCode")}
           </Link>
         </div>
       </CardContent>

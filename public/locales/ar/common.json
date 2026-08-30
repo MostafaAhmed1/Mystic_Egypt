@@ -116,7 +116,17 @@
     "resetCode": "رمز إعادة التعيين",
     "newPassword": "كلمة المرور الجديدة",
     "resetPassword": "إعادة تعيين كلمة المرور",
-    "requestNewCode": "طلب رمز جديد"
+    "requestNewCode": "طلب رمز جديد",
+    "creatingAccount": "جاري إنشاء الحساب...",
+    "sending": "جاري الإرسال...",
+    "resetting": "جاري إعادة التعيين...",
+    "verifyTitle": "تحقق من بريدك الإلكتروني",
+    "verifyDescription": "أرسلنا رمزًا مكونًا من 6 أرقام إلى",
+    "verifyEnter": "أدخله أدناه للتحقق من حسابك.",
+    "verificationCode": "رمز التحقق",
+    "verifying": "جاري التحقق...",
+    "verifyEmail": "تحقق من البريد",
+    "resendCode": "إعادة إرسال الرمز"
   },
   "dashboard": {
     "hello": "مرحباً،",
@@ -132,7 +142,11 @@
     "invoices": "الفواتير",
     "favourites": "المفضلة",
     "profile": "الملف الشخصي",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "noBookingsYet": "ليس لديك حجوزات بعد.",
+    "trackBookings": "تتبع حالة حجوزات جولاتك.",
+    "noInvoicesYet": "ليس لديك فواتير بعد. تُصدر الفواتير عند تأكيد الحجز.",
+    "noFavouritesYet": "ليس لديك جولات محفوظة بعد. اضغط على القلب في أي جولة لحفظها هنا."
   },
   "booking": {
     "title": "تفاصيل الحجز",
@@ -140,6 +154,7 @@
     "reference": "المرجع #",
     "tourDate": "تاريخ الجولة",
     "travellers": "المسافرون",
+    "person": "شخص",
     "people": "أشخاص",
     "paymentMethod": "طريقة الدفع",
     "total": "المجموع",
@@ -202,7 +217,8 @@
     "passwordHint": "8 أحرف على الأقل مع رقم وحرف.",
     "notifications": "الإشعارات",
     "emailNotifications": "إشعارات البريد الإلكتروني",
-    "emailNotificationsDesc": "تلقّي تحديثات الحجوزات والتأكيدات عبر البريد الإلكتروني."
+    "emailNotificationsDesc": "تلقّي تحديثات الحجوزات والتأكيدات عبر البريد الإلكتروني.",
+    "deleteAccount": "حذف الحساب"
   },
   "admin": {
     "overview": "نظرة عامة",
