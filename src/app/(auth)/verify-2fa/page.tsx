@@ -50,11 +50,16 @@ export default function Verify2FAPage() {
     router.refresh();
   }
 
-  if (status === "loading") {
+  if (status === "loading" || pending) {
     return (
       <Card className="w-full max-w-md">
         <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground text-center">Loading...</p>
+          <div className="flex flex-col items-center gap-3">
+            <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <p className="text-sm text-muted-foreground">
+              {pending ? "Verifying..." : "Loading..."}
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -105,8 +110,8 @@ export default function Verify2FAPage() {
 
           {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
-          <Button type="submit" disabled={pending || token.length !== 6} className="w-full">
-            {pending ? "Verifying..." : "Verify & Continue"}
+          <Button type="submit" disabled={token.length !== 6} className="w-full">
+            Verify & Continue
           </Button>
         </form>
 
