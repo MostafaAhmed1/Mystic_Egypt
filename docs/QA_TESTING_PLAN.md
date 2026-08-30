@@ -170,7 +170,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 2026-08-30 | — | 404 page uses Next.js default styling (LOW) | Created branded not-found.tsx with site layout, amber gradient, 404 hero, and CTAs | ✅ Fixed |
 | 2026-08-30 | — | CMS pages empty — need seed content (LOW) | Added about, privacy, terms pages to seed.ts with public route at /[slug] | ✅ Fixed |
 | 2026-08-30 | — | 2FA not enabled on admin account (MEDIUM) | Fixed base32/base64 encoding mismatch in TOTP verification + fixed seed to always run CMS pages | ✅ Fixed |
-| 2026-08-30 | — | 2FA not enforced during login (HIGH) | Implemented two-step login: authorize flags requires_2fa → /verify-2fa page → verify TOTP → re-sign in | ✅ Fixed |
+| 2026-08-30 | — | 2FA not enforced during login (HIGH) | Implemented two-step login: authorize flags requires_2fa → /verify-2fa page → verify TOTP → auto-redirect | ✅ Fixed |
 
 ---
 
