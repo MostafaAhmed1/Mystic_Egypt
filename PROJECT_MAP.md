@@ -1,6 +1,6 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 6 IN PROGRESS (Step 7/8)
+## Status: MILESTONE 6 COMPLETE ✅
 **Last Updated:** August 29, 2026
 
 ---
@@ -14,7 +14,7 @@
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
-| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-7: Layout + API + Dashboard + Tours + Orders + CMS + 2FA |
+| 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
@@ -314,6 +314,10 @@ Client → FormData → Route Handler → Validate (type, size)
   confirmation. Admin settings page (`/admin/settings`) with account info + 2FA toggle.
   Server actions: generate, enable, disable, verify, get status. ±1 time window tolerance
   (90 seconds).
+- **Admin Management:** Admin list page with avatar initials, 2FA status badge, delete action.
+  Create admin page with name, email, password form. `deleteAdmin` service function prevents
+  self-deletion. `createAdmin` creates user with ADMIN role + email_verified=true. Admin nav
+  includes all 6 sections: Overview, Tours, Bookings, CMS, Admins, Settings.
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural

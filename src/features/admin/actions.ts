@@ -9,6 +9,7 @@ import {
   updateCmsPage,
   deleteCmsPage,
   toggleCmsPagePublished,
+  deleteAdmin,
   type CreateAdminParams,
 } from "@/features/admin/service";
 
@@ -151,6 +152,24 @@ export async function toggleCmsPagePublishedAction(
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown error";
     console.error("[toggleCmsPagePublishedAction]", msg);
+    return { ok: false, error: msg };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Admin Management Actions
+// ---------------------------------------------------------------------------
+
+export async function deleteAdminAction(
+  userId: string,
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const currentAdmin = await requireAdmin();
+    await deleteAdmin(userId, currentAdmin.id);
+    return { ok: true };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Unknown error";
+    console.error("[deleteAdminAction]", msg);
     return { ok: false, error: msg };
   }
 }

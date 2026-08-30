@@ -807,6 +807,44 @@ export async function createAdmin(
   };
 }
 
+/**
+ * Remove admin role from a user (demote to CLIENT).
+ * Cannot demote yourself.
+ */
+export async function removeAdminRole(
+  userId: string,
+  currentAdminId: string,
+): Promise<void> {
+  if (userId === currentAdminId) {
+    throw new Error("You cannot remove your own admin role.");
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (!user) throw new Error("User not found.");
+  if (user.role !== "ADMIN") throw new Error("User is not an admin.");
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { role: "CLIENT" },
+  });
+}
+
+/**
+ * Delete an admin account entirely.
+ * Cannot delete yourself.
+ */
+export async function deleteAdmin(
+  userId: string,
+  currentAdminId: string,
+): Promise<void> {
+  if (userId === currentAdminId) {
+    throw new Error("You cannot delete your own account.");
+  }
+  await prisma.user.delete({ where: { id: userId } });
+}
+
 // ---------------------------------------------------------------------------
 // Tour Date Management
 // ---------------------------------------------------------------------------
