@@ -95,6 +95,24 @@ export const authOptions: NextAuthOptions = {
         token.email_verified = user.email_verified;
         token.requires_2fa = (user as Record<string, unknown>).requires_2fa;
       }
+
+      // Check if 2FA was verified (remove requires_2fa flag)
+      if (token.requires_2fa && token.id) {
+        const verifiedSession = await prisma.twoFactorSession.findFirst({
+          where: {
+            user_id: token.id as string,
+            verified: true,
+            expires_at: { gt: new Date() },
+          },
+        });
+
+        if (verifiedSession) {
+          // 2FA verified — clean up and remove flag
+          await prisma.twoFactorSession.delete({ where: { id: verifiedSession.id } });
+          token.requires_2fa = false;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {

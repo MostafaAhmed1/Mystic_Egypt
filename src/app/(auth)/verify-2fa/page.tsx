@@ -2,28 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, signOut } from "next-auth/react";
 import { Shield } from "lucide-react";
 import { verifyTwoFactorLoginByUserIdAction } from "@/features/auth/two-factor-actions";
 import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 export default function Verify2FAPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const [token, setToken] = useState("");
-  const [password, setPassword] = useState("");
-  const [step, setStep] = useState<"token" | "password">("token");
   const [error, setError] = useState<string | undefined>(undefined);
   const [pending, setPending] = useState(false);
 
   const userId = session?.user?.id;
   const userRole = session?.user?.role;
-  const userEmail = session?.user?.email;
 
-  async function handleTokenSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(undefined);
 
@@ -47,39 +42,8 @@ export default function Verify2FAPage() {
       return;
     }
 
-    // 2FA verified — now ask for password to complete login
-    setStep("password");
-    setPending(false);
-  }
-
-  async function handlePasswordSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(undefined);
-
-    if (!userEmail) {
-      setError("Session expired. Please log in again.");
-      return;
-    }
-
-    if (!password) {
-      setError("Please enter your password.");
-      return;
-    }
-
-    setPending(true);
-
-    // Re-sign in with email + password — this time TwoFactorSession exists
-    const signInResult = await signIn("credentials", {
-      email: userEmail,
-      password,
-      redirect: false,
-    });
-
-    if (signInResult?.error) {
-      setError("Invalid password. Please try again.");
-      setPending(false);
-      return;
-    }
+    // 2FA verified — update session to remove requires_2fa
+    await update();
 
     const home = userRole === "ADMIN" ? "/admin" : "/dashboard";
     router.push(home);
@@ -119,60 +83,32 @@ export default function Verify2FAPage() {
             <Shield className="size-6 text-primary" />
           </div>
         </div>
-        <CardTitle className="text-center text-2xl">
-          {step === "token" ? "Two-Factor Authentication" : "Confirm Password"}
-        </CardTitle>
+        <CardTitle className="text-center text-2xl">Two-Factor Authentication</CardTitle>
       </CardHeader>
       <CardContent>
-        {step === "token" ? (
-          <form onSubmit={handleTokenSubmit} className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              Enter the 6-digit code from your authenticator app.
-            </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-sm text-muted-foreground text-center">
+            Enter the 6-digit code from your authenticator app.
+          </p>
 
-            <div className="flex justify-center">
-              <input
-                type="text"
-                value={token}
-                onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                className="h-12 w-40 rounded-xl border bg-background px-3 text-center text-xl tracking-[0.3em] font-mono outline-none focus:ring-2 focus:ring-ring"
-                placeholder="000000"
-                maxLength={6}
-                autoFocus
-              />
-            </div>
+          <div className="flex justify-center">
+            <input
+              type="text"
+              value={token}
+              onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="h-12 w-40 rounded-xl border bg-background px-3 text-center text-xl tracking-[0.3em] font-mono outline-none focus:ring-2 focus:ring-ring"
+              placeholder="000000"
+              maxLength={6}
+              autoFocus
+            />
+          </div>
 
-            {error && <p className="text-sm text-destructive text-center">{error}</p>}
+          {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
-            <Button type="submit" disabled={pending || token.length !== 6} className="w-full">
-              {pending ? "Verifying..." : "Verify Code"}
-            </Button>
-          </form>
-        ) : (
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              2FA verified. Enter your password to complete login.
-            </p>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                autoFocus
-              />
-            </div>
-
-            {error && <p className="text-sm text-destructive text-center">{error}</p>}
-
-            <Button type="submit" disabled={pending || !password} className="w-full">
-              {pending ? "Signing in..." : "Complete Login"}
-            </Button>
-          </form>
-        )}
+          <Button type="submit" disabled={pending || token.length !== 6} className="w-full">
+            {pending ? "Verifying..." : "Verify & Continue"}
+          </Button>
+        </form>
 
         <div className="mt-4 text-center text-sm">
           <a href="/login" className="font-medium text-primary hover:underline">
