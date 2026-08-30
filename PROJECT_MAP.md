@@ -14,7 +14,7 @@
 | 3 | Tour Feature (Public SSG) | ✅ COMPLETE | Public tours, SSG pages, itinerary, Leaflet map, customize action |
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
-| 6 | Admin Panel | 🔄 IN PROGRESS | Step 1-2: Admin Layout + API Layer COMPLETE |
+| 6 | Admin Panel | 🔄 IN PROGRESS | Steps 1-3: Layout + API + Dashboard Analytics COMPLETE |
 | 7 | i18n, SEO & Polish | ⏳ PENDING | — |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
@@ -292,6 +292,10 @@ Client → FormData → Route Handler → Validate (type, size)
   "Full replace" approach for nested data — client sends complete arrays, server replaces all.
 - **Dashboard analytics:** Revenue chart (daily/weekly/monthly), bookings by status, top selling
   tours, recent bookings. All powered by Prisma aggregation queries.
+- **Recharts for charts:** Installed `recharts` for revenue area chart and bookings-by-status
+  donut chart. Client components ("use client") with server-side data fetching.
+- **Dashboard page:** Server component fetches all data in parallel (Promise.all), passes to
+  client chart components. Stats cards show real DB aggregates (revenue, bookings, pending, active).
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural

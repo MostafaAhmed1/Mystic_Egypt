@@ -4,39 +4,60 @@ import {
   Clock,
   Map,
 } from "lucide-react";
+import {
+  getDashboardStats,
+  getRevenueChart,
+  getBookingsByStatus,
+  getTopSellingTours,
+  getRecentBookings,
+} from "@/features/admin/service";
+import { RevenueChart } from "@/features/admin/components/RevenueChart";
+import { BookingsByStatusChart } from "@/features/admin/components/BookingsByStatusChart";
+import { TopToursTable } from "@/features/admin/components/TopToursTable";
+import { RecentBookingsTable } from "@/features/admin/components/RecentBookingsTable";
+import { CURRENCY_SYMBOLS, type Currency } from "@/core/constants/currencies";
 
 export const metadata = {
   title: "Admin Overview",
 };
 
-const STATS = [
-  {
-    label: "Total Revenue",
-    value: "—",
-    icon: DollarSign,
-    description: "All-time confirmed revenue",
-  },
-  {
-    label: "Total Bookings",
-    value: "—",
-    icon: CalendarDays,
-    description: "All booking statuses",
-  },
-  {
-    label: "Pending Review",
-    value: "—",
-    icon: Clock,
-    description: "Awaiting receipt approval",
-  },
-  {
-    label: "Active Tours",
-    value: "—",
-    icon: Map,
-    description: "Currently open for booking",
-  },
-];
-
 export default async function AdminOverviewPage() {
+  const [stats, revenue, bookingsByStatus, topTours, recentBookings] =
+    await Promise.all([
+      getDashboardStats(),
+      getRevenueChart("daily"),
+      getBookingsByStatus(),
+      getTopSellingTours(),
+      getRecentBookings(10),
+    ]);
+
+  const statCards = [
+    {
+      label: "Total Revenue",
+      value: `$${stats.total_revenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+      icon: DollarSign,
+      description: "Confirmed bookings only",
+    },
+    {
+      label: "Total Bookings",
+      value: stats.total_bookings.toString(),
+      icon: CalendarDays,
+      description: "All statuses",
+    },
+    {
+      label: "Pending Review",
+      value: stats.pending_review.toString(),
+      icon: Clock,
+      description: "Awaiting receipt approval",
+    },
+    {
+      label: "Active Tours",
+      value: stats.active_tours.toString(),
+      icon: Map,
+      description: "Open for booking",
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -48,8 +69,9 @@ export default async function AdminOverviewPage() {
         </p>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STATS.map((stat) => {
+        {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <div
@@ -71,18 +93,20 @@ export default async function AdminOverviewPage() {
         })}
       </div>
 
-      <div className="rounded-2xl border bg-card p-6">
-        <h2 className="text-lg font-semibold">Revenue & Bookings</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Charts and detailed analytics will appear here in the next step.
-        </p>
+      {/* Charts Row */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <RevenueChart data={revenue} />
+        </div>
+        <div>
+          <BookingsByStatusChart data={bookingsByStatus} />
+        </div>
       </div>
 
-      <div className="rounded-2xl border bg-card p-6">
-        <h2 className="text-lg font-semibold">Recent Bookings</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Booking activity table will appear here in the next step.
-        </p>
+      {/* Tables Row */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TopToursTable tours={topTours} />
+        <RecentBookingsTable bookings={recentBookings} />
       </div>
     </div>
   );
