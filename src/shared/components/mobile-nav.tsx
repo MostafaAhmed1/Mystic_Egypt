@@ -2,24 +2,32 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Menu, X, Phone } from "lucide-react";
 import { cn } from "@/core/utils";
+import { LanguageSwitcher } from "@/shared/components/language-switcher";
 
 type MobileNavProps = {
   user: { name: string; role: "CLIENT" | "ADMIN" } | null;
-  links: ReadonlyArray<{ href: string; label: string }>;
+  links?: ReadonlyArray<{ href: string; label: string }>;
   whatsapp?: string | null;
 };
 
-export function MobileNav({ user, links, whatsapp }: MobileNavProps) {
+export function MobileNav({ user, links = [], whatsapp }: MobileNavProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/tours", label: t("nav.tours") },
+    { href: "/#why-us", label: t("nav.whyUs") },
+  ];
 
   return (
     <div className="md:hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="Toggle menu"
+        aria-label={t("nav.toggleMenu")}
         aria-expanded={open}
         className="inline-flex size-9 items-center justify-center rounded-lg border border-border text-foreground"
       >
@@ -29,7 +37,7 @@ export function MobileNav({ user, links, whatsapp }: MobileNavProps) {
       {open && (
         <div className="absolute inset-x-0 top-16 border-b bg-background px-4 py-4 shadow-lg">
           <nav className="flex flex-col gap-3 text-sm font-medium">
-            {links.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -40,6 +48,9 @@ export function MobileNav({ user, links, whatsapp }: MobileNavProps) {
               </Link>
             ))}
             <hr className="my-1 border-border" />
+            <div className="flex items-center gap-2 py-1">
+              <LanguageSwitcher />
+            </div>
             {whatsapp && (
               <a
                 href={`https://wa.me/${whatsapp}?text=${encodeURIComponent("Hello Mystic Egypt!")}`}
@@ -48,7 +59,7 @@ export function MobileNav({ user, links, whatsapp }: MobileNavProps) {
                 className="inline-flex items-center gap-2 py-1 text-foreground/80 hover:text-foreground"
               >
                 <Phone className="size-4" aria-hidden />
-                WhatsApp
+                {t("nav.whatsapp")}
               </a>
             )}
             {user ? (
@@ -57,7 +68,7 @@ export function MobileNav({ user, links, whatsapp }: MobileNavProps) {
                 onClick={() => setOpen(false)}
                 className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-primary-foreground hover:bg-primary/90"
               >
-                {user.role === "ADMIN" ? "Admin panel" : "My account"}
+                {user.role === "ADMIN" ? t("nav.adminPanel") : t("nav.myAccount")}
               </Link>
             ) : (
               <div className="flex gap-2">
@@ -66,14 +77,14 @@ export function MobileNav({ user, links, whatsapp }: MobileNavProps) {
                   onClick={() => setOpen(false)}
                   className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-border text-sm font-medium"
                 >
-                  Log in
+                  {t("nav.login")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setOpen(false)}
                   className="inline-flex h-9 flex-1 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                 >
-                  Sign up
+                  {t("nav.signup")}
                 </Link>
               </div>
             )}
