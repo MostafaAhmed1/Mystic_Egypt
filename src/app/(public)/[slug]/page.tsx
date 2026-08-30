@@ -1,0 +1,31 @@
+import { notFound } from "next/navigation";
+import { getPublishedCmsPage } from "@/features/admin/service";
+
+type CmsPageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: CmsPageProps) {
+  const { slug } = await params;
+  const page = await getPublishedCmsPage(slug);
+  if (!page) return { title: "Page Not Found" };
+  return { title: page.title };
+}
+
+export default async function CmsPage({ params }: CmsPageProps) {
+  const { slug } = await params;
+  const page = await getPublishedCmsPage(slug);
+  if (!page) notFound();
+
+  return (
+    <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 sm:py-16">
+      <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+        {page.title}
+      </h1>
+      <div
+        className="prose prose-gray mt-8 max-w-none dark:prose-invert"
+        dangerouslySetInnerHTML={{ __html: page.content }}
+      />
+    </div>
+  );
+}
