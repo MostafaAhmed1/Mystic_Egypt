@@ -23,7 +23,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 1.5 | Public header navigation links | ✅ | Tours, Why Us, WhatsApp, My Account |
 | 1.6 | Mobile menu toggle | ⬜ | Not tested (desktop viewport) |
 | 1.7 | Footer links (About, Privacy, Terms) | ✅ | Footer renders with Explore & Account sections |
-| 1.8 | i18n language switching (AR/EN/DE) | ❌ | **NOT IMPLEMENTED** — no locale routing, no translations |
+| 1.8 | i18n language switching (AR/EN/DE) | ✅ | Implemented: client-side locale switching, 3 locales, language switcher dropdown, RTL support |
 | 1.9 | "Book Now" CTA → redirects to booking | ✅ | Navigates to /tours/{slug}/book |
 | 1.10 | "Customize" CTA → opens dialog | ✅ | Dialog opens with form fields (message, people, budget) |
 
@@ -156,7 +156,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 | 5. Admin Tours & Orders | ✅ COMPLETE | 11 | 11 | 0 | 0 |
 | 6. Admin CMS/2FA/Admins | ✅ COMPLETE | 12 | 8 | 0 | 4 |
 | 7. Edge Cases & Performance | ✅ COMPLETE | 8 | 6 | 0 | 2 |
-| **TOTAL** | | **72** | **62** | **1** | **9** |
+| **TOTAL** | | **72** | **63** | **0** | **9** |
 
 ---
 
@@ -166,6 +166,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 |------|-------|-------|-----|--------|
 | 2026-08-30 | 1.4 | TourGallery missing `fill` prop on main image | Added `fill` to `<TourImage>` in TourGallery.tsx:36 | ✅ Fixed |
 | 2026-08-30 | 6.1 | CMS page crashes: `prisma.cmsPage` undefined | Ran `npx prisma generate` + restarted dev server | ✅ Fixed |
+| 2026-08-30 | 1.8 | i18n not implemented (HIGH) | Added i18n infrastructure: 3 locales, language switcher, I18nProvider, refactored header/footer/homepage with translation keys | ✅ Fixed |
 
 ---
 
@@ -173,7 +174,7 @@ Each phase is executed sequentially, documented with results, errors, and fixes.
 
 | # | Issue | Severity | Notes |
 |---|-------|----------|-------|
-| 1 | **i18n not implemented** | HIGH | PRD mentions AR/EN/DE but no locale routing, no translation files, no i18n config exists |
+| ~~1~~ | ~~i18n not implemented~~ | ~~HIGH~~ | ✅ Fixed: 3 locales (EN/AR/DE), language switcher, RTL support, translation keys in public components |
 | 2 | 404 page uses Next.js default styling | LOW | Should have branded 404 with site layout |
 | 3 | Mobile responsive not tested | MEDIUM | Requires viewport emulation testing |
 | 4 | CMS pages empty — need seed content | LOW | Create at least About, Privacy, Terms pages |
