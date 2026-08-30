@@ -1,7 +1,9 @@
 "use server";
 
+import { getServerSession } from "next-auth/next";
 import { requireAdmin } from "@/core/lib/session";
 import { prisma } from "@/core/lib/prisma";
+import { authOptions } from "@/core/lib/auth";
 import {
   generateTwoFactorSecret,
   verifyTwoFactorToken,
@@ -72,11 +74,7 @@ export async function verifyTwoFactorLoginAction(
   token: string,
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const session = await import("next-auth/next").then((m) =>
-      m.getServerSession(
-        (await import("@/core/lib/auth")).authOptions,
-      ),
-    );
+    const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
       return { ok: false, error: "Not authenticated." };
