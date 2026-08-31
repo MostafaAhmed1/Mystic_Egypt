@@ -1,7 +1,7 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
 ## Status: MILESTONE 7 IN PROGRESS
-**Last Updated:** August 30, 2026
+**Last Updated:** August 31, 2026
 
 ---
 
@@ -15,7 +15,7 @@
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
-| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-3 complete + locale prefix routing plan documented, Phase 1 executing |
+| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-3 complete, Phase 1 complete (locale prefix routing), 6 phases remaining |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
 ---
@@ -408,14 +408,14 @@ src/app/
 
 **Execution order:**
 1. Document plan (this step) ✓
-2. Create `[locale]/layout.tsx` with `generateStaticParams`
-3. Move route groups under `[locale]/`
-4. Update proxy.ts with locale detection
-5. Update i18n-provider.tsx to read locale from URL
-6. Update language-switcher.tsx
-7. Update internal links across all components
-8. Update sitemap.ts and robots.ts
-9. Verify build + lint
+2. Create `[locale]/layout.tsx` with `generateStaticParams` ✓
+3. Move route groups under `[locale]/` ✓
+4. Update proxy.ts with locale detection ✓
+5. Update i18n-provider.tsx to read locale from URL ✓
+6. Update language-switcher.tsx ✓
+7. Update internal links across all components ✓
+8. Update sitemap.ts and robots.ts ✓
+9. Verify build + lint ✓
 
 #### Phase 2: Server-Side Locale Detection (Proxy)
 Modify `src/proxy.ts` to:
@@ -443,7 +443,7 @@ Add `alternates.languages` to sitemap entries for all public pages.
 - Step-by-step guide for user to create GA4 property
 
 ### Disconnected Pieces / Pending (Recorded during M7)
-- **Locale prefix routing IN PROGRESS** — Phase 1 executing (moving routes under [locale]).
+- **Locale prefix routing COMPLETE** — Phase 1 done (commit `1632ed8`). All routes under `[locale]/`, all links locale-aware, proxy handles detection.
 - **GDPR Cookie Consent Banner NOT STARTED** — Phase 4 pending.
 - **RTL polish NOT VERIFIED** — Phase 5 pending.
 - **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.
