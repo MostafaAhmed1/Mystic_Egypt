@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Pyramid } from "lucide-react";
 
-export function BrandLogo() {
+export function BrandLogo({ href = "/" }: { href?: string }) {
   return (
-    <Link href="/" className="inline-flex items-center gap-2">
+    <Link href={href} className="inline-flex items-center gap-2">
       <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <Pyramid className="size-5" aria-hidden />
       </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { locales, localeNames, type Locale } from "@/core/i18n-config";
 import {
   DropdownMenu,
@@ -15,11 +15,20 @@ import { Globe } from "lucide-react";
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
   const currentLocale = i18n.language as Locale;
 
-  function switchLocale(locale: Locale) {
-    document.cookie = `locale=${locale}; path=/; max-age=${365 * 24 * 60 * 60}`;
-    router.refresh();
+  function switchLocale(newLocale: Locale) {
+    // Replace the locale segment in the URL
+    const segments = pathname.split("/").filter(Boolean);
+    if (segments.length > 0 && locales.includes(segments[0] as Locale)) {
+      segments[0] = newLocale;
+    } else {
+      segments.unshift(newLocale);
+    }
+    const newPath = "/" + segments.join("/");
+    document.cookie = `locale=${newLocale}; path=/; max-age=${365 * 24 * 60 * 60}`;
+    router.push(newPath);
   }
 
   return (

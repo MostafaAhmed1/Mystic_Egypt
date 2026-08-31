@@ -6,10 +6,12 @@ import { useTranslation } from "react-i18next";
 import { Search, Wallet } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function TourSearchBar() {
   const router = useRouter();
   const { t } = useTranslation("common");
+  const { href } = useLocale();
   const [query, setQuery] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
@@ -19,7 +21,7 @@ export function TourSearchBar() {
     if (query.trim()) params.set("q", query.trim());
     if (maxPrice.trim()) params.set("maxPrice", maxPrice.trim());
     const queryString = params.toString();
-    router.push(queryString ? `/tours?${queryString}` : "/tours");
+    router.push(queryString ? href(`/tours?${queryString}`) : href("/tours"));
   }
 
   return (

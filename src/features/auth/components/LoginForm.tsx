@@ -9,9 +9,11 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function LoginForm() {
   const router = useRouter();
+  const { locale, href } = useLocale();
   const { t } = useTranslation("common");
   const [error, setError] = useState<string | undefined>(undefined);
   const [pending, setPending] = useState(false);
@@ -41,16 +43,16 @@ export function LoginForm() {
 
     if (session?.user && !session.user.email_verified) {
       const userEmail = session.user.email ?? email;
-      router.push(`/verify-email?email=${encodeURIComponent(userEmail)}`);
+      router.push(href(`/verify-email?email=${encodeURIComponent(userEmail)}`));
       return;
     }
 
     if (session?.user?.requires_2fa) {
-      router.push("/verify-2fa");
+      router.push(href("/verify-2fa"));
       return;
     }
 
-    const home = session?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
+    const home = session?.user?.role === "ADMIN" ? href("/admin") : href("/dashboard");
     router.push(home);
     router.refresh();
   }
@@ -86,7 +88,7 @@ export function LoginForm() {
         </form>
 
         <div className="mt-4 text-center text-sm">
-          <Link href="/forgot-password" className="font-medium text-primary hover:underline">
+          <Link href={href("/forgot-password")} className="font-medium text-primary hover:underline">
             {t("auth.forgotPassword")}
           </Link>
         </div>
@@ -94,7 +96,7 @@ export function LoginForm() {
       <CardFooter className="justify-center text-sm text-muted-foreground">
         <span>
           {t("auth.newToMystic")}{" "}
-          <Link href="/register" className="font-medium text-primary hover:underline">
+          <Link href={href("/register")} className="font-medium text-primary hover:underline">
             {t("auth.createAccount")}
           </Link>
         </span>

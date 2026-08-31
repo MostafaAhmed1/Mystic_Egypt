@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { Phone, ShieldCheck } from "lucide-react";
 import { LanguageSwitcher } from "@/shared/components/language-switcher";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 type PublicHeaderClientProps = {
   user: { name: string; role: "CLIENT" | "ADMIN" } | null;
@@ -12,6 +13,7 @@ type PublicHeaderClientProps = {
 
 export function PublicHeaderClient({ user, whatsapp }: PublicHeaderClientProps) {
   const { t } = useTranslation();
+  const { href } = useLocale();
 
   return (
     <div className="hidden items-center gap-3 md:flex">
@@ -29,7 +31,7 @@ export function PublicHeaderClient({ user, whatsapp }: PublicHeaderClientProps) 
       )}
       {user ? (
         <Link
-          href={user.role === "ADMIN" ? "/admin" : "/dashboard"}
+          href={href(user.role === "ADMIN" ? "/admin" : "/dashboard")}
           className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <ShieldCheck className="size-4" aria-hidden />
@@ -38,13 +40,13 @@ export function PublicHeaderClient({ user, whatsapp }: PublicHeaderClientProps) 
       ) : (
         <>
           <Link
-            href="/login"
+            href={href("/login")}
             className="text-sm font-medium text-foreground/80 hover:text-foreground"
           >
             {t("nav.login")}
           </Link>
           <Link
-            href="/register"
+            href={href("/register")}
             className="inline-flex h-9 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             {t("nav.signup")}

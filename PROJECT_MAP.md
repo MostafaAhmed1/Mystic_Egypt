@@ -15,7 +15,7 @@
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
-| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-3 complete: SEO + i18n wired to all public, auth, dashboard, and admin pages |
+| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-3 complete + locale prefix routing plan documented, Phase 1 executing |
 | 8 | Testing, QA & Deployment | ⏳ PENDING | — |
 
 ---
@@ -359,11 +359,94 @@ Client → FormData → Route Handler → Validate (type, size)
 - **Type alignment:** Client component interfaces updated to match actual service return types
   (`RevenueChartPoint`, `TopTour`, `BookingListItem`).
 
+### M7 Completion Plan (Locale Prefix Routing + Polish)
+**Decision:** Add locale prefix routing (`/en/...`, `/ar/...`, `/de/...`) to enable proper hreflang
+alternate links, server-side locale detection, and eliminate RTL flash on Arabic.
+**User confirmed:** Add locale prefix routing, reviews deferred to M9, GA4 instructions needed.
+
+#### Phase 1: Locale Prefix Routing
+**Scope:** Move all routes under `[locale]` dynamic segment.
+
+**New directory structure:**
+```
+src/app/
+  [locale]/                          ← NEW root segment
+    layout.tsx                       ← root layout (moved from src/app/layout.tsx)
+      - generateStaticParams() → [{locale:'en'},{locale:'ar'},{locale:'de'}]
+      - <html lang={locale} dir={dir[locale]}>
+      - I18nProvider reads locale from URL
+    (public)/
+      layout.tsx                     ← moved from src/app/(public)/
+      page.tsx                       ← /
+      [slug]/page.tsx                ← /about, /privacy, etc.
+      tours/
+        page.tsx                     ← /tours
+        [slug]/page.tsx              ← /tours/pyramids
+        [slug]/book/page.tsx         ← /tours/pyramids/book
+    (auth)/
+      layout.tsx                     ← moved
+      login/, register/, forgot-password/, reset-password/, verify-email/, verify-2fa/
+    (dashboard)/
+      layout.tsx                     ← moved
+      dashboard/...
+    (admin)/
+      layout.tsx                     ← moved
+      admin/...
+    sitemap.ts                       ← moved (generates locale-prefixed URLs)
+    robots.ts                        ← moved (disallow /{locale}/admin, etc.)
+  api/                               ← STAYS at root (no locale prefix)
+  globals.css                        ← stays (imported by layout)
+```
+
+**Key architectural decisions:**
+1. `next/root-params` API (v16.3.0) — Server Components import `locale` from `next/root-params`
+   without prop drilling. Client Components use `usePathname()` to extract locale.
+2. Proxy (not middleware) handles locale detection — Next.js 16 convention.
+3. Default locale redirect: `/` → `/en` (302 redirect).
+4. API routes stay at `/api/` — no locale prefix for backend endpoints.
+5. Language switcher navigates to `/${newLocale}${currentPath}` instead of setting cookie.
+
+**Execution order:**
+1. Document plan (this step) ✓
+2. Create `[locale]/layout.tsx` with `generateStaticParams`
+3. Move route groups under `[locale]/`
+4. Update proxy.ts with locale detection
+5. Update i18n-provider.tsx to read locale from URL
+6. Update language-switcher.tsx
+7. Update internal links across all components
+8. Update sitemap.ts and robots.ts
+9. Verify build + lint
+
+#### Phase 2: Server-Side Locale Detection (Proxy)
+Modify `src/proxy.ts` to:
+- Check if pathname starts with `/en`, `/ar`, `/de`
+- If not → detect from cookie or `Accept-Language` header → redirect to `/{locale}{path}`
+- Update auth route checks to strip locale prefix
+- Set locale cookie on first visit
+
+#### Phase 3: Hreflang Alternate Links
+Add `alternates.languages` to sitemap entries for all public pages.
+
+#### Phase 4: GDPR Cookie Consent Banner
+- Create `src/shared/components/cookie-consent.tsx`
+- Shows on first visit, Accept/Reject buttons
+- Sets `cookie_consent` cookie, blocks analytics if rejected
+
+#### Phase 5: RTL Layout Polish
+- Verify all pages render correctly in RTL
+- Check CSS logical properties
+
+#### Phase 6: Responsive Design Polish
+- Verify mobile layouts, table responsiveness, touch targets
+
+#### Phase 7: GA4 Setup Instructions
+- Step-by-step guide for user to create GA4 property
+
 ### Disconnected Pieces / Pending (Recorded during M7)
-- **No middleware for server-side locale detection** — locale is cookie-based only, no
-  `Accept-Language` header detection. RTL support is client-side only (flash on Arabic).
-- **No hreflang alternate links** — since there's no locale-based URL routing, hreflang cannot
-  be properly implemented yet.
+- **Locale prefix routing IN PROGRESS** — Phase 1 executing (moving routes under [locale]).
+- **GDPR Cookie Consent Banner NOT STARTED** — Phase 4 pending.
+- **RTL polish NOT VERIFIED** — Phase 5 pending.
+- **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.
 
 ### Disconnected Pieces / Pending (Recorded during M4)
 - **Stripe cannot be E2E-tested** — `pk_test_*` / `sk_test_*` / `whsec_*` are placeholders. Structural

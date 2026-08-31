@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CheckCircle2, Clock } from "lucide-react";
 import type { PaymentMethod } from "@/features/booking/constants";
 import { PAYMENT_METHODS } from "@/features/booking/constants";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function BookingSuccess({
   bookingId,
@@ -15,6 +16,7 @@ export function BookingSuccess({
   const isBankTransfer = paymentMethod === PAYMENT_METHODS.BANK_TRANSFER;
   const isStripe = paymentMethod === PAYMENT_METHODS.STRIPE;
   const shortId = bookingId.slice(0, 8);
+  const { href } = useLocale();
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-4 rounded-2xl border bg-card p-8 text-center">
@@ -40,7 +42,7 @@ export function BookingSuccess({
         </p>
       )}
       <Link
-        href="/dashboard"
+        href={href("/dashboard")}
         className="mt-2 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
       >
         Go to my dashboard

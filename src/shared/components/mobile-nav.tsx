@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Menu, X, Phone } from "lucide-react";
 import { cn } from "@/core/utils";
 import { LanguageSwitcher } from "@/shared/components/language-switcher";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 type MobileNavProps = {
   user: { name: string; role: "CLIENT" | "ADMIN" } | null;
@@ -16,10 +17,11 @@ type MobileNavProps = {
 export function MobileNav({ user, links = [], whatsapp }: MobileNavProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const { href } = useLocale();
 
   const navLinks = [
-    { href: "/tours", label: t("nav.tours") },
-    { href: "/#why-us", label: t("nav.whyUs") },
+    { href: href("/tours"), label: t("nav.tours") },
+    { href: href("/#why-us"), label: t("nav.whyUs") },
   ];
 
   return (
@@ -64,7 +66,7 @@ export function MobileNav({ user, links = [], whatsapp }: MobileNavProps) {
             )}
             {user ? (
               <Link
-                href={user.role === "ADMIN" ? "/admin" : "/dashboard"}
+                href={href(user.role === "ADMIN" ? "/admin" : "/dashboard")}
                 onClick={() => setOpen(false)}
                 className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-primary-foreground hover:bg-primary/90"
               >
@@ -73,14 +75,14 @@ export function MobileNav({ user, links = [], whatsapp }: MobileNavProps) {
             ) : (
               <div className="flex gap-2">
                 <Link
-                  href="/login"
+                  href={href("/login")}
                   onClick={() => setOpen(false)}
                   className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-border text-sm font-medium"
                 >
                   {t("nav.login")}
                 </Link>
                 <Link
-                  href="/register"
+                  href={href("/register")}
                   onClick={() => setOpen(false)}
                   className="inline-flex h-9 flex-1 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                 >

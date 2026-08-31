@@ -9,6 +9,7 @@ import {
   completeBookingAction,
 } from "@/features/admin/actions";
 import { CURRENCY_SYMBOLS, type Currency } from "@/core/constants/currencies";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 interface BookingItem {
   id: string;
@@ -97,6 +98,7 @@ function BookingActions({ booking }: { booking: BookingItem }) {
 
 export function BookingsTable({ bookings }: { bookings: BookingItem[] }) {
   const router = useRouter();
+  const { href } = useLocale();
 
   return (
     <div className="rounded-2xl border bg-card">
@@ -164,7 +166,7 @@ export function BookingsTable({ bookings }: { bookings: BookingItem[] }) {
                     <div className="flex items-center justify-end gap-2">
                       <BookingActions booking={b} />
                       <button
-                        onClick={() => router.push(`/admin/bookings/${b.id}`)}
+                        onClick={() => router.push(href(`/admin/bookings/${b.id}`))}
                         className="rounded-lg bg-muted px-2.5 py-1 text-xs font-medium hover:bg-muted/80"
                       >
                         View
@@ -183,6 +185,7 @@ export function BookingsTable({ bookings }: { bookings: BookingItem[] }) {
 
 export function BookingsKanban({ bookings }: { bookings: BookingItem[] }) {
   const router = useRouter();
+  const { href } = useLocale();
 
   return (
     <div className="grid gap-4 md:grid-cols-4">
@@ -206,7 +209,7 @@ export function BookingsKanban({ bookings }: { bookings: BookingItem[] }) {
                   <div
                     key={b.id}
                     className="cursor-pointer rounded-xl border bg-card p-3 transition-colors hover:bg-muted/50"
-                    onClick={() => router.push(`/admin/bookings/${b.id}`)}
+                    onClick={() => router.push(href(`/admin/bookings/${b.id}`))}
                   >
                     <p className="text-sm font-medium">{b.user_name}</p>
                     <p className="text-xs text-muted-foreground">{b.tour_title}</p>

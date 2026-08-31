@@ -3,35 +3,24 @@
 import { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/core/lib/i18n";
-import { type Locale, defaultLocale, dir } from "@/core/i18n-config";
+import { type Locale, dir } from "@/core/i18n-config";
 
-function getLocaleFromCookie(): Locale {
-  if (typeof document === "undefined") return defaultLocale;
-  const match = document.cookie.match(/locale=([a-z]{2})/);
-  if (match && ["en", "ar", "de"].includes(match[1])) {
-    return match[1] as Locale;
-  }
-  return defaultLocale;
+interface I18nProviderProps {
+  children: React.ReactNode;
+  locale: Locale;
 }
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(defaultLocale);
+export function I18nProvider({ children, locale }: I18nProviderProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const detected = getLocaleFromCookie();
-    setLocale(detected);
-    if (i18n.language !== detected) {
-      i18n.changeLanguage(detected);
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
     }
-    document.documentElement.lang = detected;
-    document.documentElement.dir = dir[detected];
+    document.documentElement.lang = locale;
+    document.documentElement.dir = dir[locale];
     setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
-  }
+  }, [locale]);
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }

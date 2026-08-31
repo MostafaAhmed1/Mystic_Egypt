@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Check, Plus, Trash2 } from "lucide-react";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 interface ItineraryDay {
   day_number: number;
@@ -49,6 +50,7 @@ const STEPS = ["Basic Info", "Itinerary", "Images", "Pricing & Dates"];
 
 export function TourWizard({ tour }: { tour?: TourData }) {
   const router = useRouter();
+  const { href } = useLocale();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<TourData>(
@@ -143,7 +145,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
       }
 
       toast.success(isEdit ? "Tour updated." : "Tour created.");
-      router.push("/admin/tours");
+      router.push(href("/admin/tours"));
       router.refresh();
     } catch {
       toast.error("An unexpected error occurred.");

@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/core/lib/prisma";
 import { OtpType } from "@/core/generated/prisma/enums";
@@ -8,6 +9,13 @@ import {
   createOtpCode,
   verifyOtpCode,
 } from "@/core/lib/otp";
+import { getLocaleFromCookieString } from "@/core/utils/locale";
+import { defaultLocale } from "@/core/i18n-config";
+
+async function getLocale(): Promise<string> {
+  const cookieStore = await cookies();
+  return getLocaleFromCookieString(cookieStore.get("locale")?.value) ?? defaultLocale;
+}
 import { sendEmail } from "@/core/lib/resend";
 import {
   verificationEmailHtml,
@@ -98,7 +106,8 @@ export async function registerAction(
     html: verificationEmailHtml(code, name),
   });
 
-  redirect(`/verify-email?email=${encodeURIComponent(email)}`);
+  const locale = await getLocale();
+  redirect(`/${locale}/verify-email?email=${encodeURIComponent(email)}`);
 }
 
 export async function verifyEmailAction(
@@ -131,7 +140,8 @@ export async function verifyEmailAction(
     data: { email_verified: true },
   });
 
-  redirect("/login?verified=1");
+  const locale = await getLocale();
+  redirect(`/${locale}/login?verified=1`);
 }
 
 export async function resendVerificationAction(
@@ -225,7 +235,8 @@ export async function resetPasswordAction(
     data: { password_hash: await bcrypt.hash(password, 10) },
   });
 
-  redirect("/login?reset=1");
+  const locale = await getLocale();
+  redirect(`/${locale}/login?reset=1`);
 }
 
 function otpErrorLabel(

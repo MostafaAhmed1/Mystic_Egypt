@@ -9,6 +9,7 @@ import { ItineraryAccordion } from "@/features/tour/components/ItineraryAccordio
 import { TourMapClient } from "@/features/tour/components/TourMapClient";
 import { CustomizeTourDialog } from "@/features/tour/components/CustomizeTourDialog";
 import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
+import { useLocale } from "@/shared/hooks/use-locale";
 import type { TourDetail } from "@/features/tour/types";
 
 function splitList(value: string | null): string[] {
@@ -21,6 +22,7 @@ function splitList(value: string | null): string[] {
 
 export function TourContent({ tour }: { tour: TourDetail }) {
   const { t } = useTranslation("common");
+  const { href } = useLocale();
 
   const inclusions = splitList(tour.inclusions);
   const exclusions = splitList(tour.exclusions);
@@ -59,13 +61,13 @@ export function TourContent({ tour }: { tour: TourDetail }) {
 
       <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         <nav className="mb-6 text-sm text-muted-foreground" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-foreground">
+          <Link href={href("/")} className="hover:text-foreground">
             {t("nav.home", "Home")}
           </Link>
           <span className="mx-2" aria-hidden>
             /
           </span>
-          <Link href="/tours" className="hover:text-foreground">
+          <Link href={href("/tours")} className="hover:text-foreground">
             {t("nav.tours")}
           </Link>
           <span className="mx-2" aria-hidden>
@@ -103,7 +105,7 @@ export function TourContent({ tour }: { tour: TourDetail }) {
 
             <div className="flex flex-col gap-3">
               <Link
-                href={`/tours/${tour.slug}/book`}
+                href={href(`/tours/${tour.slug}/book`)}
                 className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
                 <CalendarCheck className="size-4" aria-hidden />
@@ -185,7 +187,7 @@ export function TourContent({ tour }: { tour: TourDetail }) {
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
-              href={`/tours/${tour.slug}/book`}
+              href={href(`/tours/${tour.slug}/book`)}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
               <CalendarCheck className="size-4" aria-hidden />

@@ -6,10 +6,12 @@ import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { TourImage } from "@/features/tour/components/TourImage";
 import { formatCurrency } from "@/core/utils";
+import { useLocale } from "@/shared/hooks/use-locale";
 import type { TourSummary } from "@/features/tour/types";
 
 export function TourCard({ tour }: { tour: TourSummary }) {
   const { t } = useTranslation("common");
+  const { href } = useLocale();
   return (
     <Card className="group/card overflow-hidden">
       <div className="relative aspect-[4/3] w-full">
@@ -24,7 +26,7 @@ export function TourCard({ tour }: { tour: TourSummary }) {
       </div>
       <CardContent className="flex flex-col gap-3 px-4 py-4">
         <h3 className="font-heading text-lg leading-snug font-medium">
-          <Link href={`/tours/${tour.slug}`} className="hover:underline">
+          <Link href={href(`/tours/${tour.slug}`)} className="hover:underline">
             {tour.title}
           </Link>
         </h3>
@@ -37,7 +39,7 @@ export function TourCard({ tour }: { tour: TourSummary }) {
             </span>
           </span>
           <Link
-            href={`/tours/${tour.slug}`}
+            href={href(`/tours/${tour.slug}`)}
             className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
             {t("favourites.viewTour")}

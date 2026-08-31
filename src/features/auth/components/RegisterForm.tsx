@@ -8,9 +8,11 @@ import { SubmitButton } from "@/features/auth/components/SubmitButton";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function RegisterForm() {
   const { t } = useTranslation("common");
+  const { href } = useLocale();
   const [state, formAction] = useActionState(registerAction, undefined);
 
   return (
@@ -60,7 +62,7 @@ export function RegisterForm() {
       <CardFooter className="justify-center text-sm text-muted-foreground">
         <span>
           {t("auth.alreadyHaveAccount")}{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href={href("/login")} className="font-medium text-primary hover:underline">
             {t("auth.signIn")}
           </Link>
         </span>

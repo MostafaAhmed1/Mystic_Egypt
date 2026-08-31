@@ -1,9 +1,12 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/core/lib/auth";
 import { prisma } from "@/core/lib/prisma";
+import { getLocaleFromCookieString } from "@/core/utils/locale";
+import { defaultLocale } from "@/core/i18n-config";
 
 /**
  * Data Access Layer for authentication.
@@ -48,24 +51,28 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
 
 /** Redirect to the login page when there is no authenticated session. */
 export async function requireUser(): Promise<CurrentUser> {
+  const cookieStore = await cookies();
+  const locale = getLocaleFromCookieString(cookieStore.get("locale")?.value) ?? defaultLocale;
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    redirect(`/${locale}/login`);
   }
   if (!user.email_verified) {
-    redirect(`/verify-email?email=${encodeURIComponent(user.email)}`);
+    redirect(`/${locale}/verify-email?email=${encodeURIComponent(user.email)}`);
   }
   if (user.requires_2fa) {
-    redirect("/verify-2fa");
+    redirect(`/${locale}/verify-2fa`);
   }
   return user;
 }
 
 /** Redirect when the user is not an admin. */
 export async function requireAdmin(): Promise<CurrentUser> {
+  const cookieStore = await cookies();
+  const locale = getLocaleFromCookieString(cookieStore.get("locale")?.value) ?? defaultLocale;
   const user = await requireUser();
   if (user.role !== "ADMIN") {
-    redirect("/login");
+    redirect(`/${locale}/login`);
   }
   return user;
 }

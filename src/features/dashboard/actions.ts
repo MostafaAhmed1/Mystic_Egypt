@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/core/lib/prisma";
 import { OtpType } from "@/core/generated/prisma/enums";
@@ -8,12 +9,19 @@ import { getCurrentUser } from "@/core/lib/session";
 import { createOtpCode } from "@/core/lib/otp";
 import { sendEmail } from "@/core/lib/resend";
 import { verificationEmailHtml } from "@/features/auth/emails";
+import { getLocaleFromCookieString } from "@/core/utils/locale";
+import { defaultLocale } from "@/core/i18n-config";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_NUMBER_REGEX,
   PASSWORD_LETTER_REGEX,
   EMAIL_MAX_LENGTH,
 } from "@/core/constants/auth";
+
+async function getLocale(): Promise<string> {
+  const cookieStore = await cookies();
+  return getLocaleFromCookieString(cookieStore.get("locale")?.value) ?? defaultLocale;
+}
 
 // Client dashboard profile actions (name/email/phone, password, notifications,
 // and GDPR account deletion). All are ownership-scoped to the current session.
@@ -43,7 +51,8 @@ function withUser(
   return async (state, formData) => {
     const user = await getCurrentUser();
     if (!user) {
-      redirect("/login");
+      const locale = await getLocale();
+      redirect(`/${locale}/login`);
     }
     return action(user.id, state, formData);
   };
@@ -118,7 +127,8 @@ export const updateProfileAction = withUser(
         subject: "Verify your Mystic Egypt email",
         html: verificationEmailHtml(code, updated.name),
       });
-      redirect(`/verify-email?email=${encodeURIComponent(email)}`);
+      const locale = await getLocale();
+      redirect(`/${locale}/verify-email?email=${encodeURIComponent(email)}`);
     }
 
     return { ok: true, message: "Your profile has been updated." };
@@ -169,7 +179,8 @@ export const toggleNotificationsAction: ActionReturnsState = async (
 ) => {
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    const locale = await getLocale();
+    redirect(`/${locale}/login`);
   }
   const current = await prisma.user.findUnique({
     where: { id: user.id },
@@ -221,6 +232,7 @@ export const deleteAccountAction = withUser(
       }),
     ]);
 
-    redirect("/login");
+    const locale = await getLocale();
+    redirect(`/${locale}/login`);
   },
 );

@@ -1,8 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { prisma } from "@/core/lib/prisma";
 import { getCurrentUser } from "@/core/lib/session";
+import { getLocaleFromCookieString } from "@/core/utils/locale";
+import { defaultLocale } from "@/core/i18n-config";
 
 export type CustomizeFieldErrors = {
   message?: string;
@@ -28,7 +31,9 @@ export async function customizeTourAction(
 ): Promise<CustomizeFormState> {
   const user = await getCurrentUser();
   if (!user) {
-    redirect("/login");
+    const cookieStore = await cookies();
+    const locale = getLocaleFromCookieString(cookieStore.get("locale")?.value) ?? defaultLocale;
+    redirect(`/${locale}/login`);
   }
 
   const message = formData.get("message")?.toString().trim() ?? "";

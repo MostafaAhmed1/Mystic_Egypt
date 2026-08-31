@@ -8,9 +8,11 @@ import { SubmitButton } from "@/features/auth/components/SubmitButton";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function ForgotPasswordForm() {
   const { t } = useTranslation("common");
+  const { href } = useLocale();
   const [state, formAction] = useActionState(forgotPasswordAction, undefined);
 
   return (
@@ -40,7 +42,7 @@ export function ForgotPasswordForm() {
 
         {state?.ok && (
           <div className="mt-4 text-center text-sm">
-            <Link href="/reset-password" className="font-medium text-primary hover:underline">
+            <Link href={href("/reset-password")} className="font-medium text-primary hover:underline">
               {t("auth.haveCode")}
             </Link>
           </div>
@@ -49,7 +51,7 @@ export function ForgotPasswordForm() {
       <CardFooter className="justify-center text-sm text-muted-foreground">
         <span>
           {t("auth.rememberedIt")}{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          <Link href={href("/login")} className="font-medium text-primary hover:underline">
             {t("auth.signIn")}
           </Link>
         </span>

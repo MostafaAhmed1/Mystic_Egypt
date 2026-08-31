@@ -9,10 +9,12 @@ import { SubmitButton } from "@/features/auth/components/SubmitButton";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const { t } = useTranslation("common");
+  const { href } = useLocale();
   const initialEmail = searchParams.get("email") ?? "";
   const [state, formAction] = useActionState(resetPasswordAction, undefined);
 
@@ -76,7 +78,7 @@ export function ResetPasswordForm() {
         </form>
 
         <div className="mt-4 text-center text-sm">
-          <Link href="/forgot-password" className="font-medium text-primary hover:underline">
+          <Link href={href("/forgot-password")} className="font-medium text-primary hover:underline">
             {t("auth.requestNewCode")}
           </Link>
         </div>

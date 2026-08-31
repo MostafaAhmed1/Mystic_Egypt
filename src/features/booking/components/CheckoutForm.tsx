@@ -13,6 +13,7 @@ import { OrderSummary } from "./OrderSummary";
 import { AddOnsSection } from "./AddOnsSection";
 import { ReceiptUpload, type ReceiptFileState } from "./ReceiptUpload";
 import { StripePaymentSection } from "./StripePaymentSection";
+import { useLocale } from "@/shared/hooks/use-locale";
 import { BookingSuccess } from "./BookingSuccess";
 import { createBookingRequest, uploadReceiptRequest } from "@/features/booking/api";
 
@@ -27,6 +28,7 @@ export function CheckoutForm({
   addons: AddonDto[];
   stripePublishableKey: string;
 }) {
+  const { href } = useLocale();
   const tourDate = useBookingCart((s) => s.tourDate);
   const numPeople = useBookingCart((s) => s.numPeople);
   const cartAddons = useBookingCart((s) => s.addons);
@@ -247,11 +249,11 @@ export function CheckoutForm({
             />
             <span className="text-muted-foreground">
               I agree to the{" "}
-              <a href="/terms" target="_blank" className="underline underline-offset-4">
+              <a href={href("/terms")} target="_blank" className="underline underline-offset-4">
                 terms &amp; conditions
               </a>{" "}
               and{" "}
-              <a href="/terms" target="_blank" className="underline underline-offset-4">
+              <a href={href("/terms")} target="_blank" className="underline underline-offset-4">
                 cancellation policy
               </a>
               .
