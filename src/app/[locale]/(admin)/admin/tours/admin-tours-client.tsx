@@ -140,7 +140,7 @@ export function AdminToursClient({
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <Link
-                          href={`/admin/tours/${tour.id}/edit`}
+                          href={href(`/admin/tours/${tour.id}/edit`)}
                           className="inline-flex items-center justify-center size-8 rounded-lg hover:bg-muted"
                           title={t("admin.edit")}
                         >

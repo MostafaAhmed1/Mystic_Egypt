@@ -598,6 +598,69 @@ Modify `src/proxy.ts` to:
   (notifications column, invoice creation, wishlist toggle), `npx tsc --noEmit` + `npm run lint` +
   `npm run build` all clean. Temp verify script cleaned up.
 
+---
+
+## Milestone 8: Testing, QA & Deployment
+**Status: EXECUTING**
+
+### Phase 1: Re-QA — Browser-Based Regression Testing
+**Status: IN PROGRESS**
+
+**Scope:** Re-test all 72 existing test cases from QA_TESTING_PLAN.md using the browse tool after M7 changes (locale routing, RTL, responsive, cookie consent, GA4).
+
+**Sub-steps:**
+1. Launch dev server (`npm run dev`)
+2. Test Public Pages — verify locale routing works for all 3 locales, RTL layout, cookie consent banner, responsive layouts
+3. Test Authentication — verify auth flows still work with new `[locale]` routing
+4. Test Client Dashboard — verify dashboard, bookings, invoices, wishlist, profile
+5. Test Booking Flow — verify checkout, Stripe test mode, bank transfer, receipt upload
+6. Test Admin Panel — verify tours, orders, CMS, 2FA, admin management
+7. Test Edge Cases — verify 404, form validation, error states, mobile responsive
+8. Document any new issues found
+9. Fix issues if found
+
+**Test environment:**
+- Dev server on localhost:3000
+- Chrome DevTools via browse tool
+- Test with all 3 locales (en, ar, de)
+- Test mobile viewport (375px) and desktop (1280px)
+
+### Phase 2: Lighthouse Audit
+**Status: PENDING**
+
+**Scope:** Run Lighthouse on key pages to verify Performance, Accessibility, Best Practices, SEO scores.
+
+**Pages to audit:**
+- Homepage (`/en`)
+- Tours listing (`/en/tours`)
+- Tour detail (`/en/tours/[slug]`)
+- Login (`/en/login`)
+- Dashboard (`/en/dashboard`)
+
+**Target scores:** All categories ≥ 90
+
+### Phase 3: Build & Lint Verification
+**Status: PENDING**
+
+**Scope:** Final build and lint check before deployment readiness.
+
+**Commands:**
+- `npm run build` — must pass with 0 errors
+- `npm run lint` — must pass with 0 errors (pre-existing warnings acceptable)
+
+### Phase 4: Security Audit
+**Status: PENDING**
+
+**Scope:** Quick security checks before deployment.
+
+**Checks:**
+- No `any` types in TypeScript
+- No hardcoded secrets in code
+- API routes properly protected with auth checks
+- CSRF protection on forms
+- Input validation on server actions
+- `public/uploads/` blocks script execution (Nginx config verified)
+
 ### Document References
 1. `docs/PRD.md` — Source of truth for all features
 2. `docs/Final Technical Blueprint.md` — Architecture & schema decisions

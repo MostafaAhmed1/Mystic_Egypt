@@ -39,7 +39,7 @@ export function DashboardBookingsClient({ bookings }: { bookings: DashboardBooki
           {bookings.map((b) => (
             <li key={b.id}>
               <Link
-                href={`/dashboard/bookings/${b.id}`}
+                href={href(`/dashboard/bookings/${b.id}`)}
                 className="flex items-center justify-between gap-4 rounded-2xl border bg-card p-4 hover:bg-muted/40"
               >
                 <div className="min-w-0">

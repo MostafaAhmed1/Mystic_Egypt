@@ -20,18 +20,20 @@ const NAV_ITEMS = [
 
 export function DashboardNav() {
   const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "en";
 
   return (
     <nav aria-label="Dashboard" className="flex flex-col gap-1">
       {NAV_ITEMS.map((item) => {
+        const href = `/${locale}${item.href}`;
         const active = item.exact
-          ? pathname === item.href
-          : pathname.startsWith(item.href);
+          ? pathname === href
+          : pathname.startsWith(href);
         const Icon = item.icon;
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={href}
             aria-current={active ? "page" : undefined}
             className={
               active

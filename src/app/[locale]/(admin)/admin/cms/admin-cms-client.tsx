@@ -119,7 +119,7 @@ export function AdminCmsClient({
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <Link
-                          href={`/admin/cms/${page.slug}/edit`}
+                          href={href(`/admin/cms/${page.slug}/edit`)}
                           className="inline-flex items-center justify-center size-8 rounded-lg hover:bg-muted"
                           title={t("admin.edit")}
                         >

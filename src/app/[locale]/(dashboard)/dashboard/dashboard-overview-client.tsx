@@ -99,7 +99,7 @@ export function DashboardOverviewClient({
             {recentBookings.map((b) => (
               <li key={b.id}>
                 <Link
-                  href={`/dashboard/bookings/${b.id}`}
+                  href={href(`/dashboard/bookings/${b.id}`)}
                   className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/40"
                 >
                   <div className="min-w-0">
