@@ -447,9 +447,24 @@ Modify `src/proxy.ts` to:
 - All pages generate `<link rel="alternate" hreflang="en|ar|de|x-default" ...>` tags
 
 #### Phase 4: GDPR Cookie Consent Banner
-- Create `src/shared/components/cookie-consent.tsx`
-- Shows on first visit, Accept/Reject buttons
-- Sets `cookie_consent` cookie, blocks analytics if rejected
+**Status: COMPLETE** (commit pending)
+
+**Scope:** EU/UK GDPR compliance — show a cookie consent banner on first visit. User must Accept or Reject non-essential cookies before analytics/tracking loads.
+
+**GDPR Requirements:**
+1. No non-essential cookies until user gives explicit consent
+2. Banner must be clearly visible on first visit
+3. User can Accept all or Reject non-essential
+4. Consent state stored in `cookie_consent` cookie (value: `accepted` | `rejected`)
+5. Banner should not reappear after user makes a choice
+6. Must work across all 3 locales (en/ar/de)
+
+**What was implemented:**
+- Created `src/shared/components/cookie-consent.tsx` — banner UI + cookie logic
+- Added `<CookieConsent />` to root layout (`src/app/[locale]/layout.tsx`)
+- Added i18n keys to all 3 locale files (en/ar/de)
+- Banner shows on first visit, stores consent in `cookie_consent` cookie (1 year expiry)
+- Accept/Reject buttons, RTL-aware layout, localized text
 
 #### Phase 5: RTL Layout Polish
 - Verify all pages render correctly in RTL
@@ -464,7 +479,7 @@ Modify `src/proxy.ts` to:
 ### Disconnected Pieces / Pending (Recorded during M7)
 - **Locale prefix routing COMPLETE** — Phase 1 done (commit `1632ed8`). All routes under `[locale]/`, all links locale-aware, proxy handles detection.
 - **Hreflang alternate links COMPLETE** — Phase 3 done. `seo.ts` helper + all public pages have `generateMetadata` with `alternates.languages`.
-- **GDPR Cookie Consent Banner NOT STARTED** — Phase 4 pending.
+- **GDPR Cookie Consent Banner COMPLETE** — Phase 4 done. `cookie-consent.tsx` component added to root layout, i18n keys in all locales.
 - **RTL polish NOT VERIFIED** — Phase 5 pending.
 - **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.
 

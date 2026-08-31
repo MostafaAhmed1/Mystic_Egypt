@@ -332,5 +332,10 @@
     "yes": "Ja",
     "no": "Nein",
     "people": "Personen"
+  },
+  "cookieConsent": {
+    "message": "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern. Akzeptieren Sie alle oder lehnen Sie nicht wesentliche Cookies ab.",
+    "acceptAll": "Alle akzeptieren",
+    "rejectNonEssential": "Nicht wesentliche ablehnen"
   }
 }

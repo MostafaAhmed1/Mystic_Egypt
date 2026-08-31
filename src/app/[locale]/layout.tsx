@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/shared/components/ui/sonner";
 import { AuthProvider } from "@/shared/components/session-provider";
 import { I18nProvider } from "@/shared/components/i18n-provider";
+import { CookieConsent } from "@/shared/components/cookie-consent";
 import { dir, type Locale } from "@/core/i18n-config";
 import "../globals.css";
 
@@ -46,6 +47,7 @@ export default async function RootLayout({
         <I18nProvider locale={locale as Locale}>
           <AuthProvider>{children}</AuthProvider>
         </I18nProvider>
+        <CookieConsent />
         <Toaster />
       </body>
     </html>

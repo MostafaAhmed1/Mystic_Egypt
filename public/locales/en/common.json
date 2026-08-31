@@ -333,5 +333,10 @@
     "no": "No",
     "clear": "Clear",
     "people": "people"
+  },
+  "cookieConsent": {
+    "message": "We use cookies to improve your experience. Accept all or reject non-essential cookies.",
+    "acceptAll": "Accept All",
+    "rejectNonEssential": "Reject Non-Essential"
   }
 }
