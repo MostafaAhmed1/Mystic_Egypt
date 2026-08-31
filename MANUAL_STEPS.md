@@ -29,10 +29,57 @@
 - [ ] Store as `NEXTAUTH_SECRET` in `.env`
 - [ ] Set `NEXTAUTH_URL` (e.g. `http://localhost:3000` locally, `https://mysticegypt.net` in prod)
 
-### 4. Google Analytics 4
-- [ ] Create GA4 property for mysticegypt.net
+### 4. Google Analytics 4 (GA4)
+- [ ] Create GA4 property for mysticegypt.net (see detailed steps below)
 - [ ] Get **Measurement ID** (G-XXXXXXXXXX)
 - [ ] Add to `NEXT_PUBLIC_GA_ID` in `.env`
+
+#### Detailed GA4 Setup Steps
+
+**Step 1: Create GA4 Property**
+1. Go to https://analytics.google.com
+2. Click **Admin** (gear icon, bottom-left)
+3. Click **+ Create Property**
+4. Property name: `Mystic Egypt`
+5. Reporting time zone: `UTC` (or your preferred)
+6. Currency: `British Pound (GBP)` or `US Dollar (USD)`
+7. Click **Next**
+
+**Step 2: Set Up Data Stream**
+1. Business objectives: `Examine user behavior` (or select appropriate)
+2. Click **Web** platform
+3. Website URL: `mysticegypt.net`
+4. Stream name: `Mystic Egypt Web`
+5. Click **Create stream**
+6. Copy the **Measurement ID** (format: `G-XXXXXXXXXX`)
+
+**Step 3: Add Measurement ID to .env**
+```env
+NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
+```
+
+**Step 4: Configure Enhanced Measurement**
+1. In the data stream settings, click **Configure tag settings**
+2. Enable **Enhanced measurement** (tracks page views, scrolls, outbound clicks, site search, file downloads automatically)
+
+**Step 5: Set Up Conversion Events**
+Go to **Admin > Conversions > New conversion event** and add:
+| Event Name | Description |
+|------------|-------------|
+| `generate_lead` | User completes registration |
+| `purchase` | User completes a booking |
+| `sign_up` | User creates an account |
+
+**Step 6: Test in Development**
+1. Run `npm run dev`
+2. Open browser DevTools > Network tab
+3. Look for requests to `google-analytics.com` or `analytics.google.com`
+4. In GA4, go to **Realtime** report to verify events appear
+
+**Step 7: Privacy Considerations**
+- The implementation respects the cookie consent banner (GDPR)
+- GA4 cookies are only set after user clicks "Accept"
+- No personal data is sent to GA4 (anonymized IP is default in GA4)
 
 ### 5. WhatsApp Click-to-Chat
 - [ ] Confirm the phone number for WhatsApp messages

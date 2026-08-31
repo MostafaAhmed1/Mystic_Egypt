@@ -509,7 +509,25 @@ Modify `src/proxy.ts` to:
 - Fixed not-found page buttons: increased padding from `py-3` to `py-3.5`
 
 #### Phase 7: GA4 Setup Instructions
-- Step-by-step guide for user to create GA4 property
+**Status: COMPLETE** (commit pending)
+
+**Scope:** GA4 integration with Next.js + detailed setup guide for user.
+
+**What was implemented:**
+- Created `src/core/lib/analytics.ts` — GA4 helper functions (pageview, event) with Window.gtag type
+- Created `src/shared/components/analytics-provider.tsx` — Client provider using next/script (gtag.js)
+- Created `src/shared/hooks/use-analytics.ts` — Client hook for pageview tracking + event tracking
+- Added `<AnalyticsProvider />` to root layout
+- Expanded MANUAL_STEPS.md with detailed 7-step GA4 setup guide (create property, data stream, measurement ID, enhanced measurement, conversion events, testing, privacy)
+
+**Files created:**
+- `src/core/lib/analytics.ts`
+- `src/shared/components/analytics-provider.tsx`
+- `src/shared/hooks/use-analytics.ts`
+
+**Files modified:**
+- `src/app/[locale]/layout.tsx` — Added AnalyticsProvider import + component
+- `MANUAL_STEPS.md` — Expanded GA4 section with step-by-step instructions
 
 ### Disconnected Pieces / Pending (Recorded during M7)
 - **Locale prefix routing COMPLETE** — Phase 1 done (commit `1632ed8`). All routes under `[locale]/`, all links locale-aware, proxy handles detection.
@@ -517,7 +535,7 @@ Modify `src/proxy.ts` to:
 - **GDPR Cookie Consent Banner COMPLETE** — Phase 4 done. `cookie-consent.tsx` component added to root layout, i18n keys in all locales.
 - **RTL Layout Polish COMPLETE** — Phase 5 done. ~100 instances fixed across 21 files. All physical CSS properties converted to logical equivalents.
 - **Responsive Design Polish COMPLETE** — Phase 6 done. TourWizard overflow fixed, mobile nav touch targets increased, admin button sizing improved.
-- **GA4 Setup Instructions NOT STARTED** — Phase 7 pending.
+- **GA4 Setup Instructions COMPLETE** — Phase 7 done. Analytics provider created, MANUAL_STEPS.md expanded with step-by-step guide.
 - **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.
 
 ### Disconnected Pieces / Pending (Recorded during M4)

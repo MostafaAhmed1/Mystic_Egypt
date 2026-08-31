@@ -4,6 +4,7 @@ import { Toaster } from "@/shared/components/ui/sonner";
 import { AuthProvider } from "@/shared/components/session-provider";
 import { I18nProvider } from "@/shared/components/i18n-provider";
 import { CookieConsent } from "@/shared/components/cookie-consent";
+import { AnalyticsProvider } from "@/shared/components/analytics-provider";
 import { dir, type Locale } from "@/core/i18n-config";
 import "../globals.css";
 
@@ -44,6 +45,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <AnalyticsProvider />
         <I18nProvider locale={locale as Locale}>
           <AuthProvider>{children}</AuthProvider>
         </I18nProvider>
