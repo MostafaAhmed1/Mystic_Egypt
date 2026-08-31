@@ -467,8 +467,27 @@ Modify `src/proxy.ts` to:
 - Accept/Reject buttons, RTL-aware layout, localized text
 
 #### Phase 5: RTL Layout Polish
-- Verify all pages render correctly in RTL
-- Check CSS logical properties
+**Status: COMPLETE** (commit pending)
+
+**Scope:** Verify and fix all RTL (Arabic) layout issues across the application.
+
+**What was implemented:**
+- Audited ~100 instances of RTL-unsafe CSS classes across 21 files
+- Fixed all physical CSS properties to logical equivalents:
+  - `ml-*` → `ms-*` (margin-inline-start)
+  - `mr-*` → `me-*` (margin-inline-end)
+  - `pl-*` → `ps-*` (padding-inline-start)
+  - `pr-*` → `pe-*` (padding-inline-end)
+  - `text-left` → `text-start`
+  - `text-right` → `text-end`
+  - `border-l` → `border-s` (border-inline-start)
+  - `rounded-l` → `rounded-s`, `rounded-r` → `rounded-e`
+  - `left-*` → `start-*`, `right-*` → `end-*`
+- Fixed 11 shared UI components: field, table, accordion, select, dropdown-menu, button, badge, tabs, toast, dialog, calendar
+- Fixed 4 feature components: TourSearchBar, TourMap, ItineraryAccordion, CheckoutForm
+- Fixed 6 admin table/page components
+- Fixed 3 layout files and cookie-consent component
+- `flex-row` classes left as-is (correctly handled by `dir="rtl"` on `<html>`)
 
 #### Phase 6: Responsive Design Polish
 - Verify mobile layouts, table responsiveness, touch targets
@@ -480,7 +499,8 @@ Modify `src/proxy.ts` to:
 - **Locale prefix routing COMPLETE** — Phase 1 done (commit `1632ed8`). All routes under `[locale]/`, all links locale-aware, proxy handles detection.
 - **Hreflang alternate links COMPLETE** — Phase 3 done. `seo.ts` helper + all public pages have `generateMetadata` with `alternates.languages`.
 - **GDPR Cookie Consent Banner COMPLETE** — Phase 4 done. `cookie-consent.tsx` component added to root layout, i18n keys in all locales.
-- **RTL polish NOT VERIFIED** — Phase 5 pending.
+- **RTL Layout Polish COMPLETE** — Phase 5 done. ~100 instances fixed across 21 files. All physical CSS properties converted to logical equivalents.
+- **Responsive Design Polish NOT VERIFIED** — Phase 6 pending.
 - **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.
 
 ### Disconnected Pieces / Pending (Recorded during M4)

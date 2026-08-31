@@ -39,7 +39,7 @@ export function TourSearchBar() {
           className="h-9 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
         />
       </label>
-      <label className="flex items-center gap-2 border-t px-2 pt-1.5 sm:border-l sm:border-t-0 sm:pl-3 sm:pt-0">
+      <label className="flex items-center gap-2 border-t px-2 pt-1.5 sm:border-s sm:border-t-0 sm:ps-3 sm:pt-0">
         <Wallet className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         <Input
           type="number"
@@ -51,7 +51,7 @@ export function TourSearchBar() {
           className="h-9 w-36 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
         />
       </label>
-      <Button type="submit" size="lg" className="h-10 shrink-0 sm:ml-1">
+      <Button type="submit" size="lg" className="h-10 shrink-0 sm:ms-1">
         {t("tours.searchTours")}
       </Button>
     </form>

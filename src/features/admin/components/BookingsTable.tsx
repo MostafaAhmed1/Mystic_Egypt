@@ -105,14 +105,14 @@ export function BookingsTable({ bookings }: { bookings: BookingItem[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-muted-foreground">
+            <tr className="border-b text-start text-muted-foreground">
               <th className="px-4 py-3 font-medium">Customer</th>
               <th className="px-4 py-3 font-medium">Tour</th>
               <th className="px-4 py-3 font-medium">Date</th>
-              <th className="px-4 py-3 text-right font-medium">Amount</th>
+              <th className="px-4 py-3 text-end font-medium">Amount</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Payment</th>
-              <th className="px-4 py-3 text-right font-medium">Actions</th>
+              <th className="px-4 py-3 text-end font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -142,7 +142,7 @@ export function BookingsTable({ bookings }: { bookings: BookingItem[] }) {
                       year: "numeric",
                     })}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">
+                  <td className="whitespace-nowrap px-4 py-3 text-end tabular-nums">
                     {CURRENCY_SYMBOLS[b.currency as Currency] ?? "$"}
                     {b.total_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                   </td>

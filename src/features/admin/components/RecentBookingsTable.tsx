@@ -33,11 +33,11 @@ export function RecentBookingsTable({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-muted-foreground">
+                <tr className="border-b text-start text-muted-foreground">
                   <th className="pb-3 font-medium">Customer</th>
                   <th className="pb-3 font-medium">Tour</th>
                   <th className="pb-3 font-medium">Date</th>
-                  <th className="pb-3 text-right font-medium">Amount</th>
+                  <th className="pb-3 text-end font-medium">Amount</th>
                   <th className="pb-3 font-medium">Status</th>
                   <th className="pb-3 font-medium">Payment</th>
                 </tr>
@@ -63,7 +63,7 @@ export function RecentBookingsTable({
                         year: "numeric",
                       })}
                     </td>
-                    <td className="whitespace-nowrap py-3 text-right tabular-nums">
+                    <td className="whitespace-nowrap py-3 text-end tabular-nums">
                       ${b.total_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </td>
                     <td className="py-3">

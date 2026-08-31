@@ -77,12 +77,12 @@ export function AdminCmsClient({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-muted-foreground">
+              <tr className="border-b text-start text-muted-foreground">
                 <th className="px-4 py-3 font-medium">{t("admin.title")}</th>
                 <th className="px-4 py-3 font-medium">{t("admin.slug")}</th>
                 <th className="px-4 py-3 font-medium">{t("admin.status")}</th>
                 <th className="px-4 py-3 font-medium">{t("admin.updated")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("admin.actions")}</th>
+                <th className="px-4 py-3 text-end font-medium">{t("admin.actions")}</th>
               </tr>
             </thead>
             <tbody>

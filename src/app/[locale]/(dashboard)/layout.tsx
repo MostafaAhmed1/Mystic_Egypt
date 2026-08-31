@@ -22,7 +22,7 @@ export default async function DashboardLayout({
               <p className="truncate text-sm font-semibold">{user.name}</p>
               <p className="truncate text-xs text-muted-foreground">{user.email}</p>
             </div>
-            <SignOutButton className="ml-2 h-9 shrink-0" />
+            <SignOutButton className="ms-2 h-9 shrink-0" />
           </div>
           <DashboardNav />
         </div>

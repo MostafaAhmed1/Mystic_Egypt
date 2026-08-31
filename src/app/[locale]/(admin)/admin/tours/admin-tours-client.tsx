@@ -87,13 +87,13 @@ export function AdminToursClient({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-muted-foreground">
+              <tr className="border-b text-start text-muted-foreground">
                 <th className="px-4 py-3 font-medium">{t("admin.tour")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("tours.from")}</th>
+                <th className="px-4 py-3 text-end font-medium">{t("tours.from")}</th>
                 <th className="px-4 py-3 font-medium">{t("admin.status")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("admin.bookingsCount")}</th>
+                <th className="px-4 py-3 text-end font-medium">{t("admin.bookingsCount")}</th>
                 <th className="px-4 py-3 font-medium">{t("admin.updated")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("admin.actions")}</th>
+                <th className="px-4 py-3 text-end font-medium">{t("admin.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -112,7 +112,7 @@ export function AdminToursClient({
                         <p className="text-xs text-muted-foreground">/{tour.slug}</p>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">
+                    <td className="whitespace-nowrap px-4 py-3 text-end tabular-nums">
                       {CURRENCY_SYMBOLS[tour.currency] ?? "$"}
                       {tour.base_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </td>
@@ -127,7 +127,7 @@ export function AdminToursClient({
                         {tour.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">
+                    <td className="whitespace-nowrap px-4 py-3 text-end tabular-nums">
                       {tour.booking_count}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">

@@ -21,10 +21,10 @@ export function TopToursTable({ tours }: { tours: TopTour[] }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b text-left text-muted-foreground">
+                <tr className="border-b text-start text-muted-foreground">
                   <th className="pb-3 font-medium">Tour</th>
-                  <th className="pb-3 text-right font-medium">Bookings</th>
-                  <th className="pb-3 text-right font-medium">Revenue</th>
+                  <th className="pb-3 text-end font-medium">Bookings</th>
+                  <th className="pb-3 text-end font-medium">Revenue</th>
                 </tr>
               </thead>
               <tbody>
@@ -40,10 +40,10 @@ export function TopToursTable({ tours }: { tours: TopTour[] }) {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 text-right tabular-nums">
+                    <td className="py-3 text-end tabular-nums">
                       {tour.booking_count}
                     </td>
-                    <td className="py-3 text-right tabular-nums">
+                    <td className="py-3 text-end tabular-nums">
                       ${tour.revenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </td>
                   </tr>

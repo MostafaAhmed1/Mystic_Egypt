@@ -300,7 +300,7 @@ function PaymentOption({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className={`rounded-xl border p-4 text-left transition-colors ${
+      className={`rounded-xl border p-4 text-start transition-colors ${
         selected
           ? "border-primary bg-primary/5 ring-1 ring-primary"
           : "border-input bg-card hover:bg-muted/40"

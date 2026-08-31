@@ -16,7 +16,7 @@ export function ItineraryAccordion({ itinerary }: { itinerary: ItineraryDto[] })
       {itinerary.map((day) => (
         <AccordionItem key={day.id} value={day.id}>
           <AccordionTrigger>
-            <span className="mr-3 inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-primary/10 px-1.5 text-xs font-semibold text-primary">
+            <span className="me-3 inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-primary/10 px-1.5 text-xs font-semibold text-primary">
               {t("tours.day", "Day")} {day.day_number}
             </span>
             <span className="flex-1">{day.title}</span>

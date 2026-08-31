@@ -29,7 +29,7 @@ export default async function AdminLayout({
                 {user.email}
               </p>
             </div>
-            <SignOutButton className="ml-2 h-9 shrink-0" />
+            <SignOutButton className="ms-2 h-9 shrink-0" />
           </div>
           <AdminNav />
         </div>

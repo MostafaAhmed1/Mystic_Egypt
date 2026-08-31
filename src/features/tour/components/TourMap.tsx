@@ -45,7 +45,7 @@ export function TourMap({ route }: { route: TourPointDto[] }) {
   if (route.length === 0) {
     return (
       <div className="flex h-72 items-center justify-center rounded-2xl border bg-muted/30 text-sm text-muted-foreground">
-        <CircleDot className="mr-2 size-4" aria-hidden />
+        <CircleDot className="me-2 size-4" aria-hidden />
         Route map not available for this tour yet.
       </div>
     );

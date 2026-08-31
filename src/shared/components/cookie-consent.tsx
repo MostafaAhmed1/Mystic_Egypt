@@ -43,7 +43,7 @@ export function CookieConsent() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-4 sm:flex-row sm:justify-between sm:px-6">
-        <div className="flex items-center gap-3 text-center sm:text-left">
+        <div className="flex items-center gap-3 text-center sm:text-start">
           <Cookie className="size-5 shrink-0 text-primary" aria-hidden />
           <p className="text-sm text-muted-foreground">
             {t("cookieConsent.message")}
