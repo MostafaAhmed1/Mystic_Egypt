@@ -418,14 +418,33 @@ src/app/
 9. Verify build + lint ✓
 
 #### Phase 2: Server-Side Locale Detection (Proxy)
+**Status: COMPLETE** (done as part of Phase 1 — commit `1632ed8`)
+
 Modify `src/proxy.ts` to:
 - Check if pathname starts with `/en`, `/ar`, `/de`
 - If not → detect from cookie or `Accept-Language` header → redirect to `/{locale}{path}`
 - Update auth route checks to strip locale prefix
 - Set locale cookie on first visit
 
+**What was implemented:**
+- `hasLocalePrefix()` — checks for `/en|ar|de` prefix
+- `getLocaleFromCookie()` — extracts locale from cookie or Accept-Language
+- Bare path detection → redirect to `/{locale}{path}`
+- Auth route checks strip locale prefix before `/login`, `/register`, `/verify`, `/forgot-password`, `/reset-password`
+- Locale cookie set on redirect
+
 #### Phase 3: Hreflang Alternate Links
-Add `alternates.languages` to sitemap entries for all public pages.
+**Status: COMPLETE** (commit pending)
+
+**Scope:** Add `alternates.languages` metadata to all public pages for SEO hreflang tags.
+
+**What was implemented:**
+- Created `src/core/utils/seo.ts` — `buildAlternates(pathname, locale)` helper
+- Updated homepage `page.tsx` — dynamic `generateMetadata` with alternates
+- Updated CMS pages `[slug]/page.tsx` — dynamic `generateMetadata` with alternates
+- Updated tours listing `tours/page.tsx` — dynamic `generateMetadata` with alternates
+- Updated tour detail `tours/[slug]/page.tsx` — dynamic `generateMetadata` with alternates
+- All pages generate `<link rel="alternate" hreflang="en|ar|de|x-default" ...>` tags
 
 #### Phase 4: GDPR Cookie Consent Banner
 - Create `src/shared/components/cookie-consent.tsx`
@@ -444,6 +463,7 @@ Add `alternates.languages` to sitemap entries for all public pages.
 
 ### Disconnected Pieces / Pending (Recorded during M7)
 - **Locale prefix routing COMPLETE** — Phase 1 done (commit `1632ed8`). All routes under `[locale]/`, all links locale-aware, proxy handles detection.
+- **Hreflang alternate links COMPLETE** — Phase 3 done. `seo.ts` helper + all public pages have `generateMetadata` with `alternates.languages`.
 - **GDPR Cookie Consent Banner NOT STARTED** — Phase 4 pending.
 - **RTL polish NOT VERIFIED** — Phase 5 pending.
 - **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.

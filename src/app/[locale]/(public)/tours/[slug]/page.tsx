@@ -5,6 +5,8 @@ import {
   listPublicTourSlugs,
 } from "@/features/tour/service";
 import { TourContent } from "@/features/tour/components/TourContent";
+import { buildAlternates } from "@/core/utils/seo";
+import type { Locale } from "@/core/i18n-config";
 
 export const dynamicParams = true;
 export const revalidate = 300;
@@ -17,9 +19,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const tour = await getPublicTourBySlug(slug);
   if (!tour) return { title: "Tour not found" };
 
@@ -29,11 +31,12 @@ export async function generateMetadata({
     openGraph: {
       title: tour.title,
       description: tour.description,
-      url: `https://mysticegypt.net/tours/${tour.slug}`,
+      url: `https://mysticegypt.net/${locale}/tours/${tour.slug}`,
       siteName: "Mystic Egypt",
       locale: "en_US",
       type: "article",
     },
+    ...buildAlternates(`/tours/${tour.slug}`, locale as Locale),
   };
 }
 

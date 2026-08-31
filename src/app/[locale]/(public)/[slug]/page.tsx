@@ -1,15 +1,22 @@
 import { notFound } from "next/navigation";
 import { getPublishedCmsPage } from "@/features/admin/service";
+import { buildAlternates } from "@/core/utils/seo";
+import type { Locale } from "@/core/i18n-config";
+import type { Metadata } from "next";
 
 type CmsPageProps = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: CmsPageProps) {
-  const { slug } = await params;
+export async function generateMetadata({ params }: CmsPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
   const page = await getPublishedCmsPage(slug);
   if (!page) return { title: "Page Not Found" };
-  return { title: page.title };
+
+  return {
+    title: page.title,
+    ...buildAlternates(`/${slug}`, locale as Locale),
+  };
 }
 
 export default async function CmsPage({ params }: CmsPageProps) {
