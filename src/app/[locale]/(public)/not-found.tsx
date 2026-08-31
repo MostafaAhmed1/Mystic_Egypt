@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MapPin } from "lucide-react";
 
 export default function NotFound() {
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "en";
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-stone-100">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-4 py-24 text-center sm:px-6 sm:py-32">
@@ -21,13 +27,13 @@ export default function NotFound() {
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
-            href="/"
+            href={`/${locale}`}
             className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
           >
             Back to Home
           </Link>
           <Link
-            href="/tours"
+            href={`/${locale}/tours`}
             className="inline-flex items-center justify-center rounded-md border border-border bg-background px-6 py-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent"
           >
             Browse Tours
