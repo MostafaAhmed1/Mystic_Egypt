@@ -490,7 +490,23 @@ Modify `src/proxy.ts` to:
 - `flex-row` classes left as-is (correctly handled by `dir="rtl"` on `<html>`)
 
 #### Phase 6: Responsive Design Polish
-- Verify mobile layouts, table responsiveness, touch targets
+**Status: COMPLETE** (commit pending)
+
+**Scope:** Verify mobile layouts, table responsiveness, touch targets, and overall responsive design.
+
+**What was implemented:**
+- Audited all pages for responsive design issues
+- Fixed TourWizard overflow issues:
+  - Step indicator: added `overflow-x-auto` + `shrink-0`, hid labels on mobile (`hidden sm:inline`)
+  - Route point rows: added `flex-wrap` for mobile wrapping
+  - Image URL rows: added `flex-wrap` for mobile wrapping
+  - Date rows: added `flex-wrap` for mobile wrapping
+- Fixed mobile nav touch targets:
+  - Nav links: increased padding from `py-1` to `py-3` (32px → 44px touch target)
+  - Language switcher wrapper: increased padding from `py-1` to `py-2`
+  - WhatsApp link: increased padding from `py-1` to `py-3`
+- Fixed admin bookings action buttons: increased padding to `px-3 py-1.5` + `min-h-[36px]`
+- Fixed not-found page buttons: increased padding from `py-3` to `py-3.5`
 
 #### Phase 7: GA4 Setup Instructions
 - Step-by-step guide for user to create GA4 property
@@ -500,7 +516,8 @@ Modify `src/proxy.ts` to:
 - **Hreflang alternate links COMPLETE** — Phase 3 done. `seo.ts` helper + all public pages have `generateMetadata` with `alternates.languages`.
 - **GDPR Cookie Consent Banner COMPLETE** — Phase 4 done. `cookie-consent.tsx` component added to root layout, i18n keys in all locales.
 - **RTL Layout Polish COMPLETE** — Phase 5 done. ~100 instances fixed across 21 files. All physical CSS properties converted to logical equivalents.
-- **Responsive Design Polish NOT VERIFIED** — Phase 6 pending.
+- **Responsive Design Polish COMPLETE** — Phase 6 done. TourWizard overflow fixed, mobile nav touch targets increased, admin button sizing improved.
+- **GA4 Setup Instructions NOT STARTED** — Phase 7 pending.
 - **GA4 NOT CONFIGURED** — awaiting user to create GA4 property.
 
 ### Disconnected Pieces / Pending (Recorded during M4)

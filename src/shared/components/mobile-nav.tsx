@@ -38,19 +38,19 @@ export function MobileNav({ user, links = [], whatsapp }: MobileNavProps) {
 
       {open && (
         <div className="absolute inset-x-0 top-16 border-b bg-background px-4 py-4 shadow-lg">
-          <nav className="flex flex-col gap-3 text-sm font-medium">
+          <nav className="flex flex-col gap-1 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className={cn("py-1 text-foreground/80 hover:text-foreground")}
+                className={cn("py-3 text-foreground/80 hover:text-foreground")}
               >
                 {link.label}
               </Link>
             ))}
             <hr className="my-1 border-border" />
-            <div className="flex items-center gap-2 py-1">
+            <div className="flex items-center gap-2 py-2">
               <LanguageSwitcher />
             </div>
             {whatsapp && (
@@ -58,7 +58,7 @@ export function MobileNav({ user, links = [], whatsapp }: MobileNavProps) {
                 href={`https://wa.me/${whatsapp}?text=${encodeURIComponent("Hello Mystic Egypt!")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 py-1 text-foreground/80 hover:text-foreground"
+                className="inline-flex items-center gap-2 py-3 text-foreground/80 hover:text-foreground"
               >
                 <Phone className="size-4" aria-hidden />
                 {t("nav.whatsapp")}

@@ -81,7 +81,7 @@ function BookingActions({ booking }: { booking: BookingItem }) {
             key={a.action}
             onClick={() => handleAction(a.action)}
             disabled={loading !== null}
-            className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors min-h-[36px] ${
               a.action === "approve"
                 ? "bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-500/10 dark:text-green-400"
                 : a.action === "reject"
@@ -167,7 +167,7 @@ export function BookingsTable({ bookings }: { bookings: BookingItem[] }) {
                       <BookingActions booking={b} />
                       <button
                         onClick={() => router.push(href(`/admin/bookings/${b.id}`))}
-                        className="rounded-lg bg-muted px-2.5 py-1 text-xs font-medium hover:bg-muted/80"
+                        className="rounded-lg bg-muted px-3 py-1.5 text-xs font-medium hover:bg-muted/80 min-h-[36px]"
                       >
                         View
                       </button>

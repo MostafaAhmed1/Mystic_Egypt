@@ -157,9 +157,9 @@ export function TourWizard({ tour }: { tour?: TourData }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Step Indicator */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto">
         {STEPS.map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
+          <div key={s} className="flex shrink-0 items-center gap-2">
             <div
               className={`flex size-8 items-center justify-center rounded-full text-xs font-medium ${
                 i < step
@@ -171,7 +171,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
             >
               {i < step ? <Check className="size-4" /> : i + 1}
             </div>
-            <span className={`text-sm ${i === step ? "font-medium" : "text-muted-foreground"}`}>
+            <span className={`hidden text-sm sm:inline ${i === step ? "font-medium" : "text-muted-foreground"}`}>
               {s}
             </span>
             {i < STEPS.length - 1 && <div className="mx-2 h-px w-8 bg-border" />}
@@ -315,7 +315,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
             ) : (
               <div className="flex flex-col gap-3">
                 {data.images.map((img, i) => (
-                  <div key={i} className="flex items-center gap-3">
+                  <div key={i} className="flex flex-wrap items-center gap-3">
                     <input
                       type="text"
                       value={img.image_url}
@@ -369,7 +369,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
             ) : (
               <div className="flex flex-col gap-3">
                 {data.route.map((pt, i) => (
-                  <div key={i} className="flex items-center gap-3">
+                  <div key={i} className="flex flex-wrap items-center gap-3">
                     <span className="text-xs text-muted-foreground w-6">{pt.order}</span>
                     <input
                       type="text"
@@ -490,7 +490,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
             ) : (
               <div className="flex flex-col gap-2">
                 {data.tour_dates.map((td, i) => (
-                  <div key={i} className="flex items-center gap-3">
+                  <div key={i} className="flex flex-wrap items-center gap-3">
                     <input
                       type="date"
                       value={td.date}
