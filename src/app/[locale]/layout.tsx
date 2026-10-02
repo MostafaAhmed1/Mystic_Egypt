@@ -9,7 +9,7 @@ import { MetaPixelProvider } from "@/shared/components/meta-pixel-provider";
 import { ScrollProgressLazy } from "@/shared/components/scroll-progress-lazy";
 import { JsonLd } from "@/shared/components/json-ld";
 import { organizationSchema, websiteSchema } from "@/core/utils/structured-data";
-import { dir, type Locale } from "@/core/i18n-config";
+import { dir, locales, type Locale } from "@/core/i18n-config";
 import { getServerT } from "@/core/lib/i18n-server";
 import "../globals.css";
 
@@ -35,7 +35,7 @@ const notoKufiArabic = Noto_Kufi_Arabic({
 });
 
 export async function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "ar" }, { locale: "de" }];
+  return locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({

@@ -45,14 +45,14 @@ export const BUSINESS_CONTACT_POINTS = [
     telephone: `+${BUSINESS.phoneUK.raw}`,
     contactType: "customer service",
     areaServed: ["GB", "EG"],
-    availableLanguage: ["English", "Arabic", "German"],
+    availableLanguage: ["English", "Arabic", "German", "Hungarian"],
   },
   {
     "@type": "ContactPoint" as const,
     telephone: `+${BUSINESS.phoneEG.raw}`,
     contactType: "customer service",
     areaServed: ["EG"],
-    availableLanguage: ["English", "Arabic", "German"],
+    availableLanguage: ["English", "Arabic", "German", "Hungarian"],
   },
   {
     "@type": "ContactPoint" as const,

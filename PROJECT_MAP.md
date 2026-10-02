@@ -240,7 +240,8 @@ Client → FormData → Route Handler → Validate (type, size)
   `wishlist` (M5) are all implemented.
 - `src/features/auth/` now holds the auth feature (actions, emails, components).
 - `src/shared/hooks/` empty (shared hooks added when needed).
-- `public/locales/` now has 3 locale files (en, ar, de) with comprehensive translations (M7).
+- `public/locales/` now has 4 locale files (en, ar, de, hu) with comprehensive translations (M7;
+  `hu` added 2 Oct 2026 — UI-only: policy pages + homepage DB content fall back to EN for `hu`).
 - `public/uploads/tours/catalog/` holds 22 CC0/PD `.webp` images + `CREDITS.json`, referenced by
   `prisma/seed-tours.ts` (legacy placeholder JPGs removed 1 Oct 2026).
 - `src/core/lib/i18n.ts` created (M7). `resend`, `auth`, `otp`, `session` created (M2).

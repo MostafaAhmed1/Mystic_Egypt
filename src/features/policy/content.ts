@@ -1,4 +1,4 @@
-import type { Locale } from "@/core/i18n-config";
+import { defaultLocale, locales, type Locale } from "@/core/i18n-config";
 
 /**
  * Full content for the four trust pages (Privacy, Terms, Cancellation, Cookie).
@@ -7,7 +7,8 @@ import type { Locale } from "@/core/i18n-config";
  *  - no absolute refund/service guarantees
  *  - clear limitation-of-liability and force-majeure clauses
  *  - no card data is ever stored (Stripe handles payments)
- * The English version is the governing version; ar/de are translations.
+ * The English version is the governing version; ar/de are translations,
+ * any other locale (e.g. hu) falls back to English until translated.
  */
 
 export type PolicyType =
@@ -39,7 +40,7 @@ export function isPolicyType(value: string | undefined): value is PolicyType {
   return POLICY_TYPES.includes(value as PolicyType);
 }
 
-const CONTENT: Record<PolicyType, Record<Locale, PolicyContent>> = {
+const CONTENT: Record<PolicyType, Partial<Record<Locale, PolicyContent>>> = {
   "privacy-policy": {
     en: {
       title: "Privacy Policy",
@@ -804,6 +805,12 @@ const CONTENT: Record<PolicyType, Record<Locale, PolicyContent>> = {
 };
 
 export function getPolicyContent(type: PolicyType, locale: string): PolicyContent {
-  const l = (["en", "ar", "de"] as string[]).includes(locale) ? (locale as Locale) : "en";
-  return CONTENT[type][l];
+  const l = (locales as readonly string[]).includes(locale)
+    ? (locale as Locale)
+    : defaultLocale;
+  const content = CONTENT[type][l] ?? CONTENT[type][defaultLocale];
+  if (!content) {
+    throw new Error(`Missing policy content for "${type}"`);
+  }
+  return content;
 }
