@@ -3,7 +3,7 @@ import Link from "next/link";
 import { VerifyEmailForm } from "@/features/auth/components/VerifyEmailForm";
 
 export const metadata = {
-  title: "Verify your email | Mystic Egypt",
+  title: "Verify your email",
 };
 
 export default async function VerifyEmailPage({

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { ResetPasswordForm } from "@/features/auth/components/ResetPasswordForm";
 
 export const metadata = {
-  title: "Choose a new password | Mystic Egypt",
+  title: "Choose a new password",
 };
 
 export default function ResetPasswordPage() {

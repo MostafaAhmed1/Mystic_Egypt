@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { RegisterForm } from "@/features/auth/components/RegisterForm";
 
 export const metadata = {
-  title: "Create account | Mystic Egypt",
+  title: "Create account",
 };
 
 export default function RegisterPage() {
