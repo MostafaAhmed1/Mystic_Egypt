@@ -48,6 +48,7 @@ interface TourData {
   group_prices: GroupPriceTier[];
   currency: string;
   status: string;
+  isOffer: boolean;
   itinerary: ItineraryDay[];
   images: TourImage[];
   route: TourRoute[];
@@ -74,6 +75,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
       group_prices: [],
       currency: "USD",
       status: "open",
+      isOffer: false,
       itinerary: [],
       images: [],
       route: [],
@@ -622,6 +624,22 @@ export function TourWizard({ tour }: { tour?: TourData }) {
                 </select>
               </div>
             </div>
+
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold/30 bg-gold/5 p-4">
+              <input
+                type="checkbox"
+                checked={data.isOffer}
+                onChange={(e) => updateField("isOffer", e.target.checked)}
+                className="mt-0.5 size-4 accent-[#D4AF37]"
+              />
+              <span className="text-sm">
+                <span className="font-medium">Hot offer on homepage</span>
+                <span className="block text-xs text-muted-foreground">
+                  Feature this tour in the animated hero offers bar and the homepage
+                  offers section. Only shown while status is &quot;open&quot;.
+                </span>
+              </span>
+            </label>
 
             <div className="mt-4 flex items-center justify-between">
               <h3 className="text-sm font-medium">Group Pricing (optional)</h3>

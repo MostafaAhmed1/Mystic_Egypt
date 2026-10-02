@@ -26,6 +26,7 @@ export default async function AdminTourEditPage({
     group_prices: (tour.group_prices as { min_people: number; max_people: number; price_per_person: number }[] | null) ?? [],
     currency: tour.currency,
     status: tour.status,
+    isOffer: tour.isOffer,
     itinerary: tour.itinerary.map((d) => ({
       day_number: d.day_number,
       title: d.title,

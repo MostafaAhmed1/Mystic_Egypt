@@ -38,7 +38,8 @@
     "eyebrow": "Limited-time deals",
     "title": "Hot offers",
     "subtitle": "Handpicked savings on Egypt's most loved experiences.",
-    "cta": "View offer"
+    "cta": "View offer",
+    "badge": "OFFER"
   },
   "seo": {
     "site": {
@@ -352,14 +353,6 @@
     "homepageDeleted": "Item deleted.",
     "deleteCategoryConfirm": "Delete this category?",
     "deleteServiceConfirm": "Delete this service?",
-    "offers": "Offers",
-    "offersDescription": "Displayed in the hero promo bar and the offers section.",
-    "addOffer": "Add offer",
-    "editOffer": "Edit offer",
-    "noOffers": "No offers yet.",
-    "deleteOfferConfirm": "Delete this offer?",
-    "badge": "Badge (optional)",
-    "linkUrl": "Link path (optional)",
     "siteAdministrator": "Site Administrator",
     "adminOverview": "Admin Overview",
     "platformStats": "Platform-wide statistics and recent activity.",

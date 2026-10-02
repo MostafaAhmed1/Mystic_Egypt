@@ -3,7 +3,6 @@ import "server-only";
 import { cache } from "react";
 import type {
   Category as CategoryModel,
-  Offer as OfferModel,
   Service as ServiceModel,
 } from "@/core/generated/prisma/client";
 import { defaultLocale, type Locale } from "@/core/i18n-config";
@@ -13,9 +12,6 @@ import {
   type HomepageCategory,
   type HomepageCategoryInput,
   type HomepageCategoryRecord,
-  type HomepageOffer,
-  type HomepageOfferInput,
-  type HomepageOfferRecord,
   type HomepageService,
   type HomepageServiceIcon,
   type HomepageServiceInput,
@@ -79,46 +75,6 @@ function toServiceRecord(service: ServiceModel): HomepageServiceRecord {
   };
 }
 
-function localizedOffer(
-  offer: OfferModel,
-  locale: Locale,
-): { title: string; description: string | null } {
-  if (locale === "ar") {
-    return {
-      title: offer.title_ar || offer.title_en,
-      description: offer.description_ar || offer.description_en,
-    };
-  }
-
-  if (locale === "de") {
-    return {
-      title: offer.title_de || offer.title_en,
-      description: offer.description_de || offer.description_en,
-    };
-  }
-
-  return { title: offer.title_en, description: offer.description_en };
-}
-
-function toOfferRecord(offer: OfferModel): HomepageOfferRecord {
-  return {
-    id: offer.id,
-    title_en: offer.title_en,
-    title_ar: offer.title_ar,
-    title_de: offer.title_de,
-    description_en: offer.description_en,
-    description_ar: offer.description_ar,
-    description_de: offer.description_de,
-    badge: offer.badge,
-    image_url: offer.image_url,
-    link_url: offer.link_url,
-    sort_order: offer.sort_order,
-    is_active: offer.is_active,
-    created_at: offer.created_at.toISOString(),
-    updated_at: offer.updated_at.toISOString(),
-  };
-}
-
 export const listPublicHomepageCategories = cache(
   async (locale: Locale = defaultLocale): Promise<HomepageCategory[]> => {
     const categories = await prisma.category.findMany({
@@ -152,28 +108,6 @@ export const listPublicHomepageServices = cache(
         description: localized.description,
         icon: service.icon as HomepageServiceIcon,
         sortOrder: service.sort_order,
-      };
-    });
-  },
-);
-
-export const listPublicHomepageOffers = cache(
-  async (locale: Locale = defaultLocale): Promise<HomepageOffer[]> => {
-    const offers = await prisma.offer.findMany({
-      where: { is_active: true },
-      orderBy: [{ sort_order: "asc" }, { created_at: "asc" }],
-    });
-
-    return offers.map((offer) => {
-      const localized = localizedOffer(offer, locale);
-      return {
-        id: offer.id,
-        title: localized.title,
-        description: localized.description,
-        badge: offer.badge,
-        imageUrl: offer.image_url,
-        linkUrl: offer.link_url,
-        sortOrder: offer.sort_order,
       };
     });
   },
@@ -246,43 +180,6 @@ export async function updateHomepageService(
 export async function deleteHomepageService(id: string): Promise<boolean> {
   try {
     await prisma.service.delete({ where: { id } });
-    return true;
-  } catch (error) {
-    if (isRecordNotFound(error)) return false;
-    throw error;
-  }
-}
-
-export async function listAdminHomepageOffers(): Promise<HomepageOfferRecord[]> {
-  const offers = await prisma.offer.findMany({
-    orderBy: [{ sort_order: "asc" }, { created_at: "asc" }],
-  });
-  return offers.map(toOfferRecord);
-}
-
-export async function createHomepageOffer(
-  input: HomepageOfferInput,
-): Promise<HomepageOfferRecord> {
-  const offer = await prisma.offer.create({ data: input });
-  return toOfferRecord(offer);
-}
-
-export async function updateHomepageOffer(
-  id: string,
-  input: HomepageOfferInput,
-): Promise<HomepageOfferRecord | null> {
-  try {
-    const offer = await prisma.offer.update({ where: { id }, data: input });
-    return toOfferRecord(offer);
-  } catch (error) {
-    if (isRecordNotFound(error)) return null;
-    throw error;
-  }
-}
-
-export async function deleteHomepageOffer(id: string): Promise<boolean> {
-  try {
-    await prisma.offer.delete({ where: { id } });
     return true;
   } catch (error) {
     if (isRecordNotFound(error)) return false;

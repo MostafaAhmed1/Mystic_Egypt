@@ -6,19 +6,17 @@ import { useTranslation } from "react-i18next";
 import { Pencil, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { API_ENDPOINTS } from "@/core/api/endpoints";
-import { HOMEPAGE_SERVICE_ICONS, type HomepageCategoryInput, type HomepageCategoryRecord, type HomepageOfferInput, type HomepageOfferRecord, type HomepageServiceIcon, type HomepageServiceInput, type HomepageServiceRecord } from "@/features/homepage/types";
+import { HOMEPAGE_SERVICE_ICONS, type HomepageCategoryInput, type HomepageCategoryRecord, type HomepageServiceIcon, type HomepageServiceInput, type HomepageServiceRecord } from "@/features/homepage/types";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
 
 type CategoryDraft = HomepageCategoryInput & { id: string | null };
 type ServiceDraft = HomepageServiceInput & { id: string | null };
-type OfferDraft = HomepageOfferInput & { id: string | null };
 
 type AdminHomepageClientProps = {
   initialCategories: HomepageCategoryRecord[];
   initialServices: HomepageServiceRecord[];
-  initialOffers: HomepageOfferRecord[];
 };
 
 function newCategory(): CategoryDraft {
@@ -50,23 +48,6 @@ function newService(): ServiceDraft {
   };
 }
 
-function newOffer(): OfferDraft {
-  return {
-    id: null,
-    title_en: "",
-    title_ar: "",
-    title_de: "",
-    description_en: "",
-    description_ar: "",
-    description_de: "",
-    badge: "",
-    image_url: "",
-    link_url: "",
-    sort_order: 0,
-    is_active: true,
-  };
-}
-
 function responseError(payload: unknown, fallback: string): string {
   if (payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string") {
     return payload.error;
@@ -77,16 +58,13 @@ function responseError(payload: unknown, fallback: string): string {
 export function AdminHomepageClient({
   initialCategories,
   initialServices,
-  initialOffers,
 }: AdminHomepageClientProps) {
   const { t } = useTranslation("common");
   const [categories, setCategories] = useState(initialCategories);
   const [services, setServices] = useState(initialServices);
-  const [offers, setOffers] = useState(initialOffers);
   const [categoryDraft, setCategoryDraft] = useState<CategoryDraft | null>(null);
   const [serviceDraft, setServiceDraft] = useState<ServiceDraft | null>(null);
-  const [offerDraft, setOfferDraft] = useState<OfferDraft | null>(null);
-  const [saving, setSaving] = useState<"category" | "service" | "offer" | null>(null);
+  const [saving, setSaving] = useState<"category" | "service" | null>(null);
 
   async function saveCategory(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -174,67 +152,6 @@ export function AdminHomepageClient({
     }
     setServices((current) => current.filter((item) => item.id !== id));
     toast.success(t("admin.homepageDeleted", "Item deleted."));
-  }
-
-  async function saveOffer(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!offerDraft) return;
-    setSaving("offer");
-
-    const isEditing = Boolean(offerDraft.id);
-    const endpoint = isEditing
-      ? API_ENDPOINTS.ADMIN.HOMEPAGE.OFFERS.BY_ID(offerDraft.id as string)
-      : API_ENDPOINTS.ADMIN.HOMEPAGE.OFFERS.CREATE;
-    const response = await fetch(endpoint, {
-      method: isEditing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(offerDraft),
-    });
-    const payload: unknown = await response.json().catch(() => null);
-    setSaving(null);
-
-    if (!response.ok) {
-      toast.error(responseError(payload, t("admin.homepageSaveFailed", "Could not save offer.")));
-      return;
-    }
-
-    const offer = payload as { offer: HomepageOfferRecord };
-    setOffers((current) =>
-      isEditing
-        ? current.map((item) => (item.id === offer.offer.id ? offer.offer : item))
-        : [...current, offer.offer],
-    );
-    setOfferDraft(null);
-    toast.success(t("admin.homepageSaved", "Changes saved."));
-  }
-
-  async function deleteOffer(id: string) {
-    if (!window.confirm(t("admin.deleteOfferConfirm", "Delete this offer?"))) return;
-    const response = await fetch(API_ENDPOINTS.ADMIN.HOMEPAGE.OFFERS.BY_ID(id), { method: "DELETE" });
-    const payload: unknown = await response.json().catch(() => null);
-    if (!response.ok) {
-      toast.error(responseError(payload, t("admin.homepageDeleteFailed", "Could not delete offer.")));
-      return;
-    }
-    setOffers((current) => current.filter((item) => item.id !== id));
-    toast.success(t("admin.homepageDeleted", "Item deleted."));
-  }
-
-  function editOffer(offer: HomepageOfferRecord) {
-    setOfferDraft({
-      id: offer.id,
-      title_en: offer.title_en,
-      title_ar: offer.title_ar,
-      title_de: offer.title_de,
-      description_en: offer.description_en,
-      description_ar: offer.description_ar,
-      description_de: offer.description_de,
-      badge: offer.badge,
-      image_url: offer.image_url,
-      link_url: offer.link_url,
-      sort_order: offer.sort_order,
-      is_active: offer.is_active,
-    });
   }
 
   function editCategory(category: HomepageCategoryRecord) {
@@ -414,87 +331,6 @@ export function AdminHomepageClient({
           editLabel={t("admin.edit", "Edit")}
           deleteLabel={t("admin.delete", "Delete")}
           emptyLabel={t("admin.noServices", "No services yet.")}
-        />
-      </section>
-
-      <section className="rounded-2xl border bg-card p-5">
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold">{t("admin.offers", "Offers")}</h2>
-            <p className="text-sm text-muted-foreground">{t("admin.offersDescription", "Displayed in the hero promo bar and the offers section.")}</p>
-          </div>
-          <Button type="button" onClick={() => setOfferDraft(newOffer())}>
-            <Plus aria-hidden />
-            {t("admin.addOffer", "Add offer")}
-          </Button>
-        </div>
-
-        {offerDraft && (
-          <form onSubmit={saveOffer} className="mb-6 grid gap-4 rounded-xl border border-gold/20 bg-sand/20 p-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{offerDraft.id ? t("admin.editOffer", "Edit offer") : t("admin.addOffer", "Add offer")}</h3>
-              <Button type="button" variant="ghost" size="icon" onClick={() => setOfferDraft(null)} aria-label={t("common.close", "Close")}>
-                <X aria-hidden />
-              </Button>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Field label="English title">
-                <Input required maxLength={160} value={offerDraft.title_en} onChange={(event) => setOfferDraft({ ...offerDraft, title_en: event.target.value })} />
-              </Field>
-              <Field label="العنوان بالعربية">
-                <Input required dir="rtl" maxLength={160} value={offerDraft.title_ar} onChange={(event) => setOfferDraft({ ...offerDraft, title_ar: event.target.value })} />
-              </Field>
-              <Field label="Deutscher Titel">
-                <Input required maxLength={160} value={offerDraft.title_de} onChange={(event) => setOfferDraft({ ...offerDraft, title_de: event.target.value })} />
-              </Field>
-              <Field label={t("admin.badge", "Badge (optional)")}>
-                <Input maxLength={40} value={offerDraft.badge ?? ""} onChange={(event) => setOfferDraft({ ...offerDraft, badge: event.target.value })} placeholder="20% OFF" />
-              </Field>
-              <Field label={t("admin.linkUrl", "Link path (optional)")}>
-                <Input maxLength={500} value={offerDraft.link_url ?? ""} onChange={(event) => setOfferDraft({ ...offerDraft, link_url: event.target.value })} placeholder="/tours" />
-              </Field>
-              <Field label={t("admin.imagePath", "Local image path")}>
-                <Input maxLength={500} value={offerDraft.image_url ?? ""} onChange={(event) => setOfferDraft({ ...offerDraft, image_url: event.target.value })} placeholder="/uploads/tours/catalog/nile-cruise.webp" />
-              </Field>
-              <Field label={t("admin.sortOrder", "Sort order")}>
-                <Input required type="number" value={offerDraft.sort_order} onChange={(event) => setOfferDraft({ ...offerDraft, sort_order: Number(event.target.value) })} />
-              </Field>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              <Field label="English description (optional)">
-                <Textarea maxLength={500} value={offerDraft.description_en ?? ""} onChange={(event) => setOfferDraft({ ...offerDraft, description_en: event.target.value })} />
-              </Field>
-              <Field label="الوصف بالعربية (اختياري)">
-                <Textarea dir="rtl" maxLength={500} value={offerDraft.description_ar ?? ""} onChange={(event) => setOfferDraft({ ...offerDraft, description_ar: event.target.value })} />
-              </Field>
-              <Field label="Deutsche Beschreibung (optional)">
-                <Textarea maxLength={500} value={offerDraft.description_de ?? ""} onChange={(event) => setOfferDraft({ ...offerDraft, description_de: event.target.value })} />
-              </Field>
-            </div>
-            {Boolean(offerDraft.image_url) && offerDraft.image_url?.startsWith("/uploads/") && (
-              <Image src={offerDraft.image_url} alt="" width={280} height={120} className="h-28 w-full max-w-sm rounded-lg object-cover" unoptimized />
-            )}
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={offerDraft.is_active} onChange={(event) => setOfferDraft({ ...offerDraft, is_active: event.target.checked })} />
-              {t("admin.active", "Active")}
-            </label>
-            <Button type="submit" disabled={saving === "offer"}>
-              <Save aria-hidden />
-              {saving === "offer" ? t("common.saving", "Saving...") : t("common.save", "Save")}
-            </Button>
-          </form>
-        )}
-
-        <ItemTable
-          items={offers}
-          primary={(item) => item.title_en}
-          secondary={(item) => `${item.badge ? `${item.badge} · ` : ""}${item.link_url ?? "—"}`}
-          selectedId={offerDraft?.id ?? null}
-          onEdit={editOffer}
-          onDelete={deleteOffer}
-          editLabel={t("admin.edit", "Edit")}
-          deleteLabel={t("admin.delete", "Delete")}
-          emptyLabel={t("admin.noOffers", "No offers yet.")}
         />
       </section>
     </div>

@@ -1,7 +1,6 @@
 import {
   HOMEPAGE_SERVICE_ICONS,
   type HomepageCategoryInput,
-  type HomepageOfferInput,
   type HomepageServiceInput,
   type HomepageServiceIcon,
 } from "@/features/homepage/types";
@@ -63,40 +62,6 @@ function booleanValue(record: JsonRecord, key: string): boolean {
   throw new HomepageValidationError(`${key} must be a boolean.`);
 }
 
-function optionalString(record: JsonRecord, key: string, maxLength: number): string | null {
-  const value = record[key];
-  if (value === undefined || value === null) return null;
-  if (typeof value !== "string") {
-    throw new HomepageValidationError(`${key} must be a string.`);
-  }
-  const normalized = value.trim();
-  if (normalized.length === 0) return null;
-  if (normalized.length > maxLength) {
-    throw new HomepageValidationError(`${key} is too long.`);
-  }
-  return normalized;
-}
-
-function optionalImagePath(record: JsonRecord, key: string): string | null {
-  const path = optionalString(record, key, 500);
-  if (path === null) return null;
-  if (!path.startsWith("/uploads/")) {
-    throw new HomepageValidationError(`${key} must be a local path under /uploads/.`);
-  }
-  return path;
-}
-
-function optionalLinkUrl(record: JsonRecord, key: string): string | null {
-  const link = optionalString(record, key, 500);
-  if (link === null) return null;
-  const isInternal = link.startsWith("/");
-  const isExternal = link.startsWith("http://") || link.startsWith("https://");
-  if (!isInternal && !isExternal) {
-    throw new HomepageValidationError(`${key} must start with "/" or http(s)://.`);
-  }
-  return link;
-}
-
 function serviceIcon(record: JsonRecord): HomepageServiceIcon {
   const icon = requiredString(record, "icon", 40);
   if (!HOMEPAGE_SERVICE_ICONS.some((candidate) => candidate === icon)) {
@@ -129,23 +94,6 @@ export function parseHomepageServiceInput(value: unknown): HomepageServiceInput 
     description_ar: requiredString(record, "description_ar", 5000),
     description_de: requiredString(record, "description_de", 5000),
     icon: serviceIcon(record),
-    sort_order: integerValue(record, "sort_order"),
-    is_active: booleanValue(record, "is_active"),
-  };
-}
-
-export function parseHomepageOfferInput(value: unknown): HomepageOfferInput {
-  const record = asRecord(value);
-  return {
-    title_en: requiredString(record, "title_en", 160),
-    title_ar: requiredString(record, "title_ar", 160),
-    title_de: requiredString(record, "title_de", 160),
-    description_en: optionalString(record, "description_en", 500),
-    description_ar: optionalString(record, "description_ar", 500),
-    description_de: optionalString(record, "description_de", 500),
-    badge: optionalString(record, "badge", 40),
-    image_url: optionalImagePath(record, "image_url"),
-    link_url: optionalLinkUrl(record, "link_url"),
     sort_order: integerValue(record, "sort_order"),
     is_active: booleanValue(record, "is_active"),
   };

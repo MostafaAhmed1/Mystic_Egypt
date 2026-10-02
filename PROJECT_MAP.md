@@ -1,7 +1,7 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: PRODUCTION DEPLOYED — A+B+C+D RELEASE LIVE 2 Oct 2026 (broken tour images fixed · language switcher moved to header · nginx 12M · Hot Offers feature)
-## Active plan: execution complete for A+B+C+D (tracker: `docs/PROGRESS-2026-10-01.md`); X6 commit pending user request. Performance plan M2–M5 still awaiting order.
+## Status: PRODUCTION DEPLOYED — 2 RELEASES LIVE 2 Oct 2026 (A+B+C+D: images fix · language switcher · nginx 12M · Hot Offers v1; then Hot Offers REDESIGN: `Tour.isOffer`, `offers` table dropped, bar moved to hero top)
+## Active plan: execution complete for A+B+C+D and the Offers redesign (tracker: `docs/PROGRESS-2026-10-01.md`); X6 commit pending user request. Performance plan M2–M5 still awaiting order.
 **Last Updated:** Oct 2, 2026
 
 ---
@@ -1188,6 +1188,38 @@ Modify `src/proxy.ts` to:
 - **Live battery:** EN/AR/DE 200 (AR `dir=rtl` + Arabic offers), uploads webp 200, `/_next/image` 200,
   switcher present home header + login/register (top-right, utility bar clean), hero bar
   (`bg-obsidian/75`, h=56, indicator above) + `#offers` section with 3 cards, nginx 12M active.
+
+### Hot Offers REDESIGN — `Tour.isOffer`, `offers` table dropped (2 Oct 2026)
+
+**Status: DEPLOYED (tag `2026-10-02-offers-bar`, bundle 40.2 MB) · LIVE VERIFIED** — supersedes Phase D
+above (full tracker: `docs/PROGRESS-2026-10-01.md` → Phase D2).
+
+- **Decision (user-approved):** offers = **bookable tours**, not a separate entity. The Phase-D `Offer`
+  model, admin CRUD (`api/admin/homepage/offers[/:id]`), `/admin/homepage` Offers tab, i18n admin keys
+  and `seed.ts` homepageOffers block are **all removed**; replaced by a single `Tour.isOffer` boolean.
+- **Schema:** `tours.isOffer BOOLEAN NOT NULL DEFAULT false` (schema.prisma:109). Prod DDL (manual,
+  backup-first): backup `data/backup_full_2026-10-02_pre_drop_offers.sql` (60 KB) → `ALTER TABLE tours
+  ADD COLUMN isOffer` → `UPDATE` 5 slugs (`cairo`, `luxor`, `hurghada`, `fayoum`,
+  `classic-nile-cruise-cairo`) → `DROP TABLE IF EXISTS offers`.
+- **Backend:** `listPublicOfferTours()` (`features/tour/service.ts`, `cache()`, `isOffer: true` +
+  open status) → `TourSummary[]`; `getPublicTourBySlug`/admin tour detail/create/update pass `isOffer`;
+  tours POST/PUT routes parse `isOffer: boolean`; `endpoints.ts` OFFERS block removed.
+- **Public UI:** bar **moved from hero bottom to hero top** (`absolute inset-x-0 top-0 z-20`, solid
+  `bg-obsidian` so the existing `services-marquee` edge-fades read cleanly) — shimmer hairline +
+  pulsing `offers.heroLabel` pill + duplicated `OfferChipGroup` marquee (32s, hover-pause);
+  `OffersSection` = 5 ribbon cards linking `/tours/[slug]` (image h-44, `animate-pulse` badge
+  `offers.badge` OFFER/عرض/ANGEBOT, duration, price, "View offer" CTA). Scroll indicator back to
+  `bottom-8`. Empty offer list → both placements render null.
+- **Admin UI:** `TourWizard` step 3 checkbox "Hot offer on homepage" (`TourData.isOffer`, edit page
+  passes `tour.isOffer`); homepage admin Offers tab deleted.
+- **i18n:** public `offers.badge` added (en/ar/de); admin offer keys removed from all 3 locales.
+- **Seeds:** `seed-tours.ts` carries `isOffer` on the 5 slugs (upsert update-path spreads it only when
+  present so older rows keep their flag); `seed.ts` offers block removed.
+- **Verified:** `tsc --noEmit` 0, lint = same 7 pre-existing errors (untouched files), grep = no
+  leftovers, local battery (EN/AR, marquee exactly 5 slugs ×2, 5 cards/badges/prices, bar index
+  before h1) + live battery after swap (EN/AR 200, 11 sections both locales post-warmup,
+  `isOffer:true` in `/en/tours/cairo` RSC payload, old offers API → 404, 0 container errors,
+  rollback image `mystic-egypt-new:previous` in place).
 
 ### Document References
 

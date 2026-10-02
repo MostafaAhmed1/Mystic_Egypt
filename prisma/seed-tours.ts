@@ -16,6 +16,8 @@ type CatalogTour = {
   inclusions?: string | null;
   exclusions?: string | null;
   itinerary?: Day[];
+  /** Featured in the homepage hot-offers bar/section. */
+  isOffer?: boolean;
 };
 
 const usd = (eur: number) => Math.round(eur * 1.1355);
@@ -53,20 +55,20 @@ const luxorDay: Day = {
 };
 
 const catalog: CatalogTour[] = [
-  { slug: "cairo", title: "Cairo City Tour", description: "Explore the Giza pyramids and Sphinx, the treasures of the Egyptian Museum and the lanes of Khan el-Khalili with a licensed Egyptologist.", duration: "1 Day", price: usd(250), image: image("cairo-pyramids"), inclusions: "Licensed Egyptologist guide" },
+  { slug: "cairo", title: "Cairo City Tour", description: "Explore the Giza pyramids and Sphinx, the treasures of the Egyptian Museum and the lanes of Khan el-Khalili with a licensed Egyptologist.", duration: "1 Day", price: usd(250), image: image("cairo-pyramids"), inclusions: "Licensed Egyptologist guide", isOffer: true },
   { slug: "nile-trip-cairo", title: "Cairo Nile Trip", description: "Sail the Nile in Cairo on a traditional boat, taking in the city lights and landmarks from the water, with dinner on board and folkloric entertainment.", duration: "1 Day", price: usd(50), image: image("cairo-nile-boat"), inclusions: "Dinner on board\nFolkloric entertainment" },
-  { slug: "luxor", title: "Luxor Trip", description: "Explore Karnak and Luxor temples on the east bank, and the Valley of the Kings, Hatshepsut Temple and the Colossi of Memnon on the west bank.", duration: "1 Day", price: usd(250), image: image("luxor-karnak") },
+  { slug: "luxor", title: "Luxor Trip", description: "Explore Karnak and Luxor temples on the east bank, and the Valley of the Kings, Hatshepsut Temple and the Colossi of Memnon on the west bank.", duration: "1 Day", price: usd(250), image: image("luxor-karnak"), isOffer: true },
   { slug: "aswan", title: "Aswan Trip", description: "Discover the High Dam, Unfinished Obelisk, Philae Temple by boat, Botanical Garden and Nubian Village along the Nile at Aswan.", duration: "2 Days", price: usd(300), image: image("aswan-philae") },
   { slug: "abydos-dendera-temples", title: "Abydos & Dendera Temples", description: "Visit the Temple of Seti I at Abydos and the well-preserved Temple of Hathor at Dendera in Sohag and Qena.", duration: "1 Day", price: usd(105), image: image("abydos-dendera") },
   { slug: "alexandria", title: "Alexandria Trip", description: "Visit the Bibliotheca Alexandrina, the Catacombs of Kom el-Shoqafa, Pompey's Pillar and the seafront Corniche, with glimpses of the city's royal heritage.", duration: "1 Day", price: usd(120), image: image("alexandria-library") },
-  { slug: "hurghada", title: "Hurghada Day Trip", description: "Enjoy the Red Sea with a snorkeling or glass-bottom boat trip and free time on the beaches. An optional desert safari and quad biking are also available.", duration: "1 Day", price: usd(45), image: image("hurghada-red-sea") },
+  { slug: "hurghada", title: "Hurghada Day Trip", description: "Enjoy the Red Sea with a snorkeling or glass-bottom boat trip and free time on the beaches. An optional desert safari and quad biking are also available.", duration: "1 Day", price: usd(45), image: image("hurghada-red-sea"), isOffer: true },
   { slug: "sharm-el-sheikh", title: "Sharm El Sheikh Trip", description: "Snorkel at Ras Mohammed, see the sea from a glass-bottom boat and explore Naama Bay. Stargazing in the Sinai desert is optional.", duration: "1 Day", price: usd(75), image: image("sharm-ras-mohammed") },
   { slug: "marsa-alam", title: "Marsa Alam Trip", description: "Explore Red Sea snorkeling and diving sites, pristine beaches and dolphin watching in the deep blue waters of Marsa Alam.", duration: "1 Day", price: usd(50), image: image("marsa-alam-reef") },
   { slug: "dahab", title: "Dahab Trip", description: "Visit the Blue Hole and the Canyon, see sunrise at Mount Sinai and relax on Dahab's beach on the Gulf of Aqaba.", duration: "1 Day", price: usd(120), image: image("dahab-blue-hole") },
   { slug: "white-desert-bahariya", title: "White Desert & Bahariya Oasis Adventure", description: "Camp under the stars in the White Desert, explore the crystal mountains and relax in the hot springs of Bahariya Oasis.", duration: null, price: 899, image: image("white-desert") },
-  { slug: "fayoum", title: "Fayoum Oasis Trip", description: "Discover Fayoum's gardens and lakes, cross Lake Qarun, see the historic waterwheels and visit the waterfalls of Wadi El Rayan.", duration: "1 Day", price: usd(110), image: image("fayoum-waterfalls") },
+  { slug: "fayoum", title: "Fayoum Oasis Trip", description: "Discover Fayoum's gardens and lakes, cross Lake Qarun, see the historic waterwheels and visit the waterfalls of Wadi El Rayan.", duration: "1 Day", price: usd(110), image: image("fayoum-waterfalls"), isOffer: true },
   { slug: "siwa-oasis", title: "Siwa Oasis Trip", description: "Explore the Temple of Amun, Mountain of the Dead, salt lakes and hot springs, and camp under the stars in Siwa Oasis.", duration: "2 Days", price: usd(500), image: image("siwa-oasis") },
-  { slug: "classic-nile-cruise-cairo", title: "Classic Nile Cruise & Cairo", description: "Travel along the Nile from the Giza pyramids to the temples of Luxor and Aswan, with guided tours, Nile cruise accommodation and expert local guides.", duration: null, price: 1499, image: image("nile-cruise"), inclusions: "Guided tours\nNile cruise accommodation\nExpert local guides" },
+  { slug: "classic-nile-cruise-cairo", title: "Classic Nile Cruise & Cairo", description: "Travel along the Nile from the Giza pyramids to the temples of Luxor and Aswan, with guided tours, Nile cruise accommodation and expert local guides.", duration: null, price: 1499, image: image("nile-cruise"), inclusions: "Guided tours\nNile cruise accommodation\nExpert local guides", isOffer: true },
   { slug: "hurghada-cairo-trip-program", title: "Hurghada & Cairo Excursions Programme", description: "Five days of Hurghada desert and sea activities, Orange Bay and a day trip to Cairo's pyramids and museum.", duration: "5 Days", price: usd(1850), image: image("cairo-pyramids"), itinerary: [safari, city, orange, panorama(4), cairoDay(5)] },
   { slug: "hurghada-luxor-excursions-program", title: "Hurghada & Luxor Excursions Programme", description: "Five days of Hurghada desert and sea activities, Orange Bay and a day trip to Luxor's temples and the Valley of the Kings.", duration: "5 Days", price: usd(1750), image: image("luxor-karnak"), itinerary: [safari, city, orange, panorama(4), luxorDay] },
   { slug: "hurghada-luxor-cairo-excursions-program", title: "Hurghada, Luxor & Cairo Excursions Programme", description: "Five days combining Hurghada's desert and Red Sea with day trips to Cairo and Luxor.", duration: "5 Days", price: 1999, image: image("cairo-pyramids"), itinerary: [safari, city, panorama(3), cairoDay(4), luxorDay] },
@@ -97,8 +99,8 @@ export async function seedTours(prisma: PrismaClient, adminId: string): Promise<
     await prisma.$transaction(async (tx) => {
       const tour = await tx.tour.upsert({
         where: { slug: item.slug },
-        update: { title: item.title, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null },
-        create: { title: item.title, slug: item.slug, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, created_by: adminId },
+        update: { title: item.title, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, ...(item.isOffer !== undefined ? { isOffer: item.isOffer } : {}) },
+        create: { title: item.title, slug: item.slug, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, isOffer: item.isOffer ?? false, created_by: adminId },
       });
 
       if (item.itinerary) {

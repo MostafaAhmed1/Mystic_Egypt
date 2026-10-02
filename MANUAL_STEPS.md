@@ -1,6 +1,6 @@
 # MANUAL_STEPS.md - Human-Required Actions
 
-## Status: PRODUCTION DEPLOYED (as-built Sept 2026; A+B+C+D release live 2 Oct 2026)
+## Status: PRODUCTION DEPLOYED (as-built Sept 2026; A+B+C+D release live 2 Oct 2026; Hot Offers redesign `2026-10-02-offers-bar` live 2 Oct 2026)
 
 > NOTE: The "Server Configuration (VPS)" / PM2 / `mystic_user` instructions further
 > down are the ORIGINAL blueprint and DO NOT match reality. The production server
@@ -227,9 +227,11 @@ mariadb -u mystic_app -p -h 127.0.0.1 mystic_egypt
 
 ### Homepage database application (local first — pending)
 
-**Status update 2026-10-02:** `categories`, `services`, and `offers` are all **live on production**
-(manual SQL — see below); the full seed has NEVER been run against prod. The local-only procedure
-below remains the reference for schema-changing work.
+**Status update 2026-10-02 (EOD):** `categories` and `services` are **live on production** (manual
+SQL — see below). The **`offers` table no longer exists** — the Hot Offers feature was redesigned the
+same day to use `tours.isOffer` instead (see the redesign checklist below); its CREATE/seed rows above
+are historical only. The full seed has NEVER been run against prod. The local-only procedure below
+remains the reference for schema-changing work.
 
 The homepage code and seed are present, but the current local `DATABASE_URL` resolves to the
 production VPS database. Do not use it for any schema-changing command.
@@ -241,7 +243,7 @@ production VPS database. Do not use it for any schema-changing command.
 - [ ] Run `npm run db:generate` against the local schema.
 - [ ] Run `npm run db:push` only against the isolated local database.
 - [ ] Run `npm run db:seed` only against the isolated local database.
-- [ ] Verify six `categories` rows and four `services` rows (and 3 `offers` rows after the Hot Offers seed), then remove or rotate the temporary local credentials.
+- [ ] Verify six `categories` rows and four `services` rows, then remove or rotate the temporary local credentials.
 
 Example for the command session (replace credentials locally; never commit them):
 ```powershell
@@ -252,17 +254,24 @@ npm run db:seed
 ```
 
 **Production application procedure (manual approval required):**
-- [x] Back up `mystic_egypt` before any schema change — offers DDL used `data/backup_full_2026-10-02.sql`
+- [x] Back up `mystic_egypt` before any schema change — first offers DDL used `data/backup_full_2026-10-02.sql`
       (mirrored to repo `backups/backup_full_2026-10-02.sql`, 16 tables, 55 KB).
 - [x] Apply reviewed `CREATE TABLE`/index SQL manually (never `prisma migrate`/`db push` on prod).
-      `offers` created 2026-10-02 (matches Prisma model: `varchar(191)`, `datetime(3)`, `tinyint(1)`,
-      index `offers_is_active_sort_order_idx`, `utf8mb4_unicode_ci`); `categories`/`services` applied earlier.
-- [x] Insert only reviewed rows — offers seeded via `INSERT IGNORE` (3 rows: `offer-early-booking`,
-      `offer-family`, `offer-custom-itinerary`, Arabic round-trip verified). Full seed still prohibited
-      (it also manages users/add-ons/tours).
+      `categories`/`services` applied earlier; `offers` was created 2026-10-02 **and dropped the same day**
+      (superseded by the `Tour.isOffer` redesign — no longer exists).
+- [x] Insert only reviewed rows — offers seeded via `INSERT IGNORE` (3 rows) but the whole table was
+      dropped on redesign day; offer tours are now ordinary `tours` rows with `isOffer = 1`.
+      Full seed still prohibited (it also manages users/add-ons/tours).
 - [ ] Copy any new `public/uploads/...` files to `/var/www/mysticegypt/data/uploads/...`, preserving paths
-      (offers seed images already exist on the server: `catalog/{nile-cruise,cairo-pyramids,white-desert}.webp`).
+      (tour catalog images already exist on the server under `catalog/`).
 - [x] Container recreated via artifact release; verify all three locales + admin CRUD flow (done 2026-10-02).
+
+**Hot Offers redesign DDL — EXECUTED 2026-10-02 (release `2026-10-02-offers-bar`):**
+- [x] Back up first: `data/backup_full_2026-10-02_pre_drop_offers.sql` (60 KB, full DB).
+- [x] `ALTER TABLE tours ADD COLUMN isOffer BOOLEAN NOT NULL DEFAULT false;`
+- [x] Flag 5 tours: `UPDATE tours SET isOffer = 1 WHERE slug IN ('cairo','luxor','hurghada','fayoum','classic-nile-cruise-cairo');`
+- [x] `DROP TABLE IF EXISTS offers;` (PRD-compliant removal; code no longer references it)
+- [x] Verified: column present, `offer_count = 5`, `offers` gone; old API `/api/admin/homepage/offers` → 404.
 
 ### 8. Nginx / SSL facts
 ```

@@ -51,11 +51,6 @@ export const API_ENDPOINTS = {
         CREATE: "/api/admin/homepage/services",
         BY_ID: (id: string) => `/api/admin/homepage/services/${id}`,
       },
-      OFFERS: {
-        LIST: "/api/admin/homepage/offers",
-        CREATE: "/api/admin/homepage/offers",
-        BY_ID: (id: string) => `/api/admin/homepage/offers/${id}`,
-      },
     },
     BOOKINGS: {
       LIST: "/api/admin/bookings",

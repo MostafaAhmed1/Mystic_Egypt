@@ -38,7 +38,8 @@
     "eyebrow": "Zeitlich begrenzte Angebote",
     "title": "Hot Angebote",
     "subtitle": "Ausgewählte Ersparnisse bei den beliebtesten Ägypten-Erlebnissen.",
-    "cta": "Angebot ansehen"
+    "cta": "Angebot ansehen",
+    "badge": "ANGEBOT"
   },
   "seo": {
     "site": {
@@ -352,14 +353,6 @@
     "homepageDeleted": "Element gelöscht.",
     "deleteCategoryConfirm": "Diese Kategorie löschen?",
     "deleteServiceConfirm": "Diese Leistung löschen?",
-    "offers": "Angebote",
-    "offersDescription": "Wird in der Hero-Angebotsleiste und im Angebotsbereich angezeigt.",
-    "addOffer": "Angebot hinzufügen",
-    "editOffer": "Angebot bearbeiten",
-    "noOffers": "Noch keine Angebote.",
-    "deleteOfferConfirm": "Dieses Angebot löschen?",
-    "badge": "Badge (optional)",
-    "linkUrl": "Linkpfad (optional)",
     "siteAdministrator": "Website-Administrator",
     "adminOverview": "Admin-Übersicht",
     "platformStats": "Plattformweite Statistiken und letzte Aktivitäten.",

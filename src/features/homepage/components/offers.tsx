@@ -3,55 +3,101 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Tag } from "lucide-react";
-import { extractLocale } from "@/core/utils/locale";
-import type { HomepageOffer } from "@/features/homepage/types";
+import { ArrowRight, Clock, Tag } from "lucide-react";
+import { formatCurrency } from "@/core/utils";
+import type { TourSummary } from "@/features/tour/types";
 import { ScrollReveal } from "@/shared/components/ScrollReveal";
 import { useLocale } from "@/shared/hooks/use-locale";
 
-function offerHref(linkUrl: string | null, localize: (path: string) => string): string {
-  if (!linkUrl) return "#";
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(linkUrl)) return linkUrl;
-  if (extractLocale(linkUrl)) return linkUrl;
-  return localize(linkUrl);
-}
-
-export function OffersHeroBar({ offers }: { offers: HomepageOffer[] }) {
+/**
+ * Hot-offers promo bar pinned to the TOP of the hero section.
+ * Infinite CSS marquee (pauses on hover) of bookable offer tours.
+ */
+export function OffersHeroBar({ offers }: { offers: TourSummary[] }) {
   const { t } = useTranslation("common");
-  const { href } = useLocale();
 
   if (offers.length === 0) return null;
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-20 border-t border-gold/25 bg-obsidian/75 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-2.5 px-4 py-3 sm:px-6">
+    <aside
+      aria-label={t("offers.heroLabel", "Hot offers")}
+      className="absolute inset-x-0 top-0 z-20 border-b border-gold/40 bg-obsidian"
+    >
+      {/* Looping gold shimmer hairline */}
+      <div className="animate-shimmer h-0.5 w-full" aria-hidden />
+
+      <div className="flex items-stretch">
         <a
           href="#offers"
-          className="inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-colors duration-300 hover:text-gold-dark"
+          className="group flex shrink-0 items-center gap-2 border-e border-gold/25 px-3 py-2 sm:px-4"
         >
-          <Tag className="size-3.5" aria-hidden />
-          {t("offers.heroLabel", "Hot offers")}
-        </a>
-        {offers.map((offer) => (
-          <Link
-            key={offer.id}
-            href={offerHref(offer.linkUrl, href)}
-            className="group inline-flex min-w-0 items-center gap-2 rounded-full border border-sandstone/20 bg-white/5 px-3 py-1.5 text-xs text-sandstone transition-colors duration-300 hover:border-gold/50 hover:text-gold"
+          <span
+            className="animate-pulse rounded-full bg-gold p-1.5 text-obsidian shadow-[0_0_12px_rgba(212,175,55,0.6)]"
+            aria-hidden
           >
-            {offer.badge && (
-              <span className="shrink-0 rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold tracking-wider text-obsidian">
-                {offer.badge}
-              </span>
-            )}
-            <span className="truncate">{offer.title}</span>
-          </Link>
-        ))}
+            <Tag className="size-3.5" />
+          </span>
+          <span className="text-[11px] font-bold uppercase tracking-widest text-gold transition-colors group-hover:text-gold-dark">
+            {t("offers.heroLabel", "Hot offers")}
+          </span>
+        </a>
+
+        {/* Infinite marquee (pauses on hover) */}
+        <div className="services-marquee min-w-0 flex-1 py-2">
+          <div className="services-marquee__track">
+            <OfferChipGroup offers={offers} />
+            <OfferChipGroup offers={offers} aria-hidden />
+          </div>
+        </div>
       </div>
+    </aside>
+  );
+}
+
+function OfferChipGroup({
+  offers,
+  ...rest
+}: {
+  offers: TourSummary[];
+  "aria-hidden"?: boolean;
+}) {
+  const { href } = useLocale();
+
+  return (
+    <div className="services-marquee__group items-center" {...rest}>
+      {offers.map((tour) => (
+        <Link
+          key={tour.id}
+          href={href(`/tours/${tour.slug}`)}
+          className="group flex shrink-0 items-center gap-2.5 rounded-full border border-gold/30 bg-white/5 py-1 pe-3 ps-1 transition-all duration-300 hover:border-gold hover:bg-gold/15 hover:shadow-[0_0_16px_rgba(212,175,55,0.35)]"
+        >
+          {tour.primary_image ? (
+            <Image
+              src={tour.primary_image}
+              alt=""
+              width={40}
+              height={40}
+              className="size-8 rounded-full object-cover"
+            />
+          ) : (
+            <span className="flex size-8 items-center justify-center rounded-full bg-gold/20 text-gold">
+              <Tag className="size-4" aria-hidden />
+            </span>
+          )}
+          <span className="max-w-[140px] truncate text-xs font-medium text-sandstone transition-colors group-hover:text-gold sm:max-w-[240px] sm:text-sm">
+            {tour.title}
+          </span>
+          <span className="shrink-0 text-xs font-bold text-gold">
+            {formatCurrency(tour.base_price, tour.currency)}
+          </span>
+        </Link>
+      ))}
     </div>
   );
 }
 
-export function OffersSection({ offers }: { offers: HomepageOffer[] }) {
+/** Homepage offers section — bookable tours flagged `isOffer` by the admin. */
+export function OffersSection({ offers }: { offers: TourSummary[] }) {
   const { t } = useTranslation("common");
   const { href } = useLocale();
 
@@ -75,17 +121,17 @@ export function OffersSection({ offers }: { offers: HomepageOffer[] }) {
         </ScrollReveal>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {offers.map((offer, index) => (
-            <ScrollReveal key={offer.id} delay={index * 0.08}>
+          {offers.map((tour, index) => (
+            <ScrollReveal key={tour.id} delay={index * 0.08}>
               <Link
-                href={offerHref(offer.linkUrl, href)}
+                href={href(`/tours/${tour.slug}`)}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gold/10 bg-white shadow-[0_16px_40px_rgba(26,26,24,0.10)] transition-all duration-500 hover:border-gold/30 hover:shadow-[0_8px_40px_rgba(212,175,55,0.16)]"
               >
                 <div className="relative h-44 shrink-0 bg-obsidian">
-                  {offer.imageUrl ? (
+                  {tour.primary_image ? (
                     <Image
-                      src={offer.imageUrl}
-                      alt={offer.title}
+                      src={tour.primary_image}
+                      alt={tour.title}
                       fill
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -96,22 +142,27 @@ export function OffersSection({ offers }: { offers: HomepageOffer[] }) {
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-obsidian/40 to-transparent" />
-                  {offer.badge && (
-                    <span className="absolute top-3 start-3 rounded-full bg-gold px-3 py-1 text-[11px] font-bold tracking-wider text-obsidian shadow-[0_4px_16px_rgba(212,175,55,0.4)]">
-                      {offer.badge}
-                    </span>
-                  )}
+                  <span className="animate-pulse absolute top-3 start-3 rounded-full bg-gold px-3 py-1 text-[11px] font-bold tracking-wider text-obsidian shadow-[0_4px_16px_rgba(212,175,55,0.4)]">
+                    {t("offers.badge", "OFFER")}
+                  </span>
                 </div>
                 <div className="flex flex-1 flex-col p-5">
                   <h3 className="font-heading text-lg font-semibold tracking-wide text-obsidian transition-colors duration-300 group-hover:text-gold-dark">
-                    {offer.title}
+                    {tour.title}
                   </h3>
-                  {offer.description && (
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-obsidian/55">
-                      {offer.description}
-                    </p>
-                  )}
-                  <span className="mt-auto inline-flex items-center gap-2 pt-4 text-sm font-semibold text-gold transition-colors duration-300 group-hover:text-gold-dark">
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-obsidian/55">
+                    {tour.description}
+                  </p>
+                  <div className="mt-auto flex items-center justify-between pt-4">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-obsidian/50">
+                      <Clock className="size-3.5" aria-hidden />
+                      {tour.duration ?? "—"}
+                    </span>
+                    <span className="font-heading text-lg font-bold text-gold">
+                      {formatCurrency(tour.base_price, tour.currency)}
+                    </span>
+                  </div>
+                  <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-gold transition-colors duration-300 group-hover:text-gold-dark">
                     {t("offers.cta", "View offer")}
                     <ArrowRight
                       className="size-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1"

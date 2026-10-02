@@ -27,7 +27,6 @@ import { CategoriesSection } from "@/features/homepage/components/categories-sec
 import { OffersHeroBar, OffersSection } from "@/features/homepage/components/offers";
 import type {
   HomepageCategory,
-  HomepageOffer,
   HomepageService,
 } from "@/features/homepage/types";
 
@@ -40,7 +39,7 @@ export function HomePageClient({
   tours: TourSummary[];
   categories: HomepageCategory[];
   services: HomepageService[];
-  offers: HomepageOffer[];
+  offers: TourSummary[];
 }) {
   const { t } = useTranslation();
   const { href } = useLocale();
@@ -67,6 +66,9 @@ export function HomePageClient({
           <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
                style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')" }} />
         </div>
+
+        {/* Hot offers promo bar (top of hero, above content) */}
+        <OffersHeroBar offers={offers} />
 
         {/* Content */}
         <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center px-4 text-center sm:px-6">
@@ -101,11 +103,7 @@ export function HomePageClient({
         </div>
 
         {/* Scroll indicator */}
-        <div
-          className={`animate-fade-in-delayed absolute left-1/2 z-10 -translate-x-1/2 ${
-            offers.length > 0 ? "bottom-24" : "bottom-8"
-          }`}
-        >
+        <div className="animate-fade-in-delayed absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
           <div className="animate-bob flex flex-col items-center gap-2 text-sandstone/40">
             <span className="text-xs uppercase tracking-widest">{t("hero.scroll")}</span>
             <ChevronDown className="size-5" />
@@ -114,9 +112,6 @@ export function HomePageClient({
 
         {/* Bottom gradient fade to sandstone */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-sandstone to-transparent" />
-
-        {/* Hot offers promo bar (pinned to hero bottom edge) */}
-        <OffersHeroBar offers={offers} />
       </section>
 
       <ServicesSection services={services} />

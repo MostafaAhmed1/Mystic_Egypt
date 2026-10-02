@@ -31,6 +31,7 @@ export interface TourDetail {
   group_prices: { min_people: number; max_people: number; price_per_person: number }[] | null;
   currency: Currency;
   status: string;
+  isOffer: boolean;
   created_by: string;
   created_at: Date;
   itinerary: { id: string; day_number: number; title: string; description: string }[];
@@ -49,6 +50,7 @@ export interface CreateTourParams {
   group_prices?: { min_people: number; max_people: number; price_per_person: number }[] | null;
   currency?: Currency;
   status?: string;
+  isOffer?: boolean;
   itinerary: { day_number: number; title: string; description: string }[];
   images: { image_url: string; is_primary: boolean }[];
   route: { order: number; label: string; lat: number; lng: number; is_stop: boolean }[];
@@ -256,6 +258,7 @@ export async function getTourById(id: string): Promise<TourDetail | null> {
     group_prices: parseGroupPrices(tour.group_prices),
     currency: toCurrency(tour.currency),
     status: tour.status,
+    isOffer: tour.isOffer,
     created_by: tour.created_by,
     created_at: tour.created_at,
     itinerary: tour.itinerary.map((i) => ({
@@ -300,6 +303,7 @@ export async function createTour(
       group_prices: params.group_prices ?? undefined,
       currency: params.currency ?? "USD",
       status: params.status ?? "open",
+      isOffer: params.isOffer ?? false,
       created_by: adminId,
       itinerary: {
         create: params.itinerary.map((i) => ({
@@ -343,6 +347,7 @@ export async function createTour(
     group_prices: parseGroupPrices(tour.group_prices),
     currency: toCurrency(tour.currency),
     status: tour.status,
+    isOffer: tour.isOffer,
     created_by: tour.created_by,
     created_at: tour.created_at,
     itinerary: tour.itinerary.map((i) => ({
@@ -386,6 +391,7 @@ export async function updateTour(
   if (params.group_prices !== undefined) data.group_prices = params.group_prices ?? undefined;
   if (params.currency !== undefined) data.currency = params.currency;
   if (params.status !== undefined) data.status = params.status;
+  if (params.isOffer !== undefined) data.isOffer = params.isOffer;
 
   // Replace nested relations if provided
   if (params.itinerary) {
@@ -445,6 +451,7 @@ export async function updateTour(
     group_prices: parseGroupPrices(updated.group_prices),
     currency: toCurrency(updated.currency),
     status: updated.status,
+    isOffer: updated.isOffer,
     created_by: updated.created_by,
     created_at: updated.created_at,
     itinerary: updated.itinerary.map((i) => ({

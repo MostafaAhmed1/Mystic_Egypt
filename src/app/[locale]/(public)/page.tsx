@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { listPublicTours } from "@/features/tour/service";
+import { listPublicOfferTours, listPublicTours } from "@/features/tour/service";
 import { HomePageClient } from "@/app/[locale]/(public)/home-page-client";
 import { buildPageMetadata } from "@/core/utils/seo";
 import { getServerT } from "@/core/lib/i18n-server";
@@ -7,10 +7,9 @@ import type { Locale } from "@/core/i18n-config";
 import type { TourSummary } from "@/features/tour/types";
 import {
   listPublicHomepageCategories,
-  listPublicHomepageOffers,
   listPublicHomepageServices,
 } from "@/features/homepage/service";
-import type { HomepageCategory, HomepageOffer, HomepageService } from "@/features/homepage/types";
+import type { HomepageCategory, HomepageService } from "@/features/homepage/types";
 
 export const revalidate = 60;
 
@@ -37,13 +36,13 @@ export default async function HomePage({ params }: HomePageProps) {
     listPublicTours(),
     listPublicHomepageCategories(currentLocale),
     listPublicHomepageServices(currentLocale),
-    listPublicHomepageOffers(currentLocale),
+    listPublicOfferTours(),
   ]);
 
   const tours: TourSummary[] = tourResult.status === "fulfilled" ? tourResult.value : [];
   const categories: HomepageCategory[] = categoryResult.status === "fulfilled" ? categoryResult.value : [];
   const services: HomepageService[] = serviceResult.status === "fulfilled" ? serviceResult.value : [];
-  const offers: HomepageOffer[] = offerResult.status === "fulfilled" ? offerResult.value : [];
+  const offers: TourSummary[] = offerResult.status === "fulfilled" ? offerResult.value : [];
 
   return <HomePageClient tours={tours} categories={categories} services={services} offers={offers} />;
 }

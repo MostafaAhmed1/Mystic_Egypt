@@ -38,7 +38,8 @@
     "eyebrow": "عروض لفترة محدودة",
     "title": "العروض الساخنة",
     "subtitle": "توفيرات مختارة على أشهر التجارب في مصر.",
-    "cta": "عرض العرض"
+    "cta": "عرض العرض",
+    "badge": "عرض"
   },
   "seo": {
     "site": {
@@ -352,14 +353,6 @@
     "homepageDeleted": "تم حذف العنصر.",
     "deleteCategoryConfirm": "هل تريد حذف هذه الفئة؟",
     "deleteServiceConfirm": "هل تريد حذف هذه الخدمة؟",
-    "offers": "العروض",
-    "offersDescription": "تظهر في شريط عروض الواجهة وقسم العروض.",
-    "addOffer": "إضافة عرض",
-    "editOffer": "تعديل العرض",
-    "noOffers": "لا توجد عروض بعد.",
-    "deleteOfferConfirm": "هل تريد حذف هذا العرض؟",
-    "badge": "شارة (اختياري)",
-    "linkUrl": "مسار الرابط (اختياري)",
     "siteAdministrator": "مدير الموقع",
     "adminOverview": "نظرة عامة على الإدارة",
     "platformStats": "إحصائيات المنصة والنشاط الأخير.",

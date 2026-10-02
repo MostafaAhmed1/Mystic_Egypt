@@ -110,6 +110,25 @@ export const listPublicTourSlugs = cache(async (): Promise<string[]> => {
   return tours.map((tour) => tour.slug);
 });
 
+/**
+ * Open tours flagged as homepage offers (admin `isOffer` toggle), used by the
+ * hero offers bar and the homepage offers section. Both render bookable tours.
+ */
+export const listPublicOfferTours = cache(async (): Promise<TourSummary[]> => {
+  const tours = await prisma.tour.findMany({
+    where: { isOffer: true, status: PUBLIC_TOUR_STATUS },
+    include: {
+      images: {
+        where: { is_primary: true },
+        take: 1,
+      },
+    },
+    orderBy: { created_at: "asc" },
+  });
+
+  return tours.map(toTourSummary);
+});
+
 /** A single public tour by slug, or null when not found / not open. */
 export const getPublicTourBySlug = cache(
   async (slug: string): Promise<TourDetail | null> => {
@@ -135,6 +154,7 @@ export const getPublicTourBySlug = cache(
       group_prices: parseGroupPrices(tour.group_prices),
       currency: mapCurrency(tour.currency),
       status: tour.status,
+      isOffer: tour.isOffer,
       duration: tour.duration,
       inclusions: tour.inclusions,
       exclusions: tour.exclusions,

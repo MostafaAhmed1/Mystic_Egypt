@@ -57,6 +57,8 @@ export interface TourDetail {
   group_prices: GroupPriceTier[] | null;
   currency: Currency;
   status: string;
+  /** Featured in the homepage hot-offers bar/section (admin toggle). */
+  isOffer: boolean;
   /** Human-readable trip duration, e.g. "1 Day", "8 Days". */
   duration: string | null;
   /** Newline-delimited "what's included" items, or null when unset. */
