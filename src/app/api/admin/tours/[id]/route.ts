@@ -46,6 +46,7 @@ export async function PUT(
   if (typeof b.base_price === "number") data.base_price = b.base_price;
   if (typeof b.currency === "string") data.currency = b.currency;
   if (typeof b.status === "string") data.status = b.status;
+  if (Array.isArray(b.group_prices)) data.group_prices = b.group_prices;
 
   const tour = await updateTour(id, {
     ...data,

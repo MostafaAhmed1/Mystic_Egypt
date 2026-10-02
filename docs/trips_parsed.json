@@ -1,0 +1,336 @@
+[
+  {
+    "Name": "Fayoum",
+    "Slug": "experience-a-jungle-safari-in-chitwan-national-park-nepal",
+    "ID": "2957",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2022/03/14-2.png",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2022/03/14-2.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2022/03/28.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2022/03/Untitled-design-39.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2022/03/29.png"
+    ],
+    "Duration": "1 Day",
+    "Price": "€110",
+    "TripTypes": []
+  },
+  {
+    "Name": "Cairo",
+    "Slug": "cairo",
+    "ID": "7332",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/Untitled-design-41.webp",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/Untitled-design-41.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/cairo_tower_website_1920-1024x684.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/khan-el-khalili-cairo-3-edited-1024x1024.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/2024_6_1_14_45_4_638.jpg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€250",
+    "TripTypes": []
+  },
+  {
+    "Name": "Luxor",
+    "Slug": "luxor",
+    "ID": "7600",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/Untitled-design-37-1.webp",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/Untitled-design-37-1.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/21-1-1.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/23-1.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/25-1.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/22-1.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/24-1.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/7.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/8.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/9.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/10.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/11.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/12.webp"
+    ],
+    "Duration": "1 Day",
+    "Price": "€250",
+    "TripTypes": []
+  },
+  {
+    "Name": "Aswan",
+    "Slug": "aswan",
+    "ID": "7826",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/download.jpg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/download.jpg"
+    ],
+    "Duration": "2 Days",
+    "Price": "€300",
+    "TripTypes": []
+  },
+  {
+    "Name": "Alexandria",
+    "Slug": "alexandria",
+    "ID": "7830",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-04-at-6.47.57-PM-1.jpeg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-04-at-6.47.57-PM-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-04-at-6.47.57-PM-2.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-04-at-6.47.57-PM.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-04-at-6.47.58-PM.jpeg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€120",
+    "TripTypes": []
+  },
+  {
+    "Name": "Nile Trip (Cairo)",
+    "Slug": "nile-trip-cairo",
+    "ID": "7841",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/2000x2000-0-70-195c06ce815897f888981159fa251dcc-990x490.jpg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/2000x2000-0-70-195c06ce815897f888981159fa251dcc-990x490.jpg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€50",
+    "TripTypes": []
+  },
+  {
+    "Name": "Hurghada",
+    "Slug": "hurghada",
+    "ID": "7915",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2025-12-30-at-3.55.39-PM.jpeg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2025-12-30-at-3.55.39-PM.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/b2632804-2ff4-40dd-b0da-0fa96ebe1b52.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/e31dbdc5-717f-42da-aba1-c62386c0df0a.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/59916d16-eaaa-4d9d-b6ee-48ba86ec8461.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/a4316320-2ca6-4c96-adc3-483ed0c881ee.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/fdfd8a47-a684-4b97-9985-22d875c2084e.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.38.54-PM-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.38.54-PM-2.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.38.54-PM-3.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.38.54-PM-4-1024x546.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.38.54-PM.jpeg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€45",
+    "TripTypes": []
+  },
+  {
+    "Name": "Marsa Alam",
+    "Slug": "marsa-alam",
+    "ID": "7956",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/Egypts-Marsa-Alam-1024x667.jpg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/Egypts-Marsa-Alam-1024x667.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/Top10-Attractions-in-Marsa-Alam.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/view-1024x683.jpg.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/waterway-marsa-alam-1024x681.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/219c1d8f7eb40de288063da2d173dd4d-1024x580.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/5eff48_1fee0781451e421da48fbee77dbbe53bmv2.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.00-PM-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.00-PM.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.01-PM-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.01-PM-2.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.01-PM-3.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.01-PM-4.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.01-PM.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.02-PM-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.02-PM-2.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-5.40.02-PM.jpeg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€50",
+    "TripTypes": []
+  },
+  {
+    "Name": "Siwa Oasis",
+    "Slug": "siwa-oasis",
+    "ID": "8115",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM-2.jpeg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM-2.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/25edbd43-a0f6-4873-9a32-571bbb0b15c5.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/caption-1024x1024.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/160922-825x1024.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.17-AM.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM-3.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM-4-1024x670.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM-5.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.18-AM.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2025/12/WhatsApp-Image-2026-01-05-at-11.56.19-AM.jpeg"
+    ],
+    "Duration": "2 Days",
+    "Price": "€500",
+    "TripTypes": []
+  },
+  {
+    "Name": "Abydos & Dendera Temples Tour",
+    "Slug": "abydos-dendera-temples-tour",
+    "ID": "8125",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/01/3.png",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/3.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/1.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/2-1.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/4.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/5.webp"
+    ],
+    "Duration": "1 Day",
+    "Price": "€105",
+    "TripTypes": []
+  },
+  {
+    "Name": "Sharm El Sheikh",
+    "Slug": "sharm-el-sheikh",
+    "ID": "8221",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/01/bf27c47c-c05f-44cc-b7a3-b58365b5aaf9-1024x683.png",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/bf27c47c-c05f-44cc-b7a3-b58365b5aaf9-1024x683.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/e43695d6-90e8-4c3a-9654-e6ec8b8afb1e-1024x576.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/22216906-7790409-image-a-61_1576269843446-1.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/160201_e6f68e3ff0.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/01/sierra-sharm-el-sheikh.jpg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€75",
+    "TripTypes": []
+  },
+  {
+    "Name": "Hurghada – Cairo Trip Program (Includes flight booking and hotel accommodation)",
+    "Slug": "hurghada-cairo-trip-program",
+    "ID": "8316",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-3.jpg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-3.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-11.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-3.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-4.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-10-1024x546.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-2-1024x1024.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-9.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-8.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-7.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-6.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-5.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-4.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-2.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-1-1024x684.webp"
+    ],
+    "Duration": "8 Days",
+    "Price": "€1,850",
+    "TripTypes": []
+  },
+  {
+    "Name": "Hurghada Excursions Program (Includes flight booking and hotel accommodation)",
+    "Slug": "hurghada-excursions-program",
+    "ID": "8319",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-6.jpg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-6.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-2.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-4.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-5.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-7.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-8.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-9.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-10-1024x546.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-11.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-3.jpg"
+    ],
+    "Duration": "8 Days",
+    "Price": "€1,650",
+    "TripTypes": []
+  },
+  {
+    "Name": "Hurghada & Luxor Excursions Program (Includes flight booking and hotel accommodation)",
+    "Slug": "hurghada-luxor-excursions-program",
+    "ID": "8334",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-10-1024x546.jpeg",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-10-1024x546.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-3.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-11.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-9.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-8.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-7.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-6.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-5.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-4.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-2.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-12.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-11.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-10.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-9.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-8.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-7.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-6.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-5.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-4.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-3.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-2.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-1.webp"
+    ],
+    "Duration": "8 Days",
+    "Price": "€1,750",
+    "TripTypes": []
+  },
+  {
+    "Name": "Hurghada, Luxor & Cairo Excursions Program (Includes flight booking and hotel accommodation)",
+    "Slug": "hurghada-luxor-cairo-excursions-program",
+    "ID": "8341",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-2.png",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-2.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-3.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-11.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-10-1024x546.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-9.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-8.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-7.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-6.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-5.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-4.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-2.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الغردقة-1.jpeg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-3.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-2-1024x1024.jpg",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-1-1024x684.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/القاهرة-4.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-12.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-11.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-10.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-9.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-8.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-7.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-6.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-5.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-4.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-3.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/02/الاقصر-1.webp"
+    ],
+    "Duration": "8 Days",
+    "Price": "€1,999",
+    "TripTypes": []
+  },
+  {
+    "Name": "Dahab",
+    "Slug": "dahab",
+    "ID": "8404",
+    "FeaturedImage": "https://hellomysticegypt.com/wp-content/uploads/2026/03/126182-shataa-bmdyn-dhb-1024x576.webp",
+    "Gallery": [
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/126182-shataa-bmdyn-dhb-1024x576.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/Weather-in-Dahab-min_a5809__lg.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/Dahab-listed-top-one-of-MENAs-best-beaches.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/dahab-digital-nomads-1024x683-1.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/Downtown-shops-Dahab-1024x681.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/126182-shataa-bmdyn-dhb-1-1024x576.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/dahab-1.png",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/Dahab-NightLife-_-Dahab-Camping-webp.webp",
+      "https://hellomysticegypt.com/wp-content/uploads/2026/03/14370773261673933825.jpg"
+    ],
+    "Duration": "1 Day",
+    "Price": "€120",
+    "TripTypes": []
+  }
+]

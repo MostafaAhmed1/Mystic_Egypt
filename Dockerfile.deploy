@@ -1,0 +1,32 @@
+# Dockerfile.deploy — ARTIFACT-BASED production image (rapid deploys, Sept 2026).
+# Build context = an extracted local `npm run build` standalone bundle:
+#   server.js, .next/ (server + static), node_modules/ (traced), public/.
+# NO npm install, NO prisma generate, NO next build on the server  (was ~40 min).
+# The bundle is already fully compiled locally; this image is just packaging.
+#
+# Build (on the VPS, from the release dir):
+#   docker build -f Dockerfile.deploy -t mystic-egypt-new:<tag> .
+FROM node:20-alpine
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Standalone bundle must already contain .next/server (compiled), .next/static,
+# public/, package.json and the traced node_modules/. The uploads dir is bind-mounted
+# from the host at runtime, but must exist with the app-user's ownership (empty here).
+COPY --chown=nextjs:nodejs . ./
+
+RUN mkdir -p public/uploads/receipts public/uploads/tours public/uploads/stock \
+    && chown -R nextjs:nodejs public/uploads
+
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/core/utils/seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,9 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/dashboard", "/api/"],
+        disallow: ["/api/", "/*/admin", "/*/dashboard"],
       },
     ],
-    sitemap: "https://mysticegypt.net/sitemap.xml",
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

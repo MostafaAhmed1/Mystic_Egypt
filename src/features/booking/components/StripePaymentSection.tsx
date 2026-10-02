@@ -14,11 +14,13 @@ import { Field, FieldError } from "@/shared/components/ui/field";
 export function StripePaymentSection({
   publishableKey,
   clientSecret,
+  returnUrl,
   onSuccess,
   onCancel,
 }: {
   publishableKey: string;
   clientSecret: string;
+  returnUrl: string;
   onSuccess: () => void;
   onCancel: () => void;
 }) {
@@ -34,7 +36,11 @@ export function StripePaymentSection({
 
   return (
     <Elements stripe={stripePromise} options={{ clientSecret }}>
-      <StripeForm onSuccess={onSuccess} onCancel={onCancel} />
+      <StripeForm
+        returnUrl={returnUrl}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+      />
     </Elements>
   );
 }
@@ -49,9 +55,11 @@ function getStripePromise(publishableKey: string): Promise<Stripe | null> {
 }
 
 function StripeForm({
+  returnUrl,
   onSuccess,
   onCancel,
 }: {
+  returnUrl: string;
   onSuccess: () => void;
   onCancel: () => void;
 }) {
@@ -69,6 +77,7 @@ function StripeForm({
     const result = await stripe.confirmPayment({
       elements,
       redirect: "if_required",
+      confirmParams: { return_url: returnUrl },
     });
     setPending(false);
 

@@ -1,5 +1,11 @@
 import type { Currency } from "@/core/constants/currencies";
 
+export interface GroupPriceTier {
+  min_people: number;
+  max_people: number;
+  price_per_person: number;
+}
+
 /** A single point on a tour's route, used by the Leaflet map. */
 export interface TourPointDto {
   id: string;
@@ -32,8 +38,11 @@ export interface TourSummary {
   slug: string;
   description: string;
   base_price: number;
+  group_prices: GroupPriceTier[] | null;
   currency: Currency;
   status: string;
+  /** Human-readable trip duration, e.g. "1 Day", "8 Days". */
+  duration: string | null;
   /** Primary image URL, or null when none has been uploaded yet. */
   primary_image: string | null;
 }
@@ -45,8 +54,11 @@ export interface TourDetail {
   slug: string;
   description: string;
   base_price: number;
+  group_prices: GroupPriceTier[] | null;
   currency: Currency;
   status: string;
+  /** Human-readable trip duration, e.g. "1 Day", "8 Days". */
+  duration: string | null;
   /** Newline-delimited "what's included" items, or null when unset. */
   inclusions: string | null;
   /** Newline-delimited "what's not included" items, or null when unset. */

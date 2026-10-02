@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { Pyramid } from "lucide-react";
 
-export function BrandLogo({ href = "/" }: { href?: string }) {
+export function BrandLogo({ href = "/", className }: { href?: string; className?: string }) {
   return (
-    <Link href={href} className="inline-flex items-center gap-2">
-      <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <Pyramid className="size-5" aria-hidden />
-      </span>
-      <span className="font-heading text-lg font-semibold leading-none tracking-tight">
-        Mystic<span className="text-primary">Egypt</span>
-      </span>
+    <Link href={href} className="group inline-flex items-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.png"
+        alt="Mystic Egypt"
+        width={160}
+        height={48}
+        className={className ?? "h-14 w-auto transition-all duration-300 group-hover:opacity-80"}
+      />
     </Link>
   );
 }

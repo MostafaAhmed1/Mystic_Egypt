@@ -1,26 +1,32 @@
-import i18n from "i18next";
+import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
-import en from "../../../public/locales/en/common.json";
-import ar from "../../../public/locales/ar/common.json";
-import de from "../../../public/locales/de/common.json";
+import { resources } from "@/core/lib/i18n-resources";
+import { defaultLocale, type Locale } from "@/core/i18n-config";
 
-i18n.use(initReactI18next).init({
-  fallbackLng: "en",
-  lng: "en",
-  ns: ["common"],
-  defaultNS: "common",
-  interpolation: {
-    escapeValue: false,
-  },
-  resources: {
-    en: { common: en },
-    ar: { common: ar },
-    de: { common: de },
-  },
-});
+/**
+ * Creates an i18next instance bound to `locale`.
+ *
+ * A factory is required for correct SSR. With the previous module-level
+ * singleton the server render always read the hard-coded `"en"` default
+ * (the language was only switched in a `useEffect`, i.e. after hydration),
+ * so the raw HTML of /ar and /de was shipped in English.
+ *
+ * `init({ resources })` fills the resource store synchronously, so `t()` is
+ * usable immediately — the same guarantee `i18n-server.ts` relies on.
+ * On the server this is called once per request, so concurrent requests for
+ * different locales can never observe each other's language.
+ */
+export function createI18n(locale: Locale) {
+  const instance = createInstance();
 
-export function changeLanguage(lng: string) {
-  return i18n.changeLanguage(lng);
+  instance.use(initReactI18next).init({
+    fallbackLng: defaultLocale,
+    lng: locale,
+    ns: ["common"],
+    defaultNS: "common",
+    interpolation: { escapeValue: false },
+    resources,
+  });
+
+  return instance;
 }
-
-export default i18n;

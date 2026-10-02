@@ -26,6 +26,10 @@ export async function POST(request: Request) {
       })) as { addon_id: string; quantity: number }[])
     : [];
   const paymentMethod = getString(body, "payment_method");
+  const gaClientId = getString(body, "ga_client_id") || undefined;
+  const metaConsent = (body as { meta_consent?: unknown }).meta_consent === true;
+  const fbp = getString(body, "fbp") || undefined;
+  const fbc = getString(body, "fbc") || undefined;
 
   if (!tourId || !tourDate || !paymentMethod) {
     return NextResponse.json({ ok: false, error: "Missing required fields." }, { status: 400 });
@@ -45,6 +49,8 @@ export async function POST(request: Request) {
     numPeople,
     addons,
     paymentMethod,
+    gaClientId,
+    ...(metaConsent ? { metaConsent, fbp, fbc } : {}),
   });
 
   if (!result.ok) {

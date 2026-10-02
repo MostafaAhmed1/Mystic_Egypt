@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { MapPin } from "lucide-react";
+import { Pyramid } from "lucide-react";
 import { cn } from "@/core/utils";
 
 type TourImageProps = {
@@ -15,7 +15,12 @@ type TourImageProps = {
   fill?: boolean;
   width?: number;
   height?: number;
-  priority?: boolean;
+  /**
+   * Marks this image as the page's Largest Contentful Paint element: loaded
+   * eagerly at high priority. Next.js 16 equivalent of the deprecated
+   * `priority` prop. Only one image per page should set this.
+   */
+  lcp?: boolean;
 };
 
 /**
@@ -31,7 +36,7 @@ export function TourImage({
   fill,
   width,
   height,
-  priority,
+  lcp,
 }: TourImageProps) {
   const [failed, setFailed] = useState(false);
   const hasImage = Boolean(src) && !failed;
@@ -45,8 +50,9 @@ export function TourImage({
         width={fill ? undefined : width}
         height={fill ? undefined : height}
         sizes={sizes}
-        priority={priority}
-        className={cn("bg-muted/40", className)}
+        loading={lcp ? "eager" : "lazy"}
+        fetchPriority={lcp ? "high" : undefined}
+        className={cn("bg-sandstone-dark/30", className)}
         onError={() => setFailed(true)}
       />
     );
@@ -57,12 +63,18 @@ export function TourImage({
       role="img"
       aria-label={alt}
       className={cn(
-        "flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-amber-200 via-orange-200 to-stone-300 p-4 text-center text-stone-700",
+        "flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-sandstone-dark via-gold/10 to-sandstone-dark p-4 text-center",
         className,
       )}
     >
-      <MapPin className="size-8 text-stone-500" aria-hidden />
-      {fallbackLabel && <span className="text-xs font-medium">{fallbackLabel}</span>}
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-gold/10">
+        <Pyramid className="size-7 text-gold/60" aria-hidden />
+      </div>
+      {fallbackLabel && (
+        <span className="text-xs font-medium tracking-wider text-obsidian/40">
+          {fallbackLabel}
+        </span>
+      )}
     </div>
   );
 }

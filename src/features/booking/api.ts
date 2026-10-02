@@ -9,6 +9,15 @@ export interface CreateBookingPayload {
   num_people: number;
   addons: { addon_id: string; quantity: number }[];
   payment_method: PaymentMethod;
+  /** GA4 client id used to attribute the server-side purchase event to this
+   * browsing session (carried via Stripe PaymentIntent metadata). */
+  ga_client_id?: string;
+  /** True when the visitor accepted cookies (Meta events are consent-gated). */
+  meta_consent?: boolean;
+  /** Meta browser id (`_fbp` cookie) — carried to the CAPI events. */
+  fbp?: string;
+  /** Meta click id (`_fbc` cookie) — carried to the CAPI events. */
+  fbc?: string;
 }
 
 export interface CreateBookingResponse {

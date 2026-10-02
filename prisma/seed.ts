@@ -1,6 +1,7 @@
 import { PrismaClient } from "../src/core/generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import bcrypt from "bcryptjs";
+import { seedTours } from "./seed-tours";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -78,156 +79,210 @@ async function main() {
   }
   console.log("Sample add-ons ready.");
 
-  // --- Sample Tours ---
-  const existingTours = await prisma.tour.count();
-  if (existingTours > 0) {
-    console.log("Sample tours already present, skipping.");
-  } else {
-
-  const nileTour = await prisma.tour.create({
-    data: {
-      title: "Classic Nile Cruise & Cairo",
-      slug: "classic-nile-cruise-cairo",
-      description:
-        "A timeless journey along the Nile, from the pyramids of Giza to the temples of Luxor and Aswan. Includes guided tours, Nile cruise accommodation, and local expert guides.",
-      inclusions:
-        "4-night Nile cruise accommodation\nLicensed Egyptologist tour guides\nAirport transfers & domestic flights\nDaily breakfast & select meals\nAll entrance fees to listed sites",
-      exclusions:
-        "International flights\nTravel insurance (recommended)\nVisa fees\nPersonal expenses & gratuities",
-      base_price: 1499,
-      currency: "USD",
-      status: "open",
-      created_by: admin.id,
-      itinerary: {
-        create: [
-          {
-            day_number: 1,
-            title: "Arrival & Pyramids of Giza",
-            description: "Arrive in Cairo, guided tour of the Pyramids and the Sphinx.",
-          },
-          {
-            day_number: 2,
-            title: "Egyptian Museum & Old Cairo",
-            description: "Explore the treasures of the Egyptian Museum and historic Cairo.",
-          },
-          {
-            day_number: 3,
-            title: "Board the Nile Cruise in Luxor",
-            description: "Fly to Luxor, visit Karnak and Luxor temples, board the cruise.",
-          },
-        ],
-      },
-      images: {
-        create: [
-          {
-            image_url: "/uploads/tours/nile-cruise-cairo.jpg",
-            is_primary: true,
-          },
-        ],
-      },
-      route: {
-        create: [
-          { order: 1, label: "Cairo", lat: 30.0444, lng: 31.2357, is_stop: true },
-          {
-            order: 2,
-            label: "Giza Pyramids",
-            lat: 29.9792,
-            lng: 31.1342,
-            is_stop: true,
-          },
-          {
-            order: 3,
-            label: "Luxor",
-            lat: 25.6872,
-            lng: 32.6396,
-            is_stop: true,
-          },
-          {
-            order: 4,
-            label: "Karnak Temple",
-            lat: 25.7188,
-            lng: 32.6573,
-            is_stop: true,
-          },
-          {
-            order: 5,
-            label: "Aswan",
-            lat: 24.0889,
-            lng: 32.8998,
-            is_stop: true,
-          },
-        ],
-      },
+  const homepageCategories = [
+    {
+      slug: "desert-safari",
+      name_en: "Desert Safari",
+      name_ar: "رحلات الصحراء",
+      name_de: "Wüsten-Safari",
+      image_url: "/uploads/categories/desert-safari.webp",
+      sort_order: 1,
     },
-  });
-
-  const desertTour = await prisma.tour.create({
-    data: {
-      title: "White Desert & Bahariya Oasis Adventure",
-      slug: "white-desert-bahariya",
-      description:
-        "Camp under the stars in Egypt's surreal White Desert, explore crystal mountains, and unwind at Bahariya Oasis hot springs.",
-      inclusions:
-        "4x4 desert safari transfers\nPrivate licensed desert guide\nCamping equipment & tents\nMeals in the desert\nBottled water & cold drinks",
-      exclusions:
-        "International flights\nTravel insurance (recommended)\nVisa fees\nTips & personal expenses",
-      base_price: 899,
-      currency: "USD",
-      status: "open",
-      created_by: admin.id,
-      itinerary: {
-        create: [
-          {
-            day_number: 1,
-            title: "Drive to Bahariya Oasis",
-            description: "Scenic desert drive, visit the Black Desert and sand dunes.",
-          },
-          {
-            day_number: 2,
-            title: "White Desert Camping",
-            description: "Explore the White Desert's chalk rock formations and camp overnight.",
-          },
-        ],
-      },
-      images: {
-        create: [
-          {
-            image_url: "/uploads/tours/white-desert.jpg",
-            is_primary: true,
-          },
-        ],
-      },
-      route: {
-        create: [
-          { order: 1, label: "Cairo", lat: 30.0444, lng: 31.2357, is_stop: true },
-          {
-            order: 2,
-            label: "Bahariya Oasis",
-            lat: 28.3366,
-            lng: 28.8609,
-            is_stop: true,
-          },
-          {
-            order: 3,
-            label: "Black Desert",
-            lat: 27.9556,
-            lng: 28.5295,
-            is_stop: true,
-          },
-          {
-            order: 4,
-            label: "White Desert",
-            lat: 27.3721,
-            lng: 28.2309,
-            is_stop: true,
-          },
-        ],
-      },
+    {
+      slug: "city-cultural-tours",
+      name_en: "City & Cultural Tours",
+      name_ar: "رحلات المدن والثقافة",
+      name_de: "Stadt- und Kulturtouren",
+      image_url: "/uploads/categories/city-cultural-tours.webp",
+      sort_order: 2,
     },
-  });
+    {
+      slug: "entertainment-nightlife",
+      name_en: "Entertainment & Nightlife",
+      name_ar: "الترفيه والحياة الليلية",
+      name_de: "Unterhaltung und Nachtleben",
+      image_url: "/uploads/categories/entertainment-nightlife.webp",
+      sort_order: 3,
+    },
+    {
+      slug: "island-boat-trips",
+      name_en: "Island & Boat Trips",
+      name_ar: "رحلات الجزر والقوارب",
+      name_de: "Insel- und Bootstouren",
+      image_url: "/uploads/categories/island-boat-trips.webp",
+      sort_order: 4,
+    },
+    {
+      slug: "water-activities",
+      name_en: "Water Activities",
+      name_ar: "الأنشطة المائية",
+      name_de: "Wasseraktivitäten",
+      image_url: "/uploads/categories/water-activities.webp",
+      sort_order: 5,
+    },
+    {
+      slug: "private-yacht-tours",
+      name_en: "Private Yacht Tours",
+      name_ar: "رحلات اليخوت الخاصة",
+      name_de: "Private Yacht-Touren",
+      image_url: "/uploads/categories/private-yacht-tours.webp",
+      sort_order: 6,
+    },
+  ] as const;
 
-  console.log(`Sample tours created: ${nileTour.slug}, ${desertTour.slug}`);
+  for (const category of homepageCategories) {
+    await prisma.category.upsert({
+      where: { slug: category.slug },
+      update: {
+        name_en: category.name_en,
+        name_ar: category.name_ar,
+        name_de: category.name_de,
+        image_url: category.image_url,
+        sort_order: category.sort_order,
+        is_active: true,
+      },
+      create: { ...category, is_active: true },
+    });
   }
+
+  const homepageServices = [
+    {
+      slug: "hotel-reservations",
+      name_en: "Hotel Reservations",
+      name_ar: "حجز الفنادق",
+      name_de: "Hotelreservierungen",
+      description_en: "Handpicked stays with comfort, character, and confidence.",
+      description_ar: "إقامات مختارة بعناية توفر الراحة والطابع الخاص والاطمئنان.",
+      description_de: "Ausgewählte Unterkünfte mit Komfort, Charakter und Sicherheit.",
+      icon: "hotel",
+      sort_order: 1,
+    },
+    {
+      slug: "flight-reservations",
+      name_en: "Flight Reservations",
+      name_ar: "حجز الطيران",
+      name_de: "Flugbuchungen",
+      description_en: "Smooth flight planning for a seamless Egyptian journey.",
+      description_ar: "تخطيط سهل للرحلات الجوية لرحلة مصرية سلسة.",
+      description_de: "Einfache Flugplanung für eine reibungslose Reise durch Ägypten.",
+      icon: "plane",
+      sort_order: 2,
+    },
+    {
+      slug: "airport-transfers",
+      name_en: "Airport Transfers",
+      name_ar: "نقل المطارات",
+      name_de: "Flughafentransfers",
+      description_en: "Reliable private transfers from arrival to departure.",
+      description_ar: "نقل خاص موثوق من الوصول حتى المغادرة.",
+      description_de: "Zuverlässige private Transfers von der Ankunft bis zur Abreise.",
+      icon: "car",
+      sort_order: 3,
+    },
+    {
+      slug: "guided-tours",
+      name_en: "Guided Tours",
+      name_ar: "الجولات المصحوبة بمرشد",
+      name_de: "Geführte Touren",
+      description_en: "Local expertise and memorable journeys across Egypt.",
+      description_ar: "خبرة محلية ورحلات لا تُنسى في جميع أنحاء مصر.",
+      description_de: "Lokales Wissen und unvergessliche Reisen durch Ägypten.",
+      icon: "compass",
+      sort_order: 4,
+    },
+  ] as const;
+
+  for (const service of homepageServices) {
+    await prisma.service.upsert({
+      where: { slug: service.slug },
+      update: {
+        name_en: service.name_en,
+        name_ar: service.name_ar,
+        name_de: service.name_de,
+        description_en: service.description_en,
+        description_ar: service.description_ar,
+        description_de: service.description_de,
+        icon: service.icon,
+        sort_order: service.sort_order,
+        is_active: true,
+      },
+      create: { ...service, is_active: true },
+    });
+  }
+  console.log("Homepage categories and services ready.");
+
+  const homepageOffers = [
+    {
+      id: "offer-early-booking",
+      title_en: "Early Booking Discount",
+      title_ar: "خصم الحجز المبكر",
+      title_de: "Frühbucher-Rabatt",
+      description_en:
+        "Book your tour at least 60 days ahead and save 20% on selected departures.",
+      description_ar:
+        "احجز رحلتك قبل 60 يومًا على الأقل ووفّر 20% على رحلات مختارة.",
+      description_de:
+        "Buchen Sie mindestens 60 Tage im Voraus und sparen Sie 20 % auf ausgewählte Termine.",
+      badge: "20% OFF",
+      image_url: "/uploads/tours/catalog/nile-cruise.webp",
+      link_url: "/tours",
+      sort_order: 1,
+    },
+    {
+      id: "offer-family",
+      title_en: "Kids Go Free",
+      title_ar: "الأطفال مجانًا",
+      title_de: "Kinder fahren gratis",
+      description_en: "Children under 12 travel free on selected family tours.",
+      description_ar: "الأطفال دون 12 سنة يسافرون مجانًا في رحلات العائلة المختارة.",
+      description_de:
+        "Kinder unter 12 Jahren reisen gratis auf ausgewählten Familientouren.",
+      badge: "FAMILY",
+      image_url: "/uploads/tours/catalog/cairo-pyramids.webp",
+      link_url: "/tours",
+      sort_order: 2,
+    },
+    {
+      id: "offer-custom-itinerary",
+      title_en: "Free Itinerary Customization",
+      title_ar: "تخصيص المسار مجانًا",
+      title_de: "Kostenlose Routenanpassung",
+      description_en:
+        "Tailor any itinerary to your group — planning with our experts costs nothing.",
+      description_ar:
+        "خصّص أي مسار لمجموعتك — التخطيط مع خبراءنا بلا أي تكلفة.",
+      description_de:
+        "Passen Sie jede Route an Ihre Gruppe an — die Planung mit unseren Experten ist kostenlos.",
+      badge: "BESPOKE",
+      image_url: "/uploads/tours/catalog/white-desert.webp",
+      link_url: "/contact",
+      sort_order: 3,
+    },
+  ] as const;
+
+  for (const offer of homepageOffers) {
+    await prisma.offer.upsert({
+      where: { id: offer.id },
+      update: {
+        title_en: offer.title_en,
+        title_ar: offer.title_ar,
+        title_de: offer.title_de,
+        description_en: offer.description_en,
+        description_ar: offer.description_ar,
+        description_de: offer.description_de,
+        badge: offer.badge,
+        image_url: offer.image_url,
+        link_url: offer.link_url,
+        sort_order: offer.sort_order,
+        is_active: true,
+      },
+      create: { ...offer, is_active: true },
+    });
+  }
+  console.log("Homepage offers ready.");
+
+  await seedTours(prisma, admin.id);
+
 
   // --- CMS Pages ---
   const cmsPages = [

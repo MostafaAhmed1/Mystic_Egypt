@@ -50,8 +50,13 @@ export function BookPageClient({
           {t("bookPage.book")} {tour.title}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {formatCurrency(tour.base_price, tour.currency)} {t("tours.perPerson")} ·{" "}
-          {userName}
+          {formatCurrency(tour.base_price, tour.currency)} {t("tours.perPerson")}
+          {tour.group_prices && tour.group_prices.length > 0 && (
+            <span className="ml-2 text-gold font-medium">
+              · {t("tours.groupDiscountsAvailable", "Group discounts available")}
+            </span>
+          )}{" "}
+          · {userName}
         </p>
       </header>
 

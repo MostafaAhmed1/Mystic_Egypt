@@ -1,0 +1,29 @@
+# Mystic Egypt
+
+> Mystic Egypt is a UK-based tour operator running authentic group and private tours across Egypt — Cairo, Luxor, Aswan, the Nile, Hurghada, Marsa Alam, Siwa, Alexandria, Dahab, Sharm El Sheikh and more — with licensed Egyptologist guides, flights, hotels and full support. Our website is available in English, Arabic and German.
+
+## Optional
+
+## Tours
+
+- [Cairo](https://mysticegypt.net/en/tours/cairo): Cairo – 1 Day tour
+- [Luxor](https://mysticegypt.net/en/tours/luxor): Luxor – 1 Day tour
+- [Aswan](https://mysticegypt.net/en/tours/aswan): Aswan – 2 Days tour
+- [Alexandria](https://mysticegypt.net/en/tours/alexandria): Alexandria – 1 Day tour
+- [Nile Trip (Cairo)](https://mysticegypt.net/en/tours/nile-trip-cairo): Nile Trip (Cairo) – 1 Day tour
+- [Hurghada](https://mysticegypt.net/en/tours/hurghada): Hurghada – 1 Day tour
+- [Marsa Alam](https://mysticegypt.net/en/tours/marsa-alam): Marsa Alam – 1 Day tour
+- [Siwa Oasis](https://mysticegypt.net/en/tours/siwa-oasis): Siwa Oasis – 2 Days tour
+- [Abydos & Dendera Temples Tour](https://mysticegypt.net/en/tours/abydos-dendera-temples-tour): Abydos & Dendera Temples Tour – 1 Day tour
+- [Sharm El Sheikh](https://mysticegypt.net/en/tours/sharm-el-sheikh): Sharm El Sheikh – 1 Day tour
+- [Hurghada & Cairo Trip Program](https://mysticegypt.net/en/tours/hurghada-cairo-trip-program): Includes flights and hotel – 8 Days
+- [Hurghada Excursions Program](https://mysticegypt.net/en/tours/hurghada-excursions-program): Includes flights and hotel – 8 Days
+- [Hurghada & Luxor Excursions Program](https://mysticegypt.net/en/tours/hurghada-luxor-excursions-program): Includes flights and hotel – 8 Days
+- [Hurghada, Luxor & Cairo Excursions Program](https://mysticegypt.net/en/tours/hurghada-luxor-cairo-excursions-program): Includes flights and hotel – 8 Days
+- [Dahab](https://mysticegypt.net/en/tours/dahab): Dahab – 1 Day tour
+
+## Key pages
+
+- [All tours](https://mysticegypt.net/en/tours): Browse every Mystic Egypt tour
+- [Contact us](https://mysticegypt.net/en/contact): Send us an enquiry
+- [Site map](https://mysticegypt.net/en/sitemap.xml): Full URL site map for crawling

@@ -4,11 +4,12 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { KeyRound } from "lucide-react";
 import { resetPasswordAction } from "@/features/auth/actions";
 import { SubmitButton } from "@/features/auth/components/SubmitButton";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { useLocale } from "@/shared/hooks/use-locale";
 
 export function ResetPasswordForm() {
@@ -19,15 +20,27 @@ export function ResetPasswordForm() {
   const [state, formAction] = useActionState(resetPasswordAction, undefined);
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="text-center text-2xl">{t("auth.chooseNewPassword")}</CardTitle>
-        <CardDescription className="text-center">
-          {t("auth.chooseDescription")}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form action={formAction} className="space-y-4" noValidate>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-md"
+    >
+      <div className="rounded-2xl border border-gold/10 bg-white p-8 shadow-[0_4px_30px_rgba(0,0,0,0.06)]">
+        <div className="mb-6 text-center">
+          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-gold/10">
+            <KeyRound className="size-6 text-gold" />
+          </div>
+          <h1 className="font-heading text-2xl font-bold tracking-wider text-obsidian">
+            {t("auth.chooseNewPassword")}
+          </h1>
+          <p className="mt-2 text-sm text-obsidian/50">
+            {t("auth.chooseDescription")}
+          </p>
+          <div className="mx-auto mt-3 h-px w-16 bg-gradient-to-r from-transparent via-gold to-transparent" />
+        </div>
+
+        <form action={formAction} className="space-y-5" noValidate>
           <div className="space-y-2">
             <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
@@ -39,7 +52,9 @@ export function ResetPasswordForm() {
               required
             />
             {state?.errors?.email && (
-              <p className="text-sm text-destructive">{state.errors.email}</p>
+              <p className="rounded-lg bg-terracotta/10 px-4 py-3 text-sm font-medium text-terracotta">
+                {state.errors.email}
+              </p>
             )}
           </div>
 
@@ -56,7 +71,9 @@ export function ResetPasswordForm() {
               required
             />
             {state?.errors?.code && (
-              <p className="text-sm text-destructive">{state.errors.code}</p>
+              <p className="rounded-lg bg-terracotta/10 px-4 py-3 text-sm font-medium text-terracotta">
+                {state.errors.code}
+              </p>
             )}
           </div>
 
@@ -70,19 +87,29 @@ export function ResetPasswordForm() {
               required
             />
             {state?.errors?.password && (
-              <p className="text-sm text-destructive">{state.errors.password}</p>
+              <p className="rounded-lg bg-terracotta/10 px-4 py-3 text-sm font-medium text-terracotta">
+                {state.errors.password}
+              </p>
             )}
           </div>
 
-          <SubmitButton pendingText={t("auth.resetting", "Resetting...")}>{t("auth.resetPassword")}</SubmitButton>
+          <SubmitButton
+            pendingText={t("auth.resetting", "Resetting...")}
+            className="w-full bg-gold text-obsidian font-semibold shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:bg-gold-light hover:shadow-[0_4px_30px_rgba(212,175,55,0.5)] transition-all duration-300"
+          >
+            {t("auth.resetPassword")}
+          </SubmitButton>
         </form>
 
         <div className="mt-4 text-center text-sm">
-          <Link href={href("/forgot-password")} className="font-medium text-primary hover:underline">
+          <Link
+            href={href("/forgot-password")}
+            className="font-medium text-gold underline underline-offset-4 hover:text-gold-light transition-colors"
+          >
             {t("auth.requestNewCode")}
           </Link>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </motion.div>
   );
 }

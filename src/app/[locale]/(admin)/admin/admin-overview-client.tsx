@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import {
   DollarSign,
   CalendarDays,
@@ -40,58 +41,69 @@ export function AdminOverviewClient({
       value: `$${stats.total_revenue.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
       icon: DollarSign,
       description: t("admin.confirmedBookingsOnly"),
+      color: "text-gold",
     },
     {
       label: t("admin.totalBookings"),
       value: stats.total_bookings.toString(),
       icon: CalendarDays,
       description: t("admin.allStatuses"),
+      color: "text-lapis",
     },
     {
       label: t("admin.pendingReview"),
       value: stats.pending_review.toString(),
       icon: Clock,
       description: t("admin.awaitingReceipt"),
+      color: "text-amber-600",
     },
     {
       label: t("admin.activeTours"),
       value: stats.active_tours.toString(),
       icon: Map,
       description: t("admin.openForBooking"),
+      color: "text-emerald-600",
     },
   ];
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="font-heading text-2xl font-bold tracking-wider text-obsidian">
           {t("admin.adminOverview")}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-obsidian/50">
           {t("admin.platformStats")}
         </p>
-      </div>
+      </motion.div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat) => {
+        {statCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div
+            <motion.div
               key={stat.label}
-              className="rounded-2xl border bg-card p-5"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
+              className="rounded-2xl border border-gold/10 bg-white p-5 shadow-[0_2px_20px_rgba(0,0,0,0.03)]"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-sm font-medium text-obsidian/50">
                   {stat.label}
                 </p>
-                <Icon className="size-4 text-muted-foreground" aria-hidden />
+                <Icon className={`size-4 ${stat.color}`} aria-hidden />
               </div>
-              <p className="mt-2 text-3xl font-semibold">{stat.value}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-2 text-3xl font-bold text-obsidian">{stat.value}</p>
+              <p className="mt-1 text-xs text-obsidian/40">
                 {stat.description}
               </p>
-            </div>
+            </motion.div>
           );
         })}
       </div>

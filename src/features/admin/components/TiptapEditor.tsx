@@ -83,7 +83,7 @@ export function TiptapEditor({ content, onChange, editable = true }: Props) {
   if (!editor) return null;
 
   function setLink() {
-    const url = window.prompt("URL:");
+    const url = window.prompt("Link address:");
     if (url === null) return;
     if (url === "") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
@@ -93,7 +93,7 @@ export function TiptapEditor({ content, onChange, editable = true }: Props) {
   }
 
   function addImage() {
-    const url = window.prompt("Image URL:");
+    const url = window.prompt("Image address:");
     if (url) editor.chain().focus().setImage({ src: url }).run();
   }
 

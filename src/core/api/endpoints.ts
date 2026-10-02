@@ -37,6 +37,25 @@ export const API_ENDPOINTS = {
       CREATE: "/api/admin/tours",
       UPDATE: (id: string) => `/api/admin/tours/${id}`,
       DELETE: (id: string) => `/api/admin/tours/${id}`,
+      UPLOAD_IMAGE: "/api/admin/tours/images",
+      DELETE_IMAGE: "/api/admin/tours/images",
+    },
+    HOMEPAGE: {
+      CATEGORIES: {
+        LIST: "/api/admin/homepage/categories",
+        CREATE: "/api/admin/homepage/categories",
+        BY_ID: (id: string) => `/api/admin/homepage/categories/${id}`,
+      },
+      SERVICES: {
+        LIST: "/api/admin/homepage/services",
+        CREATE: "/api/admin/homepage/services",
+        BY_ID: (id: string) => `/api/admin/homepage/services/${id}`,
+      },
+      OFFERS: {
+        LIST: "/api/admin/homepage/offers",
+        CREATE: "/api/admin/homepage/offers",
+        BY_ID: (id: string) => `/api/admin/homepage/offers/${id}`,
+      },
     },
     BOOKINGS: {
       LIST: "/api/admin/bookings",
@@ -52,5 +71,10 @@ export const API_ENDPOINTS = {
   },
   WEBHOOKS: {
     STRIPE: "/api/webhooks/stripe",
+  },
+  ANALYTICS: {
+    // Proxy that forwards browser-generated Meta events to the Conversions
+    // API with the server-side Access Token (never exposed to the client).
+    META: "/api/analytics/meta",
   },
 } as const;

@@ -2,6 +2,8 @@
   "nav": {
     "home": "Startseite",
     "tours": "Touren",
+    "services": "Leistungen",
+    "categories": "Kategorien",
     "whyUs": "Warum wir",
     "whatsapp": "WhatsApp",
     "myAccount": "Mein Konto",
@@ -9,13 +11,56 @@
     "adminPanel": "Admin-Panel",
     "login": "Anmelden",
     "signup": "Registrieren",
-    "toggleMenu": "Menü umschalten"
+    "toggleMenu": "Menü umschalten",
+    "contact": "Kontakt"
+  },
+  "a11y": {
+    "skipToContent": "Zum Hauptinhalt springen"
   },
   "hero": {
     "badge": "UK-registriert · Ägyptische Experten",
     "title": "Erkunden Sie Ägypten wie ein Einheimischer, geschützt durch britische Standards.",
     "subtitle": "Keine versteckten Gebühren. Authentische ägyptische Abenteuer mit transparenten lokalen Preisen und britischen Rechtsgarantien.",
-    "searchPlaceholder": "Touren suchen..."
+    "searchPlaceholder": "Touren suchen...",
+    "imageAlt": "Pyramiden zur goldenen Stunde in Ägypten",
+    "scroll": "Entdecken"
+  },
+  "homepage": {
+    "servicesEyebrow": "Reiseleistungen",
+    "servicesTitle": "Alles für Ihre Reise",
+    "categoriesEyebrow": "Ihr Erlebnis finden",
+    "categoriesTitle": "Ägypten auf Ihre Weise entdecken",
+    "categoriesSubtitle": "Wählen Sie eine Kategorie und planen Sie die passende Reise.",
+    "explore": "Entdecken"
+  },
+  "offers": {
+    "heroLabel": "Hot Angebote",
+    "eyebrow": "Zeitlich begrenzte Angebote",
+    "title": "Hot Angebote",
+    "subtitle": "Ausgewählte Ersparnisse bei den beliebtesten Ägypten-Erlebnissen.",
+    "cta": "Angebot ansehen"
+  },
+  "seo": {
+    "site": {
+      "title": "Mystic Egypt | Luxusreisen & authentische ägyptische Erlebnisse",
+      "titleTemplate": "%s | Mystic Egypt",
+      "description": "Authentische, luxuriöse Reisen durch ganz Ägypten – von den Pyramiden von Gizeh bis zur Weißen Wüste. Im Vereinigten Königreich registriert, mit lokalen ägyptischen Experten."
+    },
+    "home": {
+      "title": "Luxusreisen & authentische ägyptische Erlebnisse",
+      "description": "Buchen Sie authentische, luxuriöse Reisen durch ganz Ägypten – von den Pyramiden von Gizeh bis zur Weißen Wüste. Im Vereinigten Königreich registriert, mit lokalen ägyptischen Experten. Transparente Preise, keine versteckten Gebühren."
+    },
+    "tours": {
+      "title": "Rundreisen",
+      "description": "Entdecken Sie authentische ägyptische Touren – von den Pyramiden von Gizeh bis zur Weißen Wüste – zu transparenten lokalen Preisen."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "description": "Kontaktieren Sie Mystic Egypt. Wir helfen Ihnen gerne bei der Planung Ihres perfekten Ägypten-Abenteuers."
+    },
+    "tour": {
+      "description": "Buchen Sie {{title}} — eine authentische Ägypten-Tour mit transparenten lokalen Preisen und UK-Registrierungsgarantien."
+    }
   },
   "tours": {
     "featured": "Ausgewählte Touren",
@@ -40,22 +85,50 @@
     "maxBudget": "Max. Budget (USD)",
     "allStatuses": "Alle Status",
     "filter": "Filtern",
-    "noToursFound": "Keine Touren gefunden."
+    "noToursFound": "Keine Touren gefunden.",
+    "relatedTours": "Das könnte Ihnen auch gefallen"
   },
   "whyUs": {
     "title": "Warum Sie uns wählen",
+    "subtitle": "Drei Versprechen auf jeder Reise — abgesichert durch britisches Recht, erfüllt von ägyptischen Experten.",
     "ukEntity": {
       "title": "UK-registrierte Gesellschaft",
-      "description": "Buchen Sie mit vollständigen britischen Rechtsgarantien und einer überprüfbaren, registrierten Firma hinter jeder Tour."
+      "description": "Buchen Sie mit vollständigen britischen Rechtsgarantien und einer überprüfbaren, registrierten Firma hinter jeder Tour.",
+      "statLabel": "Britischer Rechtsschutz"
     },
     "transfers": {
       "title": "Unkomplizierte Transfers",
-      "description": "Tür-zu-Tür-Transfers, lizenzierte Guides und jedes Detail arrangiert — vom Flughafen bis zu Ihrem Hotel."
+      "description": "Tür-zu-Tür-Transfers, lizenzierte Guides und jedes Detail arrangiert — vom Flughafen bis zu Ihrem Hotel.",
+      "statLabel": "Rund um die Uhr verfügbar"
     },
     "prices": {
       "title": "Beste lokale Preise garantiert",
-      "description": "Transparente lokale Preise ohne versteckte Gebühren oder Touristen-Fallen. Niemals."
+      "description": "Transparente lokale Preise ohne versteckte Gebühren oder Touristen-Fallen. Niemals.",
+      "statLabel": "Versteckte Gebühren"
     }
+  },
+  "process": {
+    "title": "So funktioniert es",
+    "choose": {
+      "title": "Tour auswählen",
+      "description": "Durchsuchen Sie unsere kuratierte Auswahl und finden Sie die Reise, die zu Ihrem Stil passt."
+    },
+    "customize": {
+      "title": "Individuell anpassen",
+      "description": "Termine ändern, Ausflüge hinzufügen oder Änderungen anfordern — wir gestalten jedes Detail für Sie."
+    },
+    "book": {
+      "title": "Sicher buchen",
+      "description": "Bezahlen Sie sicher per Karte oder Überweisung, mit vollem Schutz durch die UK-Registrierung."
+    },
+    "experience": {
+      "title": "Ägypten genießen",
+      "description": "Reisen Sie mit lokalen Experten, die alles von der Ankunft bis zum Abschied übernehmen."
+    }
+  },
+  "testimonials": {
+    "title": "Was unsere Reisenden sagen",
+    "subtitle": "Echte Geschichten von Gästen, die Ägypten mit uns entdeckt haben."
   },
   "trust": {
     "securePayment": "Sichere Zahlung",
@@ -70,10 +143,39 @@
     "localExperts": "Lokale ägyptische Experten",
     "explore": "Entdecken",
     "whyChooseUs": "Warum uns wählen",
+    "contact": "Kontakt",
     "account": "Konto",
     "login": "Anmelden",
     "createAccount": "Konto erstellen",
-    "copyright": "Mystic Egypt. Alle Rechte vorbehalten."
+    "copyright": "Mystic Egypt. Alle Rechte vorbehalten.",
+    "legal": "Rechtliches",
+    "privacyPolicy": "Datenschutzerklärung",
+    "termsConditions": "AGB",
+    "cancellationPolicy": "Stornierungsbedingungen",
+    "cookiePolicy": "Cookie-Richtlinie",
+    "ukAddress": "Cleveland Tower, Holloway Head, Birmingham, Vereinigtes Königreich",
+    "egyptAddress": "Hurghada, Ägypten"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Haben Sie eine Frage oder möchten Sie Ihre Traumreise planen? Wir sind hier, um zu helfen.",
+    "getInfo": "Kontaktinformationen",
+    "followUs": "Folgen Sie uns",
+    "ourOffice": "Unser Büro",
+    "sendMessage": "Senden Sie uns eine Nachricht",
+    "name": "Ihr Name",
+    "email": "E-Mail-Adresse",
+    "subject": "Betreff",
+    "selectSubject": "Betreff auswählen",
+    "subjectGeneral": "Allgemeine Anfrage",
+    "subjectBooking": "Buchungsfrage",
+    "subjectCustom": "Individuelle Touranfrage",
+    "subjectSupport": "Support",
+    "message": "Ihre Nachricht",
+    "send": "Nachricht senden",
+    "sending": "Senden",
+    "successTitle": "Nachricht gesendet!",
+    "sendAnother": "Weitere Nachricht senden"
   },
   "customTour": {
     "title": "Diese Tour anpassen",
@@ -228,6 +330,36 @@
     "cms": "CMS",
     "admins": "Administratoren",
     "settings": "Einstellungen",
+    "homepage": "Startseite",
+    "manageHomepage": "Leistungen, Kategorien und Angebote der Startseite verwalten.",
+    "categories": "Kategorien",
+    "categoriesDescription": "Werden unter den Leistungen auf der Startseite angezeigt.",
+    "services": "Leistungen",
+    "servicesDescription": "Werden im beweglichen Leistungsstreifen angezeigt.",
+    "addCategory": "Kategorie hinzufügen",
+    "editCategory": "Kategorie bearbeiten",
+    "addService": "Leistung hinzufügen",
+    "editService": "Leistung bearbeiten",
+    "noCategories": "Noch keine Kategorien.",
+    "noServices": "Noch keine Leistungen.",
+    "imagePath": "Lokaler Bildpfad",
+    "sortOrder": "Reihenfolge",
+    "icon": "Symbol",
+    "active": "Aktiv",
+    "homepageSaveFailed": "Startseitenelement konnte nicht gespeichert werden.",
+    "homepageDeleteFailed": "Startseitenelement konnte nicht gelöscht werden.",
+    "homepageSaved": "Änderungen gespeichert.",
+    "homepageDeleted": "Element gelöscht.",
+    "deleteCategoryConfirm": "Diese Kategorie löschen?",
+    "deleteServiceConfirm": "Diese Leistung löschen?",
+    "offers": "Angebote",
+    "offersDescription": "Wird in der Hero-Angebotsleiste und im Angebotsbereich angezeigt.",
+    "addOffer": "Angebot hinzufügen",
+    "editOffer": "Angebot bearbeiten",
+    "noOffers": "Noch keine Angebote.",
+    "deleteOfferConfirm": "Dieses Angebot löschen?",
+    "badge": "Badge (optional)",
+    "linkUrl": "Linkpfad (optional)",
     "siteAdministrator": "Website-Administrator",
     "adminOverview": "Admin-Übersicht",
     "platformStats": "Plattformweite Statistiken und letzte Aktivitäten.",
@@ -318,6 +450,7 @@
   },
   "common": {
     "loading": "Laden...",
+    "saving": "Speichern...",
     "error": "Fehler",
     "save": "Speichern",
     "cancel": "Abbrechen",

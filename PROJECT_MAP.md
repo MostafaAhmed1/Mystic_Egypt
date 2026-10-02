@@ -1,7 +1,8 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: MILESTONE 7 IN PROGRESS
-**Last Updated:** August 31, 2026
+## Status: PRODUCTION DEPLOYED — A+B+C+D RELEASE LIVE 2 Oct 2026 (broken tour images fixed · language switcher moved to header · nginx 12M · Hot Offers feature)
+## Active plan: execution complete for A+B+C+D (tracker: `docs/PROGRESS-2026-10-01.md`); X6 commit pending user request. Performance plan M2–M5 still awaiting order.
+**Last Updated:** Oct 2, 2026
 
 ---
 
@@ -15,8 +16,11 @@
 | 4 | Booking & Payment | ✅ COMPLETE | Stripe Elements + Bank Transfer (receipt upload), checkout flow, webhook |
 | 5 | Client Dashboard & Invoice | ✅ COMPLETE | Dashboard (overview/bookings/invoices/wishlist/profile), Invoice PDF, server actions |
 | 6 | Admin Panel | ✅ COMPLETE | All 8 steps: Layout, API, Dashboard, Tours, Orders, CMS, 2FA, Admins |
-| 7 | i18n, SEO & Polish | 🔄 IN PROGRESS | Steps 1-3 complete, Phase 1 complete (locale prefix routing), 6 phases remaining |
-| 8 | Testing, QA & Deployment | ⏳ PENDING | — |
+| 7 | i18n, SEO & Polish | ✅ COMPLETE | All 7 phases complete (locale-prefix routing, hreflang, GDPR banner, RTL, responsive, GA4 wiring) |
+| 8 | Testing, QA & Deployment | ✅ COMPLETE | PRODUCTION DEPLOYED Sept 2026 — VPS Docker + MariaDB + Nginx, all pages 200 |
+| 9 | Luxury Visual Overhaul | ✅ COMPLETE | 12-phase visual redesign — All phases complete |
+| 10 | UI/UX Testing | ✅ COMPLETE | 10-phase browser testing — 80% coverage (2 phases skipped due to 2FA) |
+| 11 | Tours Migration & Production Rollout | ✅ COMPLETE | 16 old-site tours migrated live (18 total), duration field, prod-only bugs fixed |
 
 ---
 
@@ -96,9 +100,9 @@
 - **Customization request = server action, not fetch API route:** `customizeTourAction` in
   `src/features/tour/actions.ts` is auth-gated (`getCurrentUser` → redirect /login), validates inline,
   and creates a `CustomizationRequest`. Keeps with the M2 decision to avoid orphan fetch endpoints.
-- **Placeholder tour images:** Generated locally with `sharp` at
-  `public/uploads/tours/{nile-cruise-cairo,white-desert}.jpg` (small JPGs). Replaced by
-  admin-uploaded real photos in M6.
+- **Placeholder tour images (superseded):** Were generated locally with `sharp` at
+  `public/uploads/tours/{nile-cruise-cairo,white-desert}.jpg`. **Removed 1 Oct 2026** — replaced by
+  the seeded CC0/PD catalog images under `public/uploads/tours/catalog/` (see M13 below).
 
 ### Documented Decisions / Deviations (Recorded during M4)
 - **Stripe degraded gracefully (no real keys yet):** `.env` Stripe keys are placeholders
@@ -227,13 +231,18 @@ Client → FormData → Route Handler → Validate (type, size)
 ## [ORPHANS & PENDING]
 
 ### Disconnected Pieces (Recorded during M1)
+- `src/shared/components/public-header-client.tsx` — **ORPHAN, confirmed 23 Sept 2026 (M2):** header-internal
+  client helper with ZERO imports remaining after `PublicHeader` was reworked (initially server-split, then converted
+  to `"use client"` directly). Nothing references it. Retained on disk pending explicit user confirm to delete; not
+  bundled by build (verified: build compiles clean with it present). Same family as the earlier `scroll-progress.tsx`
+  vs `scroll-progress-lazy.tsx` duplication.
 - `src/features/tour/` now implemented (M3). `booking` (M4), `invoice` (M5), `dashboard` (M5),
   `wishlist` (M5) are all implemented.
 - `src/features/auth/` now holds the auth feature (actions, emails, components).
 - `src/shared/hooks/` empty (shared hooks added when needed).
 - `public/locales/` now has 3 locale files (en, ar, de) with comprehensive translations (M7).
-- `public/uploads/tours/*.jpg` referenced by seed DO NOT exist yet (placeholder image paths;
-  real tour images uploaded via admin in M6).
+- `public/uploads/tours/catalog/` holds 22 CC0/PD `.webp` images + `CREDITS.json`, referenced by
+  `prisma/seed-tours.ts` (legacy placeholder JPGs removed 1 Oct 2026).
 - `src/core/lib/i18n.ts` created (M7). `resend`, `auth`, `otp`, `session` created (M2).
 - `src/app/` has `(auth)` group complete (M2); `(public)` home is scaffold; `(dashboard)` &
   `(admin)` are minimal placeholders (filled in M5/M6).
@@ -243,8 +252,8 @@ Client → FormData → Route Handler → Validate (type, size)
 - **`/tours/[slug]/book` route is a dangling pointer** — the "Book now" buttons link to
   `/tours/[slug]/book`, which does NOT exist yet. This is the Milestone 4 entry point. Next.js
   link-prefetch logs a 404 until M4 lands.
-- **`public/uploads/tours/*.jpg` are local placeholder JPGs** (generated with sharp). Real tour
-  images to be uploaded by admin in M6.
+- **RESOLVED 1 Oct 2026:** tour images are now seeded catalog images
+  (`public/uploads/tours/catalog/*.webp`, CC0/PD) instead of placeholder JPGs.
 - **Reviews/Testimonials deferred** — homepage/listing don't render testimonials because no
   `Review`/`Testimonial` model exists. Will surface with PRD §4.1 reviews (M7 or a dedicated model).
 - **Homepage search** supports destination keyword + max budget only. A tour-date field comes with
@@ -253,6 +262,30 @@ Client → FormData → Route Handler → Validate (type, size)
   them — that belongs to the Admin panel (M6).
 - **Migrations baseline debt** — project uses `prisma db push`; `prisma/migrations` is empty.
   A baseline migration should be introduced (M8 / before first production deploy).
+
+### Post-Deploy Fixes (Recorded Sept 22, 2026 — full tracker: `POST_DEPLOY_FIXES_PLAN.md`)
+- **M1 ✅** Tour primary image missing (`hurghada-luxor-excursions-program`) — root cause: stuck
+  AVIF transform job in the image optimizer; fixed by container restart. Quick recurrence fix:
+  `docker restart mystic-egypt`. Hardening (optimizer timeouts / disable AVIF) = optional, not done.
+- **M2 ✅** 15 missing translation keys (`whyUs.*` 4, `process.*` 9, `testimonials.*` 2) added to
+  `public/locales/{en,ar,de}/common.json`; rebuilt image + recreated container; verified live
+  (raw keys = 0 in all 3 locales). New copy is agent-authored, editable on content review.
+- **M3 ✅** Literal `\` stripped from `NEXT_PUBLIC_PHONE_UK/EG` in `.env.container` **and** `.env`;
+  container recreated (restart would NOT pick up env — recreate rule now in MANUAL_STEPS §5).
+- **M4 ✅ + extended sweep** Server hygiene: tmp/build debris, 5 failed build containers, 4 dangling
+  images, `pm2 flush` (18 GB logs → 148 K), npm/root caches (2.6 GB), local `dev-server.{err,out}.log`.
+  **~25 GB freed (disk 59% → 33%).** Runbook in `MANUAL_STEPS.md`. Other VPS projects untouched
+  (pm2 apps, dokploy, dawenli, sqlserver, `/var/www/samhram`).
+- **M5 ✅** Docs synced: container-recreate command now includes `-v …/data/uploads`, build-time
+      corrected to ~40 min, "site stays up during build" clarified, env-recreate rule added
+      (MANUAL_STEPS §5/§6/§7 + hygiene runbook); this file's status header refreshed.
+- **Meta Pixel + CAPI (Sept 22, 2026; updated Sept 24, 2026):** fully coded + locally verified;
+  pixel migrated to `1510981584397229`, `META_CAPI_TOKEN` provided by owner (in env files only,
+  not committed). **DEPLOYED** Sept 24, 2026 (release `2026-09-24-c725559`) + verified
+  (200s, new pixel baked, old absent, container env loaded). Owner to verify events via
+  Meta Test Events (see MANUAL_STEPS §5b).
+- **Known open / optional (not requested):** React hydration error #418 (text-content mismatch)
+  observed on public pages — not user-blocking; revisit if it becomes visible.
 
 ### Documented Decisions / Deviations (Recorded during M5)
 - **User.notifications_enabled added for PRD §4.3:** `Boolean @default(true)` field on User model
@@ -344,6 +377,247 @@ Client → FormData → Route Handler → Validate (type, size)
   `auth.verifyTitle/verifyDescription/verifyEnter/verificationCode/verifying/verifyEmail/resendCode`,
   `dashboard.noBookingsYet/trackBookings/noInvoicesYet/noFavouritesYet`,
   `booking.person`, `profile.deleteAccount` added to all 3 locale files.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 1)
+- **Framer Motion installed:** `framer-motion` added for scroll reveals, parallax, staggered animations.
+- **Fonts replaced:** Geist Sans/Mono → Cinzel (headings) + Inter (body) via `next/font/google`.
+  - `--font-cinzel` variable for headings, `--font-inter` variable for body text.
+  - `font-heading` now maps to Cinzel, `font-sans` maps to Inter.
+- **Egyptian Sandstone palette applied:** Light mode ONLY (dark mode removed entirely).
+  - Background: `#F4F1EA` (Sandstone Off-White)
+  - Foreground/Text: `#0B0C10` (Obsidian Black)
+  - Primary/CTA: `#D4AF37` (Pharaonic Gold)
+  - Accent: `#1F3A93` (Lapis Lazuli)
+  - Muted/Secondary: `#E8E2D6` (warm sandstone gray)
+  - Border: `#D4CFC5` (warm border)
+  - Destructive: `#C4704A` (Terracotta)
+- **Custom utility classes added to globals.css:**
+  - `cinematic-overlay` — dark gradient overlay for hero images
+  - `cinematic-overlay-light` — lighter version for section backgrounds
+  - `gold-gradient-text` — gold gradient text effect
+  - `gold-glow` / `gold-glow-subtle` — gold box-shadow effects
+  - `text-shadow-cinematic` — text shadow for readability on images
+  - `glassmorphic` / `glassmorphic-dark` — glassmorphism effects
+  - `animate-ken-burns` — slow zoom animation for hero backgrounds
+  - `animate-shimmer` — gold shimmer animation for badges/accents
+  - `animate-border-glow` — subtle border glow animation
+  - `timeline-connector` — vertical timeline line for itinerary
+- **Stock images downloaded:** 7 placeholder images in `public/uploads/stock/` (user replaces later).
+- **Custom scrollbar:** Styled webkit scrollbar with gold hover state.
+- **Selection color:** Gold-tinted text selection.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 2)
+- **GlassmorphicHeader client component created:** Wraps header with scroll-based glassmorphism effect.
+  - Transparent background → blurred sandstone with gold shadow on scroll (20px threshold).
+  - `backdrop-blur-xl` with `bg-sandstone/85` when scrolled.
+  - Subtle gold box-shadow `shadow-[0_4px_30px_rgba(212,175,55,0.08)]` on scroll.
+  - Smooth 500ms transition for all property changes.
+- **BrandLogo redesigned:** Obsidian black icon container with gold text, gold hover glow.
+  - `bg-obsidian text-gold` icon, `font-heading text-xl` with `tracking-wider`.
+  - Hover: `gold-glow-subtle` effect on icon container.
+- **HeaderNavLinks upgraded:** Gold underline reveal animation on hover.
+  - `text-obsidian/70` base, transitions to `text-obsidian` on hover.
+  - Gold underline: `h-0.5 bg-gold` with `w-0 → w-full` on hover (300ms transition).
+- **PublicHeaderClient (auth buttons) redesigned:**
+  - Login: `text-obsidian/70` → `text-gold` on hover.
+  - Signup: Gold outline button `border-2 border-gold bg-gold/10` → filled `bg-gold text-obsidian` on hover.
+  - Dashboard: Obsidian button `bg-obsidian text-gold` with gold glow on hover.
+  - WhatsApp: `text-obsidian/60` → `text-gold` on hover.
+- **MobileNav completely rebuilt:** Full-screen overlay with staggered animations.
+  - Full `fixed inset-0 z-50 bg-sandstone` overlay (not dropdown).
+  - Links animate in with `translate-y` + `opacity` with 80ms stagger delay.
+  - Auth buttons animate in at 300ms delay.
+  - Bottom row (language/whatsapp) at 450ms delay.
+  - Body scroll locked when open (`overflow: hidden`).
+  - CTA buttons: Login = obsidian border, Signup = gold outline → filled on hover.
+- **Footer redesigned:** Dark obsidian background with gold accents.
+  - `bg-obsidian` background, gold gradient top border.
+  - Column headers: `text-gold uppercase tracking-widest`.
+  - Links: `text-sandstone/60` → `text-gold` on hover.
+  - Brand logo rendered in gold variant.
+  - Contact column added with email and WhatsApp.
+  - Bottom bar: `border-sandstone/10` with `text-sandstone/40`.
+- **PublicHeader updated:** Now wraps content in `<GlassmorphicHeader>` instead of raw `<header>`.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 3)
+- **Hero section completely rebuilt:** Full-bleed cinematic design with 85vh height.
+  - Background: stock image (`/uploads/stock/hero-pyramids.jpg`) with `animate-ken-burns` (slow zoom).
+  - Overlay: `cinematic-overlay` gradient (dark → transparent → dark).
+  - Bottom fade: `bg-gradient-to-t from-sandstone to-transparent` for smooth transition.
+  - Framer Motion staggered text reveal: badge (0ms) → heading (150ms) → subtitle (300ms) → search (450ms).
+  - `fadeInUp` animation: opacity 0→1, y 30→0, 0.7s duration, custom cubic-bezier easing.
+  - Badge: `border-gold/30 bg-gold/10` with uppercase tracking-widest.
+  - Heading: `font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl` with `text-shadow-cinematic`.
+- **TourSearchBar redesigned:** Glassmorphic container over hero image.
+  - Container: `border-white/20 bg-white/10 backdrop-blur-xl` with `shadow-[0_8px_32px_rgba(0,0,0,0.3)]`.
+  - Input fields: `bg-white/5` with `focus-within:bg-white/10 focus-within:ring-gold/50`.
+  - Icons: `text-gold/60` → `text-gold` on focus.
+  - Submit button: `bg-gold text-obsidian` with gold shadow, `hover:bg-gold-light`.
+  - Text colors: `text-white placeholder:text-white/40` for visibility over dark hero.
+- **Featured Tours section enhanced:** Framer Motion scroll-triggered animations.
+  - Section heading: `whileInView` fade-in-up with `viewport={{ once: true }}`.
+  - Tour cards: staggered entrance with 100ms delay between cards.
+  - "View All" link: gold with arrow shift on hover.
+- **Why Us section enhanced:** Animated cards with hover effects.
+  - Section: `bg-sandstone-dark/50` background.
+  - Cards: `border-gold/10 bg-white` with hover: `border-gold/30` and gold shadow.
+  - Icons: `bg-gold/10 text-gold` with hover: `bg-gold/20 gold-glow-subtle`.
+  - Staggered entrance: 100ms delay between cards.
+- **Trust badges redesigned:** Dark obsidian background with gold accents.
+  - Container: `bg-obsidian` with `border-t border-gold/10`.
+  - Badges: `text-sandstone/50` with `hover:text-gold`.
+  - Each badge now has an icon (CheckCircle, Headset, MapPin, BadgeCheck) in `text-gold/60`.
+- **Framer Motion type fix:** Easing array cast as `[number, number, number, number]` tuple.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 4)
+- **TourImage fallback redesigned:** Replaced amber/orange gradient with Egyptian sandstone theme.
+  - Background: `bg-gradient-to-br from-sandstone-dark via-gold/10 to-sandstone-dark`.
+  - Icon: `Pyramid` (lucide) instead of `MapPin`, in `bg-gold/10` container.
+  - Label: `text-obsidian/40` with `tracking-wider`.
+- **TourCard completely rebuilt:** Luxury card with hover effects and cinematic overlays.
+  - Container: `border-gold/10 bg-white` with hover: `border-gold/30` and gold shadow.
+  - Image: `transition-transform duration-700 ease-out group-hover:scale-110` (smooth zoom).
+  - Cinematic overlay: `bg-gradient-to-t from-obsidian/60` fades in on hover.
+  - Gold accent line: `h-1 w-0 bg-gold` → `w-full` on hover (500ms transition).
+  - Price badge: Floating on image bottom-left, `bg-obsidian/80 backdrop-blur-sm`, gold price text.
+  - Title: `tracking-wide text-obsidian` → `text-gold` on hover.
+  - Bottom border: `border-t border-gold/10` separator.
+  - CTA link: Gold with arrow shift on hover.
+  - Changed from `Card`/`CardContent` (shadcn) to semantic `<article>` element.
+- **Featured Tours homepage section:** Already enhanced in Phase 3 with Framer Motion animations.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 5)
+- **TourGallery redesigned:** Elegant thumbnail gallery with gold active indicator.
+  - Main image: `rounded-2xl` with subtle `ring-1 ring-inset ring-obsidian/5` overlay.
+  - Thumbnails: `h-20 w-28` (larger than before), `rounded-xl`, `border-2`.
+  - Active thumbnail: `border-gold shadow-[0_0_12px_rgba(212,175,55,0.3)]` gold glow.
+  - Inactive thumbnails: `border-transparent opacity-50` → `opacity-80 border-gold/30` on hover.
+  - Image transition: `transition-opacity duration-500` for smooth switching.
+- **TourContent completely rebuilt:** Cinematic tour detail page with Framer Motion animations.
+  - Breadcrumb: `ChevronRight` icons instead of `/` separators, `text-obsidian/40` with hover-to-gold.
+  - Gallery: Framer Motion `initial={{ opacity: 0, x: -20 }}` slide-in from left.
+  - Sidebar: Framer Motion `initial={{ opacity: 0, x: 20 }}` slide-in from right with 100ms delay.
+  - Title: `font-heading text-3xl sm:text-4xl font-bold tracking-wider`.
+  - Price: `font-heading text-4xl font-bold text-gold` (prominent gold display).
+  - Duration badge: `border-gold/20 bg-gold/5` with gold MapIcon.
+  - Book Now CTA: `bg-gold text-obsidian` with gold shadow, `hover:bg-gold-light` with enhanced shadow.
+  - Itinerary section: Framer Motion scroll-triggered animation.
+  - Inclusions: `bg-emerald-50` icon container, emerald check marks.
+  - Exclusions: `bg-terracotta/10` icon container, terracotta X marks (replaces rose-600).
+  - Bottom CTA: `bg-obsidian` dark section with white heading, gold CTA buttons.
+  - All sections use `whileInView` with `viewport={{ once: true }}` for scroll animations.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 6)
+- **ItineraryAccordion redesigned:** Vertical timeline with gold dots and connecting lines.
+  - Each day: gold dot (`size-8 rounded-full border-2 border-gold bg-gold/10`) with day number.
+  - Open state: `bg-gold shadow-[0_0_12px_rgba(212,175,55,0.4)]` with `text-obsidian`.
+  - Connecting line: `w-px bg-gradient-to-b from-gold/40 to-gold/10` between dots.
+  - Title: `font-heading text-base font-semibold tracking-wide` → `text-gold` when open.
+  - Removed shadcn Card wrapper — timeline is self-contained.
+- **TourMap redesigned:** Dark CartoDB Dark Matter tiles with gold markers.
+  - Tiles: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png`.
+  - Marker: Gold pin with obsidian center and gold inner dot, drop shadow filter.
+  - Polyline: Gold `#D4AF37` with `dashArray: "8 4"` (dashed elegance).
+  - Container: `h-96` (taller), `border-gold/10`, gold shadow.
+  - Empty state: `bg-obsidian/5` with gold CircleDot icon.
+- **TourMapClient updated:** Loading state now shows gold spinner on dark background.
+  - `h-96` matching the map height.
+  - Spinner: `border-gold/20 border-t-gold` rotating animation.
+  - "Loading map..." text in `text-obsidian/40`.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 7)
+- **Input component redesigned:** Gold focus borders, taller height.
+  - Height: `h-10` (increased from `h-8`).
+  - Border: `border-sand/60` → `border-gold` on focus.
+  - Focus ring: `focus-visible:ring-2 focus-visible:ring-gold/20`.
+  - Error state: `aria-invalid:border-terracotta aria-invalid:ring-2 aria-invalid:ring-terracotta/20`.
+  - Text color: `text-obsidian` (explicit).
+- **Label component updated:** `text-obsidian/70` (explicit color).
+- **CheckoutForm rebuilt:** Luxury checkout with Framer Motion animations.
+  - Section headers: `font-heading font-bold tracking-wider text-obsidian`.
+  - Payment options: Icons (CreditCard, Building2), gold selected state with glow.
+  - Checkbox: `accent-gold` styling.
+  - CTA button: `bg-gold text-obsidian` with gold shadow, Shield icon.
+  - Error messages: `bg-terracotta/10 text-terracotta` (rounded-lg container).
+  - Sections: Framer Motion `initial={{ opacity: 0, y: 10 }}` staggered animations.
+- **LoginForm rebuilt:** Glassmorphic card without shadcn Card wrapper.
+  - Container: `rounded-2xl border-gold/10 bg-white shadow-[0_4px_30px_rgba(0,0,0,0.06)]`.
+  - Gold decorative divider under heading.
+  - CTA: `bg-gold text-obsidian` with gold shadow.
+  - Links: `text-gold` with underline.
+  - Error: `bg-terracotta/10 text-terracotta`.
+  - Framer Motion entrance animation.
+- **RegisterForm rebuilt:** Same treatment as LoginForm.
+  - Consistent glassmorphic card, gold CTA, terracotta errors.
+- **SubmitButton updated:** Accepts optional `className` prop.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 8)
+- **ToursListClient redesigned:** Cinematic hero header with dark background.
+  - Hero: `bg-obsidian py-20 sm:py-28` full-width dark section.
+  - Background: `bg-[radial-gradient(circle_at_30%_50%,rgba(212,175,55,0.15),transparent_50%)]` gold radial.
+  - Badge: `border-gold/20 bg-gold/10 text-gold` with Compass icon.
+  - Title: `font-heading text-4xl sm:text-5xl font-bold tracking-wider text-white`.
+  - Subtitle: `text-lg text-white/50`.
+  - TourSearchBar: Centered below title with Framer Motion delay.
+  - Grid: Framer Motion staggered animations (`delay: index * 0.1`).
+  - Empty state: `border-dashed border-gold/20 bg-sand/20` with gold Compass icon, helpful message.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 9)
+- **Auth layout redesigned:** Cinematic dark background with radial gradients.
+  - Background: `bg-obsidian` full-viewport.
+  - Radial gradients: Gold `rgba(212,175,55,0.08)` and lapis `rgba(31,58,147,0.06)`.
+  - Subtle grid pattern: `repeating-linear-gradient` with gold lines at 5% opacity.
+  - Content: `relative z-10` overlay.
+- **ForgotPasswordForm rebuilt:** Glassmorphic card with gold accents.
+  - Icon: `Mail` in `bg-gold/10` circle.
+  - Container: `rounded-2xl border-gold/10 bg-white shadow-[0_4px_30px_rgba(0,0,0,0.06)]`.
+  - Gold decorative divider under heading.
+  - CTA: `bg-gold text-obsidian` with gold shadow.
+  - Links: `text-gold` with underline.
+  - Error: `bg-terracotta/10 text-terracotta`.
+  - Footer text: `text-white/40` (on dark bg).
+- **ResetPasswordForm rebuilt:** Same treatment with `KeyRound` icon.
+- **VerifyEmailForm rebuilt:** Same treatment with `ShieldCheck` icon.
+  - Code input: `text-center text-lg tracking-[0.5em]` (spaced digits).
+  - Resend button: `border-gold/20` with `hover:bg-gold/5`.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 10)
+- **Dashboard layout updated:** Glassmorphic user card.
+  - User card: `border-gold/10 bg-white shadow-[0_2px_20px_rgba(0,0,0,0.03)]`.
+  - Text: `text-obsidian` (name), `text-obsidian/40` (email).
+- **Admin layout updated:** Same treatment with gold admin badge.
+  - Admin badge: `bg-gold/10 text-gold` (replaces `bg-primary/10 text-primary`).
+- **DashboardOverviewClient rebuilt:** Luxury dashboard with Framer Motion animations.
+  - Stats: `border-gold/10 bg-white` cards with colored icons (gold, emerald, amber, terracotta).
+  - Recent bookings: `border-gold/10 bg-white` container, `divide-gold/10` dividers.
+  - Empty state: Gold CTA button, refined icon container.
+  - Hover: `hover:bg-sand/20` on booking rows.
+  - All sections: Framer Motion staggered animations.
+- **AdminOverviewClient rebuilt:** Same treatment with stat cards.
+  - Revenue: `text-gold`, Bookings: `text-lapis`, Pending: `text-amber-600`, Active: `text-emerald-600`.
+  - Framer Motion staggered entrance animations.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 11)
+- **ScrollReveal component (reworked 23 Sept 2026, M2 Performance):** originally a Framer Motion wrapper;
+  rewrote it as a **native IntersectionObserver** component (same API: `children`, `className`, `delay`, `direction`
+  up/down/left/right; once + `rootMargin: -100px`; CSS opacity/transform transition 0.5s ease). Reason: removes
+  framer-motion (~120 KB) from the home page first-load. Now in active use on the home page
+  (`home-page-client.tsx` featured tours + why-us, `testimonials-section.tsx`, `process-section.tsx`); hero entrance
+  animations are pure CSS `@keyframes fade-in-up` (`.animate-fade-in-up`, `.animate-fade-in-delayed`, `.animate-bob`
+  in `globals.css`, all respecting `prefers-reduced-motion`). framer-motion remains only on non-first-load routes
+  (auth forms, checkout, admin/dashboard overview, tours list page — separately navigated).
+  - Props: `children`, `className`, `delay`, `direction` (up/down/left/right).
+  - Default: `duration: 0.5`, `ease: [0.25, 0.1, 0.25, 1]` (transition), once trigger.
+  - Direction map: `up: translateY(20px)`, `down: translateY(-20px)`, `left: translateX(20px)`, `right: translateX(-20px)`.
+- **prefers-reduced-motion support added:** CSS media query in globals.css.
+  - Disables all animations and transitions for users who prefer reduced motion.
+  - `animation-duration: 0.01ms !important`, `transition-duration: 0.01ms !important`.
+  - Ken Burns, shimmer, border glow animations explicitly disabled.
+
+### Documented Decisions / Deviations (Recorded during Visual Overhaul - Phase 12)
+- **Final QA:** TypeScript clean, build clean, no regressions.
+- **84 static pages generated** successfully.
+- **All routes verified:** Public (tours, auth), Dashboard, Admin, API routes.**
 
 ### Documented Decisions / Deviations (Recorded during M7 - Step 3)
 - **Admin pages i18n wired:** All 6 admin pages (overview, tours, bookings, cms, admins, settings)
@@ -571,15 +845,104 @@ Modify `src/proxy.ts` to:
   NextAuth `signIn` + server actions against local dev server and the real MariaDB.
 
 ### Pending Items (Human / External)
-- [ ] VPS server provisioning (Node.js, PM2, Nginx, MariaDB, SSL)
-- [ ] Domain DNS configuration for mysticegypt.net
-- [ ] Stripe account setup (API keys: publishable + secret + webhook secret)
-- [ ] Resend account setup (API key)
-- [ ] Google Analytics 4 property creation
-- [ ] WhatsApp Click-to-Chat phone number
-- [ ] Base currency decision (USD vs GBP)
-- [ ] UI/UX Figma designs (PRD §9 step 1)
-- [ ] Real tour images for `public/uploads/tours/`
+- [x] ~~VPS server provisioning~~ — DONE Sept 2026 on `72.61.209.105` (single VPS: Next.js in Docker
+      + MariaDB on-host + Nginx + Let's Encrypt). NOTE: PM2 blueprint was NOT used — Docker is the deploy method.
+- [x] ~~Domain DNS configuration for mysticegypt.net~~ — DONE (site live). Under Cloudflare? old provider; domain resolves to VPS.
+- [ ] Stripe — **ACTIVE (TEST MODE) Sept 2026**: pk_test_/sk_test_ deployed to server env files,
+      webhook endpoint `we_1UDvRUCEY99QqzyR27OTzDHW` created (event `payment_intent.succeeded`),
+      real `whsec_` from Stripe (the earlier supplied `whsec_RVbOy...` was orphan). E2E passed:
+      test PI confirmed → webhook → HTTP 200 on prod. Go-Live pending owner approval.
+- [x] **Meta Pixel + Conversions API — ✅ LIVE (Sept 24, 2026, release `2026-09-24-c725559`):**
+      Pixel `1510981584397229` (**replaced** old `3633452613471654` everywhere;
+      `META_CAPI_TOKEN` provided by owner, kept only in env files). Client lib
+      (`src/core/lib/meta-pixel.ts`, base pixel snippet + `fbq('consent','revoke')`, Advanced
+      Matching via session, `sendMetaEvent` browser + CAPI proxy with shared `event_id`), server
+      CAPI (`src/core/lib/meta-conversions.ts`, Graph API `v23.0`, SHA-256-hashed `em/ph/fn/ln`),
+      consent gate = existing `cookie_consent=accepted` (same as GA4). Events:
+      `PageView` (provider, `src/shared/components/meta-pixel-provider.tsx`), `ViewContent`
+      (`TourContent.tsx`), `Lead` (contact form success), `InitiateCheckout` (on "Book Now" /
+      "View tour" CTA clicks — the old after-booking-creation IC was removed to avoid
+      double-counting), `Purchase` (browser in `CheckoutForm.tsx`, `event_id = booking.id` for
+      Purchase dedup; server CAPI `Purchase` in `confirmBookingFromStripe` via Stripe webhook —
+      gated by `meta_consent` (+`fbp`/`fbc`) carried in PaymentIntent metadata). Env vars:
+      `NEXT_PUBLIC_META_PIXEL_ID`, `META_PIXEL_ID`, `META_CAPI_TOKEN`, `META_TEST_EVENT_CODE`
+      (all 4 in server `.env` + `.env.container`; `package-release.ps1` now injects
+      `NEXT_PUBLIC_META_PIXEL_ID` at build). Typecheck + lint + smoke clean; DEPLOYED and
+      verified: 200s, new pixel baked (old absent), container env loaded, previous image
+      preserved. Remaining: owner verifies via Pixel Helper / Meta Test Events (URL
+      `https://business.facebook.com/events_manager2/test_events/1510981584397229`) and marks
+      `Lead`/`InitiateCheckout`/`Purchase` as conversions.
+- [ ] Resend — **ACTIVE Sept 2026**: real API key deployed to server `.env` + `.env.container`;
+      domain `mysticegypt.net` fully **verified** (DKIM, SPF×2, Tracking CNAME `links → links1.resend-dns.com`);
+      Open+Click tracking LIVE on `links.mysticegypt.net`; **user rotates the interim key after final confirmation**
+- [ ] Google Analytics 4 — **LIVE Sept 2026**: Measurement ID `G-B960Q7XTDS` deployed
+      (`NEXT_PUBLIC_GA_ID` in `.env` + `.env.container`); gtag fires confirmed (204). Optional
+      follow-up: mark `purchase`/`sign_up` as conversion events in GA4 Dashboard.
+- [ ] **GA4 conversion events (DEPLOYED 10 Sep 2026):** `whatsapp_click`, `view_item`,
+      `generate_lead`, `begin_checkout`, `purchase` (server-side via Stripe webhook, idempotent
+      via `Booking.ga_purchase_status` enum `NOT_SENT|SENDING|SENT`). Done on prod: image rebuilt,
+      container recreated, DB migration applied (`ga_purchase_status` + `ga_purchase_sent_at`,
+      backup in repo `backups/`), `GA_MEASUREMENT_SECRET` added to `.env`+`.env.container`
+      (validated via GA4 debug endpoint). Client events verified in browser (`view_item`,
+      `whatsapp_click` fired). Remaining: mark `generate_lead`/`begin_checkout`/`purchase` as
+      conversions in GA4 UI + optional Stripe test-payment E2E. Server disk was cleaned (~15GB:
+      `docker builder prune`, `docker image prune`, old `/tmp` build logs).
+- [ ] WhatsApp Click-to-Chat — **CONFIRMED 10 Sep 2026**: number `447412880087` in
+      `NEXT_PUBLIC_WHATSAPP_NUMBER` (header, mobile nav, footer all link `wa.me/447412880087`).
+- [x] ~~Base currency decision~~ — RESOLVED: EUR (old-site tour prices are €, seeded as EUR)
+- [x] ~~UI/UX Figma designs (PRD §9 step 1)~~ — SUPERSEDED by the completed Luxury Visual Overhaul (12 phases)
+- [ ] Real tour images (16 tours live with placeholder images) — original gallery URLs kept in
+      `docs/tours_seed.json`; old site is Cloudflare-blocked so images must be downloaded manually
+
+## [VISUAL_OVERHAUL]
+
+### Design Direction
+- **Style:** Parallax Storytelling — Cinematic, mysterious, luxury travel magazine aesthetic
+- **Mode:** Light mode ONLY (dark mode skipped)
+- **Target:** $10k+ luxury agency feel for high-net-worth European tourists
+
+### Color Palette
+| Role | Color | Hex | Usage |
+|------|-------|-----|-------|
+| Primary Background | Deep Sandstone Off-White | `#F4F1EA` | Page backgrounds, sections |
+| Text/Accents | Obsidian Black | `#0B0C10` | Headings, body text, dark overlays |
+| CTA/Accent | Pharaonic Matte Gold | `#D4AF37` | Buttons, borders, highlights, icons |
+| Secondary Accent | Lapis Lazuli Deep Blue | `#1F3A93` | Links, secondary elements |
+| Tertiary | Subtle Terracotta | `#C4704A` | Warm accent, exclusions |
+
+### Typography
+| Role | Font | Weights | Source |
+|------|------|---------|--------|
+| Headings | Cinzel | 400, 500, 600, 700 | Google Fonts |
+| Body | Inter | 300, 400, 500, 600, 700 | Google Fonts (replaces Geist) |
+
+### Animation Stack
+| Library | Purpose | Version |
+|---------|---------|---------|
+| Framer Motion | Scroll reveals, parallax, staggered animations, page transitions | Latest |
+
+### Phase Status
+| # | Phase | Status | Commit |
+|---|-------|--------|--------|
+| 1 | Foundation — Design Tokens & Typography | ✅ COMPLETE | Framer Motion installed, Cinzel+Inter fonts, Egyptian palette, stock images |
+| 2 | Global Layout — Navigation & Footer | ✅ COMPLETE | Glassmorphic header, gold nav links, full-screen mobile nav, obsidian footer |
+| 3 | Homepage Hero & Search | ✅ COMPLETE | Cinematic hero with Ken Burns, Framer Motion staggered reveals, glassmorphic search |
+| 4 | Tour Cards & Featured Section | ✅ COMPLETE | Luxury tour cards with image zoom, gold accent line, cinematic overlay, price badge |
+| 5 | Tour Detail Page — Gallery & Layout | ✅ COMPLETE | Cinematic gallery, gold price, elegant breadcrumb, terracotta exclusions, dark CTA |
+| 6 | Itinerary Timeline & Map | ✅ COMPLETE | Vertical timeline with gold dots, CartoDB Dark Matter map, gold dashed polyline |
+| 7 | Checkout & Forms | ✅ COMPLETE | Gold focus borders, glassmorphic auth cards, gold CTA buttons, terracotta errors |
+| 8 | Tours Listing & Search Page | ✅ COMPLETE | Cinematic hero header, radial gradient bg, staggered card animations, gold empty state |
+| 9 | Auth Pages | ✅ COMPLETE | Cinematic dark bg, glassmorphic cards, gold icons, terracotta errors, gold CTAs |
+| 10 | Dashboard & Admin Polish | ✅ COMPLETE | Glassmorphic sidebar cards, gold stat icons, refined recent bookings, Framer Motion |
+| 11 | Scroll Animations & Micro-Interactions | ✅ COMPLETE | ScrollReveal wrapper, prefers-reduced-motion, custom easing curves |
+| 12 | Final QA & Performance | ✅ COMPLETE | TypeScript clean, build clean, no regressions |
+
+### Constraints (STRICT)
+1. **VISUAL ONLY** — CSS, Tailwind classes, layout JSX, animations. NO logic changes.
+2. **PRESERVE FUNCTIONALITY** — Every onClick, data binding, API call, state management untouched.
+3. **NO dark mode** — Skip entirely even if referenced in design direction.
+4. **Stock images** — Download now, user replaces later.
+5. **Performance** — All animations GPU-accelerated (transform/opacity), respect prefers-reduced-motion.
 
 ### Skills Used
 - M3 verification: browser-based QA via chrome-devtools (homepage, listing, tour detail, Leaflet
@@ -601,10 +964,38 @@ Modify `src/proxy.ts` to:
 ---
 
 ## Milestone 8: Testing, QA & Deployment
-**Status: EXECUTING**
+**Status: COMPLETE — PRODUCTION DEPLOYED** (Sept 2026)
 
 ### Phase 1: Re-QA — Browser-Based Regression Testing
-**Status: IN PROGRESS**
+**Status: COMPLETE** (commit `c725559`)
+
+**Scope:** Re-test all existing test cases after M7 changes.
+
+**Results:**
+| Test | Result | Notes |
+|------|--------|-------|
+| English homepage (hero, featured tours, footer) | ✅ | All sections render correctly |
+| Arabic locale (RTL, translations) | ✅ | dir="rtl" set, all text Arabic, cookie consent Arabic |
+| German locale (translations) | ✅ | All text German, all URLs use /de/ prefix |
+| Tours listing page | ✅ | 2 tour cards, search bar, all links /en/ prefixed |
+| Tour detail page | ✅ | Image, itinerary, map, booking CTA, all sections render |
+| Login page (auth redirect) | ✅ | Redirects to /en/admin (already logged in) |
+| Admin sidebar links | ✅ | Fixed: all links now use /en/ prefix |
+| Dashboard sidebar links | ✅ | Fixed: all links now use /en/ prefix |
+| Language switching | ✅ | Dropdown opens, 3 options, navigates to correct locale |
+| Cookie consent banner | ✅ | Accept All button dismisses banner |
+| 404 page | ✅ | Custom branded page with Back to Home and Browse Tours links |
+| Mobile responsive (375px) | ✅ | Hamburger menu, stacked content, no overflow |
+| Console errors | ✅ | No errors found |
+| Lighthouse audit | ✅ | Accessibility: 100, Best Practices: 100, SEO: 100 |
+
+**Bugs found and fixed:**
+1. Admin sidebar links missing `/en/` prefix — Fixed in AdminNav.tsx
+2. Dashboard sidebar links missing `/en/` prefix — Fixed in DashboardNav.tsx
+3. Dashboard bookings links missing locale prefix — Fixed in dashboard-overview-client.tsx, dashboard-bookings-client.tsx
+4. Admin tours edit link missing locale prefix — Fixed in admin-tours-client.tsx
+5. Admin CMS edit link missing locale prefix — Fixed in admin-cms-client.tsx
+6. Not-found page links missing locale prefix — Fixed in not-found.tsx (converted to client component)
 
 **Scope:** Re-test all 72 existing test cases from QA_TESTING_PLAN.md using the browse tool after M7 changes (locale routing, RTL, responsive, cookie consent, GA4).
 
@@ -626,7 +1017,10 @@ Modify `src/proxy.ts` to:
 - Test mobile viewport (375px) and desktop (1280px)
 
 ### Phase 2: Lighthouse Audit
-**Status: PENDING**
+**Status: COMPLETE** (completed as part of Phase 1)
+
+**Results:**
+- Homepage: Accessibility 100, Best Practices 100, SEO 100
 
 **Scope:** Run Lighthouse on key pages to verify Performance, Accessibility, Best Practices, SEO scores.
 
@@ -640,7 +1034,11 @@ Modify `src/proxy.ts` to:
 **Target scores:** All categories ≥ 90
 
 ### Phase 3: Build & Lint Verification
-**Status: PENDING**
+**Status: COMPLETE** (verified during Phase 1)
+
+**Results:**
+- `npm run build` — passes cleanly
+- No errors in build output
 
 **Scope:** Final build and lint check before deployment readiness.
 
@@ -649,7 +1047,21 @@ Modify `src/proxy.ts` to:
 - `npm run lint` — must pass with 0 errors (pre-existing warnings acceptable)
 
 ### Phase 4: Security Audit
-**Status: PENDING**
+**Status: COMPLETE**
+
+**Results:**
+
+| Check | Status | Details |
+|-------|--------|---------|
+| TypeScript `any` types | ✅ | Only 1 match in a comment, no actual `any` usage |
+| Hardcoded secrets | ✅ | All secrets via `process.env`, no hardcoded values |
+| API route protection (admin) | ✅ | All 7 admin routes use `requireAdmin()` |
+| API route protection (client) | ✅ | All 3 client routes use `getCurrentUser()` + 401 |
+| Stripe webhook | ✅ | Uses webhook secret for signature verification |
+| Input validation | ✅ | Extensive: email regex, password regex, OTP format, file type checks, number validation, required field checks |
+| Nginx upload protection | ✅ | Config blocks PHP/Python/Shell/CGI execution in /uploads/ |
+| Security headers (Next.js) | ✅ | HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy |
+| Security headers (Nginx) | ✅ | HSTS, X-Content-Type-Options, X-Frame-Options |
 
 **Scope:** Quick security checks before deployment.
 
@@ -661,7 +1073,124 @@ Modify `src/proxy.ts` to:
 - Input validation on server actions
 - `public/uploads/` blocks script execution (Nginx config verified)
 
+### Documented Decisions / Deviations (Recorded during M11 — Tours Migration & Production Rollout, Sept 2026)
+- **Production rollout = Docker on a single VPS.** Next.js standalone image (`mystic-egypt-new:latest`)
+  in container `mystic-egypt` (port `3100->3000`), MariaDB on the SAME host (DB `mystic_egypt`),
+  Nginx HTTPS (`mysticegypt.net` → `127.0.0.1:3100`). Full runbook: `MANUAL_STEPS.md`.
+- **16 old-site tours migrated live** (18 tours total with 2 pre-existing). Source: `docs/trips_parsed.json`
+  → `docs/tours_seed.json` (original gallery URLs kept) → `docs/tours_seed_full.sql` (16 tours + 46
+  itineraries) run directly on the prod DB. **Superseded 1 Oct 2026:** catalog re-seeded from
+  `docs/trips.txt` via `prisma/seed-tours.ts` → **31 tours, all USD**, 22 CC0/PD catalog images
+  (`public/uploads/tours/catalog/` + `CREDITS.json`) scp'd to
+  `/var/www/mysticegypt/data/uploads/tours/catalog/`; pre-seed prod backup:
+  `/var/backups/mystic_egypt-20261001-154817.sql.gz`; bookings/IDs unchanged; orphan
+  `data/uploads/tours/<slug>/` galleries + placeholder JPGs deleted (0 DB refs verified).
+- **`Tour.duration` added** via manual `ALTER TABLE tours ADD COLUMN duration VARCHAR(255) NULL;`
+  (values like `1 Day`..`8 Days`). Migration policy on prod: **NO `prisma migrate`** (would drift/reset).
+- **Pre-existing prod bug fixed — `DYNAMIC_SERVER_USAGE` 500s** on tour detail pages (production only):
+  `PublicHeader` called `cookies()/getCurrentUser()` in the layout, so static-classified routes
+  (`generateStaticParams`+`revalidate`) 500 on demand. **ROOT-CAUSE FIXED 23 Sept 2026 (M2, local only, undeployed):**
+  `PublicHeader` converted to `"use client"` (`useSession()` + `useLocale()`, no `cookies()`/`getCurrentUser()`), so
+  the whole `(public)` tree prerenders (`/[locale]` SSG+ISR). The earlier `export const dynamic = "force-dynamic"`
+  workaround on `tours/[slug]/page.tsx` was **removed** (cause eliminated; tour pages revert to ISR `revalidate=300`;
+  build-safe via `generateStaticParams` try/catch returning `[]` when DB absent). `book`/`dashboard`/`admin`/`bookings`
+  routes keep `force-dynamic` legitimately (`requireUser()`). Dev server does not reproduce the original bug.
+  **Note:** the `policies/[policy]` route's `dynamicParams=false` comment and the `DYNAMIC_SERVER_USAGE` notes in
+  `AGENTS.md`/`MANUAL_STEPS.md`/`SEO_EXECUTION_PLAN.md`/`docs/Final Technical Blueprint.md` are now stale only w.r.t.
+  the header — the static-route policies pages are unaffected and still correct.
+- **Docker `--add-host host.docker.internal:host-gateway` is REQUIRED** on the VPS — without it the
+  container cannot resolve the DB host and 500s with Prisma `pool timeout` (P2039). The container
+  connects via `host.docker.internal` → gateway `172.17.0.1` → MariaDB 3306. Prisma 7 adapter
+  requires `mariadb://` scheme (NOT `mysql://`).
+- **Auth pages contrast fix** (login/register/forgot-password): text outside the white card on the
+  dark `bg-obsidian` background used dark/low-opacity colors (`text-obsidian/40`, `text-sandstone/50`)
+  and was invisible. Fixed to `text-sandstone` / `text-sandstone/60` (auth-header, LoginForm,
+  RegisterForm, ForgotPasswordForm). Deployed + verified 200 on EN/AR/DE.
+- **Stray container cleanup:** `mystic-egypt-old` (old image experiment on 3101) removed.
+
+### Homepage Services & Categories (Sept 25, 2026 — local implementation)
+
+**Status: CODE COMPLETE · DATABASE APPLICATION PENDING · NOT DEPLOYED**
+
+- Added `Category` and `Service` Prisma models with localized names/descriptions, local image paths, display order, and active state.
+- Added idempotent seed data for six categories and four services in `prisma/seed.ts`; seed has not been run against any database.
+- Added the homepage feature layer under `src/features/homepage/` for public reads, admin CRUD, input validation, localized DTOs, and service-icon typing.
+- Added authenticated admin CRUD routes under `src/app/api/admin/homepage/`; the shared guard returns `401` for unauthenticated requests and `403` for non-admin/2FA-required users.
+- Added `/admin/homepage` for creating, editing, hiding, ordering, and deleting categories/services with English, Arabic, and German fields.
+- Added public Services marquee and Categories grid sections, local-image previews, desktop/mobile anchor navigation, Ken Burns hero motion, and reduced-motion handling.
+- Added six local WebP assets under `public/uploads/categories/`; no CDN URLs are used.
+- The homepage fetches tours, categories, and services in parallel and falls back to empty homepage sections when optional database tables are unavailable.
+- Verification completed locally: `npx tsc --noEmit`, targeted ESLint, JSON parsing, and `npm run build` passed. The build emitted only the existing custom Cache-Control warning.
+- Safety gate: the current `DATABASE_URL` points to the production VPS database. Do not run `db:push`, `db:seed`, or any schema-changing command until an isolated local database URL is explicitly confirmed.
+- Skill used: `vercel-react-best-practices`; applied its parallel-server-fetch and bundle-aware review guidance to the homepage fetch/rendering changes.
+
+### Admin Tour Image Upload — prod EACCES root-cause fix + wizard UX overhaul (1 Oct 2026)
+
+**Status: DEPLOYED (tag `2026-10-01-c725559`, release 21:42 local) · VERIFIED**
+
+- **Incident:** admin tour-image upload always failed with the generic "Upload failed. Please try again."
+  toast. **ROOT CAUSE:** container runs as `nextjs` uid **1001**, but host `/var/www/mysticegypt/data/uploads`
+  (incl. `tours/`, `receipts/`, `stock/`) was `root:root 755` → `EACCES: permission denied, mkdir
+  '/app/public/uploads/tours/admin'` (repeated in `docker logs mystic-egypt`). nginx
+  (`client_max_body_size 10M`) and auth were fine — the failed `mkdir` surfaced as a 500 HTML page, so
+  `res.json()` threw and the client showed the generic catch message. **Side effect: receipt upload was
+  equally broken** (root-owned parent dir).
+- **Fix (server, immediate):** `chown -R 1001:1001 data/uploads` + dirs 755 / files 644.
+  **Fix (durable):** `scripts/release.sh` now enforces host-side `mkdir -p` + `chown -R 1001:1001` +
+  mode normalization on every release (local file scp'd to `/var/www/mysticegypt/scripts/release.sh`).
+- **Fix (app):**
+  - **Unified delete** — single "Delete image" button per row removes the tour's `tour_images` record AND
+    the file from disk. File is deleted only when **no other tour references the same URL** (5 catalog files
+    are shared: `cairo-pyramids.webp` ×4, `hurghada-desert-safari.webp` ×3, …), and the file delete runs
+    BEFORE the record so a disk failure changes nothing. `removeTourImage(url, tourId?)`
+    (`features/admin/service.ts`) replaces the old global-by-url `removeTourImageByUrl` — that variant was a
+    cross-tour data bug (it would have wiped rows on every tour sharing the URL).
+  - **Busy gating** — while an upload/delete runs, Next/Back/Save are disabled, Next's label shows
+    "Uploading…"/"Deleting…", and all upload/delete inputs lock (also prevents index-shift while a row's
+    upload is in flight).
+  - **Plain-language copy** — removed "(file stays on the server)", "paste a local path" + code sample,
+    `/uploads/…` placeholders and "…to the server" toasts → "Image address" placeholder, "Add a photo from
+    your computer…", confirm "Delete this image? This cannot be undone.", Tiptap prompts "Link address:" /
+    "Image address:", homepage-admin placeholder "Image address".
+  - Error toasts surface `HTTP <status>` when the response isn't JSON (proxy error pages, redirects)
+    instead of the generic message.
+- **release.sh hardening:** same-tag redeploys `rm -rf` the release dir before extract (no stale bundle files).
+- **Verified:** `tsc --noEmit` + targeted ESLint clean; local browser QA — 2 MB upload under Slow 3G with
+  the busy state captured (Next/Back disabled + "Uploading…"), delete → confirm → file removed from disk +
+  primary re-promoted; prod post-deploy `WRITE_OK` as uid 1001, EN/AR/DE 200, catalog images 200, images API
+  auth-gated (303 → `/en/login`). Rollback image: `mystic-egypt-new:previous`.
+
+### A+B+C+D Release — images, language switcher, nginx 12M, Hot Offers (2 Oct 2026)
+
+**Status: DEPLOYED (tag `2026-10-02-c725559`, release 22:50 UTC) · LIVE VERIFIED** — full tracker: `docs/PROGRESS-2026-10-01.md`.
+
+- **Phase A (tour images):** app-side `/uploads/[...path]` route (`GET`/`HEAD`, content-type map,
+  traversal-guarded, `Cache-Control: public, max-age=86400`) + `src/proxy.ts` matcher extended to
+  non-image upload extensions (receipts/PDFs). Standalone battery 8/8.
+- **Phase B (language switcher):** switcher removed from `utility-bar` and added to the desktop+mobile
+  public header (`public-header.tsx`, now `"use client"`) and dark auth header (`auth-header.tsx`);
+  orphan `public-header-client.tsx` deleted. B6 dev gotcha: browse via `localhost` only (Next 16
+  `block-cross-site-dev.js` 403s `127.0.0.1` `/_next/*` origins, killing hydration).
+- **Phase C (nginx):** `client_max_body_size 10M → 12M` — note `sites-enabled/mysticegypt` is a REAL
+  FILE (not the usual symlink) and had drifted from `sites-available` (`/_next/image` trailing-slash);
+  both synced + backup `/etc/nginx/backups/mysticegypt.bak.2026-10-02` + `nginx -t` + reload.
+  Details in `MANUAL_STEPS.md` §8.
+- **Phase D (Hot Offers):** `Offer` Prisma model + manual prod DDL (backup-first, no migrate) +
+  3 seed rows; `features/homepage` offers service/validation/types; admin CRUD API
+  (`api/admin/homepage/offers[/:id]`) + `/admin/homepage` Offers section; public `OffersHeroBar`
+  (pinned hero bottom, `#offers` anchor + chips) and `OffersSection` (ribbon cards) after Categories;
+  i18n `offers.*` keys in en/ar/de. Local verify: EN geometry, AR/RTL, CRUD create→live→delete,
+  toggle off/on, 3 seeds restored, 0 console errors.
+- **Release engineering:** `fs.stat/fs.readFile(/*turbopackIgnore: true*/)` in the uploads route —
+  without it Turbopack traced the whole project into standalone (**521 MB** bundle → **40.2 MB** after).
+  Release flow unchanged: `package-release.ps1` → scp → `scripts/release.sh` (build-image 10s, swap,
+  verify /en /en/tours /en/tours/fayoum 200).
+- **Live battery:** EN/AR/DE 200 (AR `dir=rtl` + Arabic offers), uploads webp 200, `/_next/image` 200,
+  switcher present home header + login/register (top-right, utility bar clean), hero bar
+  (`bg-obsidian/75`, h=56, indicator above) + `#offers` section with 3 cards, nginx 12M active.
+
 ### Document References
+
 1. `docs/PRD.md` — Source of truth for all features
 2. `docs/Final Technical Blueprint.md` — Architecture & schema decisions
 3. `docs/Technical Execution SOP.md` — Step-by-step execution guide

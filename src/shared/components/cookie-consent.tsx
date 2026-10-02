@@ -31,6 +31,7 @@ export function CookieConsent() {
   function handleAccept() {
     setCookieValue(COOKIE_NAME, "accepted", COOKIE_MAX_AGE);
     setVisible(false);
+    window.dispatchEvent(new Event("cookie-consent-accepted"));
   }
 
   function handleReject() {

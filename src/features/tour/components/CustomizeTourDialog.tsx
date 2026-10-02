@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
@@ -8,11 +8,13 @@ import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Label } from "@/shared/components/ui/label";
 import { Field, FieldError } from "@/shared/components/ui/field";
+import { cn } from "@/core/utils/cn";
 import { customizeTourAction, type CustomizeFormState } from "@/features/tour/actions";
+import { trackEvent } from "@/core/lib/analytics";
 
 const initial: CustomizeFormState = undefined;
 
-export function CustomizeTourDialog({ tourId, tourTitle }: { tourId: string; tourTitle: string }) {
+export function CustomizeTourDialog({ tourId, tourTitle, className }: { tourId: string; tourTitle: string; className?: string }) {
   const { t } = useTranslation("common");
   const [state, formAction, pending] = useActionState(
     (prev: CustomizeFormState, formData: FormData) =>
@@ -21,10 +23,21 @@ export function CustomizeTourDialog({ tourId, tourTitle }: { tourId: string; tou
   );
 
   const success = state?.ok;
+  const leadFiredRef = useRef(false);
+
+  useEffect(() => {
+    if (success && !leadFiredRef.current) {
+      leadFiredRef.current = true;
+      trackEvent("generate_lead", {
+        tour_id: tourId,
+        tour_title: tourTitle,
+      });
+    }
+  }, [success, tourId, tourTitle]);
 
   return (
     <Dialog>
-      <DialogTrigger render={<Button variant="outline" />}>
+      <DialogTrigger render={<Button variant="outline" className={cn("h-14 rounded-xl border-gold/30 px-8 text-base font-semibold text-gold hover:bg-gold/10", className)} />}>
         {t("tours.requestCustom")}
       </DialogTrigger>
       <DialogContent>

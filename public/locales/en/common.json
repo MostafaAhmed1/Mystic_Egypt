@@ -2,6 +2,8 @@
   "nav": {
     "home": "Home",
     "tours": "Tours",
+    "services": "Services",
+    "categories": "Categories",
     "whyUs": "Why Us",
     "whatsapp": "WhatsApp",
     "myAccount": "My account",
@@ -9,13 +11,56 @@
     "adminPanel": "Admin panel",
     "login": "Log in",
     "signup": "Sign up",
-    "toggleMenu": "Toggle menu"
+    "toggleMenu": "Toggle menu",
+    "contact": "Contact"
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content"
   },
   "hero": {
     "badge": "UK-registered · Egyptian experts",
     "title": "Explore Egypt like a local, protected by UK standards.",
     "subtitle": "No hidden fees. Authentic Egyptian adventures with transparent local pricing and British legal guarantees.",
-    "searchPlaceholder": "Search tours..."
+    "searchPlaceholder": "Search tours...",
+    "imageAlt": "Pyramids at golden hour in Egypt",
+    "scroll": "Discover"
+  },
+  "homepage": {
+    "servicesEyebrow": "Travel services",
+    "servicesTitle": "Everything you need for your journey",
+    "categoriesEyebrow": "Find your experience",
+    "categoriesTitle": "Explore Egypt your way",
+    "categoriesSubtitle": "Choose a category and start planning the journey that feels right for you.",
+    "explore": "Explore"
+  },
+  "offers": {
+    "heroLabel": "Hot offers",
+    "eyebrow": "Limited-time deals",
+    "title": "Hot offers",
+    "subtitle": "Handpicked savings on Egypt's most loved experiences.",
+    "cta": "View offer"
+  },
+  "seo": {
+    "site": {
+      "title": "Mystic Egypt | Luxury Tours & Experiences",
+      "titleTemplate": "%s | Mystic Egypt",
+      "description": "Authentic, luxurious tours across Egypt — from the Pyramids of Giza to the White Desert. UK-registered with local Egyptian experts."
+    },
+    "home": {
+      "title": "Luxury Tours & Authentic Egyptian Experiences",
+      "description": "Book authentic, luxurious tours across Egypt — from the Pyramids of Giza to the White Desert. UK-registered with local Egyptian experts. Transparent pricing, no hidden fees."
+    },
+    "tours": {
+      "title": "Tours",
+      "description": "Browse authentic Egyptian tours — from the Pyramids of Giza to the White Desert — with transparent local pricing."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "Get in touch with Mystic Egypt. We're here to help you plan your perfect Egyptian adventure."
+    },
+    "tour": {
+      "description": "Book {{title}} — an authentic Egyptian tour with transparent local pricing and UK-registered guarantees."
+    }
   },
   "tours": {
     "featured": "Featured tours",
@@ -40,22 +85,50 @@
     "maxBudget": "Max budget (USD)",
     "allStatuses": "All statuses",
     "filter": "Filter",
-    "noToursFound": "No tours found."
+    "noToursFound": "No tours found.",
+    "relatedTours": "You May Also Like"
   },
   "whyUs": {
     "title": "Why choose us",
+    "subtitle": "Three promises on every journey — guaranteed by British law and delivered by Egyptian experts.",
     "ukEntity": {
       "title": "UK Registered Entity",
-      "description": "Book with full British legal guarantees and a verifiable, registered company behind every tour."
+      "description": "Book with full British legal guarantees and a verifiable, registered company behind every tour.",
+      "statLabel": "British legal protection"
     },
     "transfers": {
       "title": "Hassle-Free Transfers",
-      "description": "Door-to-door transfers, licensed guides, and every detail arranged — from the airport to your hotel."
+      "description": "Door-to-door transfers, licensed guides, and every detail arranged — from the airport to your hotel.",
+      "statLabel": "Round-the-clock availability"
     },
     "prices": {
       "title": "Best Local Prices Guaranteed",
-      "description": "Transparent local pricing with zero hidden fees and no tourist-trap markups. Ever."
+      "description": "Transparent local pricing with zero hidden fees and no tourist-trap markups. Ever.",
+      "statLabel": "Hidden fees"
     }
+  },
+  "process": {
+    "title": "How it works",
+    "choose": {
+      "title": "Choose your tour",
+      "description": "Browse our curated collection and pick the journey that matches your style."
+    },
+    "customize": {
+      "title": "Customize it",
+      "description": "Adjust dates, add excursions or request any change — we tailor every detail to you."
+    },
+    "book": {
+      "title": "Book securely",
+      "description": "Pay safely by card or bank transfer, backed by full UK-registered protection."
+    },
+    "experience": {
+      "title": "Enjoy Egypt",
+      "description": "Travel with local experts who handle everything from arrival to farewell."
+    }
+  },
+  "testimonials": {
+    "title": "What our travellers say",
+    "subtitle": "Real stories from guests who explored Egypt with us."
   },
   "trust": {
     "securePayment": "Secure payment",
@@ -70,10 +143,39 @@
     "localExperts": "Local Egyptian Experts",
     "explore": "Explore",
     "whyChooseUs": "Why Choose Us",
+    "contact": "Contact Us",
     "account": "Account",
     "login": "Log in",
     "createAccount": "Create account",
-    "copyright": "Mystic Egypt. All rights reserved."
+    "copyright": "Mystic Egypt. All rights reserved.",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "cancellationPolicy": "Cancellation Policy",
+    "cookiePolicy": "Cookie Policy",
+    "ukAddress": "Cleveland Tower, Holloway Head, Birmingham, United Kingdom",
+    "egyptAddress": "Hurghada, Egypt"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have a question or want to plan your dream trip? We're here to help.",
+    "getInfo": "Contact Information",
+    "followUs": "Follow Us",
+    "ourOffice": "Our Office",
+    "sendMessage": "Send us a Message",
+    "name": "Your Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "selectSubject": "Select a subject",
+    "subjectGeneral": "General Enquiry",
+    "subjectBooking": "Booking Question",
+    "subjectCustom": "Custom Tour Request",
+    "subjectSupport": "Support",
+    "message": "Your Message",
+    "send": "Send Message",
+    "sending": "Sending",
+    "successTitle": "Message Sent!",
+    "sendAnother": "Send another message"
   },
   "customTour": {
     "title": "Customize this tour",
@@ -228,6 +330,36 @@
     "cms": "CMS",
     "admins": "Admins",
     "settings": "Settings",
+    "homepage": "Homepage",
+    "manageHomepage": "Manage the homepage services, categories, and offers.",
+    "categories": "Categories",
+    "categoriesDescription": "Displayed below Services on the homepage.",
+    "services": "Services",
+    "servicesDescription": "Displayed in the moving services strip.",
+    "addCategory": "Add category",
+    "editCategory": "Edit category",
+    "addService": "Add service",
+    "editService": "Edit service",
+    "noCategories": "No categories yet.",
+    "noServices": "No services yet.",
+    "imagePath": "Local image path",
+    "sortOrder": "Sort order",
+    "icon": "Icon",
+    "active": "Active",
+    "homepageSaveFailed": "Could not save homepage item.",
+    "homepageDeleteFailed": "Could not delete homepage item.",
+    "homepageSaved": "Changes saved.",
+    "homepageDeleted": "Item deleted.",
+    "deleteCategoryConfirm": "Delete this category?",
+    "deleteServiceConfirm": "Delete this service?",
+    "offers": "Offers",
+    "offersDescription": "Displayed in the hero promo bar and the offers section.",
+    "addOffer": "Add offer",
+    "editOffer": "Edit offer",
+    "noOffers": "No offers yet.",
+    "deleteOfferConfirm": "Delete this offer?",
+    "badge": "Badge (optional)",
+    "linkUrl": "Link path (optional)",
     "siteAdministrator": "Site Administrator",
     "adminOverview": "Admin Overview",
     "platformStats": "Platform-wide statistics and recent activity.",
@@ -318,6 +450,7 @@
   },
   "common": {
     "loading": "Loading...",
+    "saving": "Saving...",
     "error": "Error",
     "save": "Save",
     "cancel": "Cancel",

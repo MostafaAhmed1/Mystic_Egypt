@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+*.md
+.vscode
+.idea
+test-screenshots
+docs
+Dockerfile
+docker-compose.yml
+.dockerignore
+deploy.sh
+data

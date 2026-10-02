@@ -30,6 +30,12 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum GaPurchaseStatus {
+  NOT_SENT
+  SENDING
+  SENT
+}
+
 enum Currency {
   USD
   GBP
@@ -95,7 +101,9 @@ model Tour {
   description   String    @db.Text
   inclusions    String?   @db.Text // Newline-delimited "what's included" list (PRD §4.1)
   exclusions    String?   @db.Text // Newline-delimited "what's not included" list (PRD §4.1)
+  duration      String?   // Human-readable trip duration, e.g. "1 Day", "8 Days"
   base_price    Float
+  group_prices  Json?     // [{min_people, max_people, price_per_person}]
   currency      Currency  @default(USD)
   status        String    @default("open") // open, closed
   created_by    String // Admin ID
@@ -184,6 +192,8 @@ model Booking {
   status            BookingStatus @default(PENDING_PAYMENT)
   payment_method    String // "stripe" or "bank_transfer"
   receipt_image_url String? // للتحويلات البنكية
+  ga_purchase_status  GaPurchaseStatus @default(NOT_SENT)
+  ga_purchase_sent_at DateTime?
   created_at        DateTime      @default(now())
 
   user        User           @relation(fields: [user_id], references: [id])
@@ -248,4 +258,59 @@ model CmsPage {
   creator     User     @relation(fields: [created_by], references: [id])
 
   @@map("cms_pages")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  slug        String   @unique @db.VarChar(191)
+  name_en     String   @db.VarChar(160)
+  name_ar     String   @db.VarChar(160)
+  name_de     String   @db.VarChar(160)
+  image_url   String   @db.VarChar(500)
+  sort_order  Int      @default(0)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@index([is_active, sort_order])
+  @@map("categories")
+}
+
+model Service {
+  id             String   @id @default(uuid())
+  slug           String   @unique @db.VarChar(191)
+  name_en        String   @db.VarChar(160)
+  name_ar        String   @db.VarChar(160)
+  name_de        String   @db.VarChar(160)
+  description_en String   @db.Text
+  description_ar String   @db.Text
+  description_de String   @db.Text
+  icon           String   @default("sparkles") @db.VarChar(40)
+  sort_order     Int      @default(0)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@index([is_active, sort_order])
+  @@map("services")
+}
+
+model Offer {
+  id             String   @id @default(uuid())
+  title_en       String   @db.VarChar(160)
+  title_ar       String   @db.VarChar(160)
+  title_de       String   @db.VarChar(160)
+  description_en String?  @db.VarChar(500)
+  description_ar String?  @db.VarChar(500)
+  description_de String?  @db.VarChar(500)
+  badge          String?  @db.VarChar(40) // e.g. "20% OFF"
+  image_url      String?  @db.VarChar(500)
+  link_url       String?  @db.VarChar(500) // e.g. "/en/tours"
+  sort_order     Int      @default(0)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@index([is_active, sort_order])
+  @@map("offers")
 }

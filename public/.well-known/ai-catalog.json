@@ -1,0 +1,22 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Mystic Egypt",
+    "identifier": "mysticegypt.net"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:mysticegypt.net:site:main",
+      "displayName": "Mystic Egypt",
+      "type": "text/html",
+      "url": "https://mysticegypt.net/en",
+      "capabilities": ["TourCatalog", "ContactMysticEgyptTool"],
+      "description": "Mystic Egypt - UK-based tour operator running authentic group and private tours across Egypt (Cairo, Luxor, Aswan, the Nile, Hurghada, Marsa Alam, Siwa, Alexandria, Dahab, Sharm El Sheikh), with licensed Egyptologist guides, flights, hotels and full support. The site exposes a WebMCP contact form tool and a full tour catalog accessible to AI agents.",
+      "representativeQueries": [
+        "What tours does Mystic Egypt offer in Cairo?",
+        "Book or enquire about a Nile cruise in Luxor and Aswan",
+        "Contact Mystic Egypt about a private tour in Egypt"
+      ]
+    }
+  ]
+}

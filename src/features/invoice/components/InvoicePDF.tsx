@@ -5,6 +5,7 @@ import {
   Page,
   Text,
   View,
+  Image,
   StyleSheet,
   PDFDownloadLink,
 } from "@react-pdf/renderer";
@@ -24,11 +25,18 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     marginBottom: 24,
   },
   brand: { fontSize: 18, fontWeight: 700, color: "#0f172a" },
   brandSub: { fontSize: 9, color: "#71717a", marginTop: 2 },
+  logo: {
+    width: 120,
+    height: 48,
+    objectFit: "contain",
+    marginBottom: 4,
+  },
   invoiceMeta: { alignItems: "flex-end" },
   metaLabel: { fontSize: 9, color: "#71717a" },
   metaValue: { fontSize: 11, marginTop: 2 },
@@ -94,6 +102,7 @@ export function InvoicePDF({ invoice }: { invoice: InvoiceDto }) {
           <Page size="A4" style={styles.page}>
             <View style={styles.header}>
               <View>
+                <Image src="/logo.png" style={styles.logo} />
                 <Text style={styles.brand}>Mystic Egypt</Text>
                 <Text style={styles.brandSub}>
                   Luxury tours & experiences across Egypt

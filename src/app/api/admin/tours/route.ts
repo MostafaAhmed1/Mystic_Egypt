@@ -51,6 +51,7 @@ export async function POST(request: Request) {
       base_price,
       currency: typeof b.currency === "string" ? (b.currency as "USD" | "GBP" | "EUR") : undefined,
       status: typeof b.status === "string" ? b.status : undefined,
+      group_prices: Array.isArray(b.group_prices) ? b.group_prices as { min_people: number; max_people: number; price_per_person: number }[] : undefined,
       itinerary: Array.isArray(b.itinerary)
         ? (b.itinerary as { day_number: number; title: string; description: string }[])
         : [],

@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 export function generateMetadata(): Metadata {
   return {
     title: "Book your tour",
+    robots: { index: false, follow: true },
   };
 }
 

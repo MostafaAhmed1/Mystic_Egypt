@@ -2,6 +2,12 @@ import "server-only";
 import { prisma } from "@/core/lib/prisma";
 import type { Currency } from "@/core/constants/currencies";
 import {
+  sendMetaServerEvent,
+  splitMetaName,
+  type MetaServerUserData,
+} from "@/core/lib/meta-conversions";
+import { SITE_URL } from "@/core/utils/seo";
+import {
   PAYMENT_METHODS,
   type PaymentMethod,
 } from "@/features/booking/constants";
@@ -25,17 +31,35 @@ export async function getBookableTourBySlug(slug: string): Promise<{
   title: string;
   slug: string;
   base_price: number;
+  group_prices: { min_people: number; max_people: number; price_per_person: number }[] | null;
   currency: Currency;
 } | null> {
   const tour = await prisma.tour.findUnique({ where: { slug } });
   if (!tour || tour.status !== "open") {
     return null;
   }
+  let groupPrices: { min_people: number; max_people: number; price_per_person: number }[] | null = null;
+  if (tour.group_prices && Array.isArray(tour.group_prices)) {
+    const raw = tour.group_prices as Record<string, unknown>[];
+    groupPrices = raw
+      .filter(
+        (t) =>
+          typeof t.min_people === "number" &&
+          typeof t.max_people === "number" &&
+          typeof t.price_per_person === "number",
+      )
+      .map((t) => ({
+        min_people: t.min_people as number,
+        max_people: t.max_people as number,
+        price_per_person: t.price_per_person as number,
+      }));
+  }
   return {
     id: tour.id,
     title: tour.title,
     slug: tour.slug,
     base_price: tour.base_price,
+    group_prices: groupPrices,
     currency: toCurrency(tour.currency),
   };
 }
@@ -47,6 +71,15 @@ interface CreateBookingParams {
   numPeople: number;
   addons: { addon_id: string; quantity: number }[];
   paymentMethod: PaymentMethod;
+  /** GA4 client id from the visitor's `_ga` cookie, carried to the Stripe
+   * PaymentIntent metadata so the server-side purchase event can be
+   * attributed to the same browsing session. */
+  gaClientId?: string;
+  /** True when the visitor accepted the Meta/cookies consent gate. */
+  metaConsent?: boolean;
+  /** Meta browser id (`_fbp`) and click id (`_fbc`) from the visitor. */
+  fbp?: string;
+  fbc?: string;
 }
 
 export async function createBooking(params: CreateBookingParams): Promise<{
@@ -107,7 +140,10 @@ export async function createBooking(params: CreateBookingParams): Promise<{
     addonTotal += addon.price * item.quantity;
   }
 
-  const tourTotal = tour.base_price * params.numPeople;
+  const tourGroupPrices = tour.group_prices && Array.isArray(tour.group_prices)
+    ? (tour.group_prices as { min_people: number; max_people: number; price_per_person: number }[])
+    : null;
+  const tourTotal = calculateTourTotal(tour.base_price, tourGroupPrices, params.numPeople);
   const totalAmount = round2(tourTotal + addonTotal);
   const currency = toCurrency(tour.currency);
 
@@ -140,7 +176,15 @@ export async function createBooking(params: CreateBookingParams): Promise<{
       const intent = await stripe().paymentIntents.create({
         amount: Math.round(totalAmount * 100),
         currency: currency.toLowerCase(),
-        metadata: { booking_id: booking.id },
+        metadata: {
+          booking_id: booking.id,
+          ...(params.gaClientId ? { ga_client_id: params.gaClientId } : {}),
+          // Consent flag + browser/click ids let the Stripe webhook decide
+          // whether to send the Meta Purchase event — same as GA4.
+          ...(params.metaConsent ? { meta_consent: "1" } : {}),
+          ...(params.fbp ? { fbp: params.fbp } : {}),
+          ...(params.fbc ? { fbc: params.fbc } : {}),
+        },
         automatic_payment_methods: { enabled: true },
       });
       clientSecret = intent.client_secret;
@@ -153,6 +197,11 @@ export async function createBooking(params: CreateBookingParams): Promise<{
       };
     }
   }
+
+  // Meta InitiateCheckout is fired from the client on the tour page "Book Now"
+  // / "View tour" CTA clicks (shared event_id via the CAPI proxy) — NOT here,
+  // to avoid double-counting. Consent + fbp/fbc are only carried into the
+  // PaymentIntent metadata for the server-side Purchase event below.
 
   await sendBookingConfirmationEmail(params.userId, booking, currency, params.paymentMethod);
 
@@ -195,7 +244,154 @@ export async function confirmBookingFromStripe(
     }
   }
 
+  // Attempt GA4 purchase delivery on every successful payment intent (the
+  // claim below is idempotent, so only the first delivery ever sends the
+  // event). GA4 failures must never break or roll back the booking
+  // confirmation, so this is fully guarded.
+  try {
+    await deliverGa4Purchase(bookingId, intent.metadata?.ga_client_id);
+  } catch (err) {
+    console.error(
+      `[analytics] unexpected GA4 purchase delivery error for booking ${bookingId}:`,
+      err instanceof Error ? err.message : err,
+    );
+  }
+
+  // Attempt Meta CAPI purchase delivery. The event_id equals the booking id,
+  // so Meta deduplicates webhook retries; consent is taken from the
+  // PaymentIntent metadata captured at checkout.
+  try {
+    await deliverMetaPurchase(bookingId, intent.metadata);
+  } catch (err) {
+    console.error(
+      `[meta-capi] unexpected Meta purchase delivery error for booking ${bookingId}:`,
+      err instanceof Error ? err.message : err,
+    );
+  }
+
   return { ok: updated.count > 0 };
+}
+
+/* ---------------------------------------------------------------------------
+ * GA4 purchase delivery (Measurement Protocol)
+ *
+ * State machine on the booking:
+ *   NOT_SENT  → event has not been sent yet
+ *   SENDING   → a delivery attempt is in flight (claimed)
+ *   SENT      → GA4 confirmed the event (response validated)
+ *
+ * Concurrency: the claim is a single atomic UPDATE ... WHERE statement, so
+ * two concurrent/retried webhook deliveries can never both claim the same
+ * booking. Only one request transitions NOT_SENT → SENDING; the others match
+ * zero rows and skip.
+ *
+ * GA4 failure (bad status, timeout, missing secret): the booking is returned
+ * to NOT_SENT and the failure is logged. There is no guaranteed automated
+ * retry in the current application (no queue/cron exists); a future delivery
+ * mechanism (admin action, manual tool) can re-claim NOT_SENT bookings.
+ *
+ * Crash safety: a SENDING claim older than five minutes is treated as stale
+ * (the process died mid-delivery) and may be re-claimed by a later attempt.
+ * ------------------------------------------------------------------------ */
+
+const GA_STALE_SENDING_MS = 5 * 60 * 1000;
+
+async function deliverGa4Purchase(
+  bookingId: string,
+  clientId?: string,
+): Promise<void> {
+  const claimTime = new Date();
+
+  const claimed = await prisma.booking.updateMany({
+    where: {
+      id: bookingId,
+      OR: [
+        { ga_purchase_status: "NOT_SENT" },
+        {
+          ga_purchase_status: "SENDING",
+          ga_purchase_sent_at: {
+            lt: new Date(claimTime.getTime() - GA_STALE_SENDING_MS),
+          },
+        },
+      ],
+    },
+    data: { ga_purchase_status: "SENDING", ga_purchase_sent_at: claimTime },
+  });
+
+  if (claimed.count === 0) {
+    // Already claimed, in flight, or delivered. Skip.
+    return;
+  }
+
+  let booking;
+  try {
+    booking = await prisma.booking.findUniqueOrThrow({
+      where: { id: bookingId },
+      include: {
+        tour: { select: { title: true, base_price: true } },
+        addons: { include: { addon: { select: { id: true, name: true } } } },
+      },
+    });
+  } catch (err) {
+    console.error(
+      `[analytics] could not load booking ${bookingId} for GA4 purchase:`,
+      err instanceof Error ? err.message : err,
+    );
+    await resetGaPurchaseStatus(bookingId);
+    return;
+  }
+
+  const { sendServerEvent } = await import("@/core/lib/analytics");
+
+  const delivered = await sendServerEvent(
+    "purchase",
+    {
+      transaction_id: booking.id,
+      value: booking.total_amount,
+      currency: booking.currency,
+      items: [
+        {
+          item_id: booking.tour_id,
+          item_name: booking.tour.title,
+          price: booking.tour.base_price,
+          quantity: booking.num_people,
+        },
+        ...booking.addons.map((a) => ({
+          item_id: a.addon.id,
+          item_name: a.addon.name,
+          price: a.price_at_time,
+          quantity: a.quantity,
+        })),
+      ],
+    },
+    clientId,
+  );
+
+  if (delivered) {
+    await prisma.booking.update({
+      where: { id: bookingId },
+      data: { ga_purchase_status: "SENT", ga_purchase_sent_at: new Date() },
+    });
+    return;
+  }
+
+  await resetGaPurchaseStatus(bookingId);
+  console.error(
+    `[analytics] GA4 purchase for booking ${bookingId} was NOT delivered. ` +
+      "Booking left in NOT_SENT for a future delivery attempt (Stripe webhook " +
+      "retries are NOT guaranteed); current application has no automated retry.",
+  );
+}
+
+async function resetGaPurchaseStatus(bookingId: string): Promise<void> {
+  try {
+    await prisma.booking.update({
+      where: { id: bookingId },
+      data: { ga_purchase_status: "NOT_SENT" },
+    });
+  } catch {
+    // Best effort — never throw from analytics bookkeeping.
+  }
 }
 
 /** Marks a bank-transfer booking as awaiting manual receipt review. */
@@ -222,7 +418,104 @@ export async function markBookingReceiptSubmitted(
   return { ok: true };
 }
 
+/* ---------------------------------------------------------------------------
+ * Meta CAPI delivery
+ *
+ * Consent model: Meta events only fire when `meta_consent: true` reached the
+ * Booking/PaymentIntent (set from the browser cookie-consent gate). The
+ * `event_id` always mirrors the browser event so Meta deduplicates.
+ * ------------------------------------------------------------------------ */
+
+async function deliverMetaPurchase(
+  bookingId: string,
+  metadata?: Record<string, string>,
+): Promise<void> {
+  if (metadata?.meta_consent !== "1") {
+    // Visitor never accepted marketing cookies — respect the gate.
+    return;
+  }
+
+  let booking;
+  try {
+    booking = await prisma.booking.findUniqueOrThrow({
+      where: { id: bookingId },
+      include: {
+        tour: { select: { title: true, slug: true } },
+        addons: { include: { addon: { select: { id: true } } } },
+      },
+    });
+  } catch (err) {
+    console.error(
+      `[meta-capi] could not load booking ${bookingId} for Purchase:`,
+      err instanceof Error ? err.message : err,
+    );
+    return;
+  }
+
+  const userData = await getMetaUserData(booking.user_id);
+
+  const delivered = await sendMetaServerEvent({
+    eventName: "Purchase",
+    eventId: bookingId,
+    userData,
+    customData: {
+      currency: booking.currency,
+      value: booking.total_amount,
+      content_type: "product",
+      content_ids: [booking.tour_id, ...booking.addons.map((a) => a.addon.id)],
+      content_name: booking.tour.title,
+      num_items: booking.num_people,
+    },
+    eventSourceUrl: `${SITE_URL}/tours/${booking.tour.slug}`,
+    fbp: metadata?.fbp,
+    fbc: metadata?.fbc,
+  });
+  if (!delivered) {
+    console.error(
+      `[meta-capi] Purchase for booking ${bookingId} was NOT delivered.`,
+    );
+  }
+}
+
+async function getMetaUserData(
+  userId: string,
+): Promise<MetaServerUserData | undefined> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true, name: true, phone: true },
+  });
+  if (!user) return undefined;
+  const out: MetaServerUserData = {};
+  if (user.email) out.em = user.email;
+  if (user.phone) out.ph = user.phone;
+  if (user.name) {
+    const { fn, ln } = splitMetaName(user.name);
+    if (fn) out.fn = fn;
+    if (ln) out.ln = ln;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 // --- Helpers ---
+
+function calculateTourTotal(
+  basePrice: number,
+  groupPrices: { min_people: number; max_people: number; price_per_person: number }[] | null,
+  numPeople: number,
+): number {
+  if (!groupPrices || groupPrices.length === 0) {
+    return basePrice * numPeople;
+  }
+  // Find matching tier
+  const tier = groupPrices.find(
+    (t) => numPeople >= t.min_people && numPeople <= t.max_people,
+  );
+  if (tier) {
+    return tier.price_per_person * numPeople;
+  }
+  // No matching tier — fall back to base price
+  return basePrice * numPeople;
+}
 
 function toBookingDto(
   booking: {

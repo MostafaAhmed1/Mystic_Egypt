@@ -1,32 +1,35 @@
 import type { Metadata } from "next";
 import { listPublicTours } from "@/features/tour/service";
 import { ToursListClient } from "@/app/[locale]/(public)/tours/tours-list-client";
-import { buildAlternates } from "@/core/utils/seo";
+import { buildPageMetadata } from "@/core/utils/seo";
+import { getServerT } from "@/core/lib/i18n-server";
 import type { Locale } from "@/core/i18n-config";
+import type { TourSummary } from "@/features/tour/types";
 
 type ToursPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string; maxPrice?: string }>;
 };
 
-export async function generateMetadata({ params }: ToursPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: ToursPageProps): Promise<Metadata> {
   const { locale } = await params;
-  const alternates = buildAlternates("/tours", locale as Locale);
+  const { q, maxPrice } = await searchParams;
+  const hasQueryParams = Boolean(q?.trim() || maxPrice?.trim());
+  const t = getServerT(locale as Locale);
+
+  const metadata = buildPageMetadata({
+    pathname: "/tours",
+    locale: locale as Locale,
+    title: t("seo.tours.title"),
+    description: t("seo.tours.description"),
+  });
 
   return {
-    title: "Tours",
-    description:
-      "Browse authentic Egyptian tours — from the Pyramids of Giza to the White Desert — with transparent local pricing.",
-    openGraph: {
-      title: "Tours | Mystic Egypt",
-      description:
-        "Browse authentic Egyptian tours — from the Pyramids of Giza to the White Desert — with transparent local pricing.",
-      url: `https://mysticegypt.net/${locale}/tours`,
-      siteName: "Mystic Egypt",
-      locale: "en_US",
-      type: "website",
-    },
-    ...alternates,
+    ...metadata,
+    ...(hasQueryParams ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
@@ -42,7 +45,13 @@ export default async function ToursPage({ params, searchParams }: ToursPageProps
   const query = q?.trim().toLowerCase() ?? "";
   const budget = normalizePrice(maxPrice);
 
-  const tours = await listPublicTours();
+  let tours: TourSummary[] = [];
+  try {
+    tours = await listPublicTours();
+  } catch {
+    // DB not available during Docker build
+  }
+
   const filtered = tours.filter((tour) => {
     const matchesQuery =
       !query ||

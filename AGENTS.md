@@ -211,6 +211,18 @@ Maintain feature coherence and never lose context between steps.
 - Verify SSL, image optimization, and email delivery post-deploy
 - Check that `public/uploads/` blocks PHP/Script execution via Nginx
 
+### Repository & Server Hygiene (Mandatory)
+- The repo and the VPS must stay clean of temporary files and stale artifacts at all times.
+- **Never leave behind:** screenshots/test captures at the repo root, `tmp/`, `test-screenshots/`,
+  `.dev-server.{log,pid}`, `*.err.log`, one-off `tmp-*.mjs`/`*.gz` audit files, or duplicate old
+  exports. Remove them before finishing any task and record what was cleaned in the plan doc.
+- **No old-image hoarding:** orphan images (unreferenced in `src/`, seeds, CSS, docs) must be
+  deleted or moved out of `public/uploads/` immediately once confirmed unused — never accumulate.
+- Cleanup applies **both locally and on the server**; server temp files are listed in
+  `MANUAL_STEPS.md` → Server Access & Deployment.
+- Working scratch goes only under the pre-approved temp dir `C:\Users\Zer0ne\AppData\Local\Temp\opencode`
+  (never the repo root).
+
 ---
 
 ## 11. Document References
@@ -233,6 +245,55 @@ No code is written until:
 3. The phase scope is clearly defined and bounded.
 
 **When in doubt, ask. When unclear, stop. When confident, execute surgically.**
+
+---
+
+## 13. Production Server Facts (AS-BUILT — Sept 2026, keep current)
+
+> Deployed to production. Full runbook: `MANUAL_STEPS.md` → "Server Access & Deployment (AS-BUILT)".
+
+- **Single VPS:** `72.61.209.105` (`ssh root@72.61.209.105`), domain `https://mysticegypt.net`.
+- **Topology:** Next.js 16 (Docker container `mystic-egypt`, image `mystic-egypt-new:latest`,
+  port `3100->3000`) + MariaDB **on the same VPS** (DB `mystic_egypt`) + Nginx (HTTPS →
+  `proxy_pass 127.0.0.1:3100`, Let's Encrypt). **No staging — direct to prod.**
+- **Deploy = ARTIFACT-BASED (canonical since 23 Sept 2026).** The app is built LOCALLY and the
+  server NEVER compiles anything. Two scripts codify it (`scripts/package-release.ps1` builds +
+  packages `releases/mystic-egypt-<tag>.tar.gz`; `scripts/release.sh` on the VPS extracts it into
+  `/var/www/mysticegypt/releases/<tag>/app`, does a packaging-only `docker build -f $APP/Dockerfile.deploy`
+  (COPY-only image, seconds), then swaps the container with the §5 flags). Downtime = seconds;
+  previous image kept as `mystic-egypt-new:previous` for instant rollback. The OLD build-on-server
+  `Dockerfile` (npm install + prisma generate + next build inside docker, ~40 min) is RETIRED.
+- **Bundle contents:** `.next/standalone` (server.js, `.next/server`, traced node_modules) + `.next/static`
+  + `public`. NO source, NO dev node_modules, NO `.env*` (stripped — container gets env at runtime via
+  `--env-file .env.container`).
+- **`NEXT_PUBLIC_*` parity (build-time bake):** `next build` bakes `.env.production` values into client
+  JS. The packaging script fetches the LIVE server values first and injects them as build-time env vars
+  (server GA_ID sha `5CEB...84BF`, WHATSAPP sha `6FC6...365A`) so a local build ships the SAME public
+  values as the deployed image. Never build locally for prod with a stale/different local `.env.production`.
+- **Source dir:** `/var/www/mysticegypt` (git checkout). Keep `scripts/release.sh` and `Dockerfile.deploy`
+  there (docker build uses `-f $APP/Dockerfile.deploy` against the bundle dir, which has NO `.dockerignore`).
+- **Env files on server:** `.env` (real creds, source of truth), `.env.container` (passed to
+  docker run), `.env.production` (placeholder template — never use for the container).
+- **Container run command (keep ALL flags):**
+  `docker run -d --name mystic-egypt --restart unless-stopped -p 3100:3000 --add-host host.docker.internal:host-gateway --env-file /var/www/mysticegypt/.env.container mystic-egypt-new:latest`
+  - `--add-host` is REQUIRED: on this host `host.docker.internal` does not resolve otherwise,
+    and the app 500s with Prisma `pool timeout` (P2039, DB unreachable).
+- **DB access:** user `mystic_app` (host `%`), password only in `/var/www/mysticegypt/.env`
+  (`DATABASE_URL`). Prisma 7 adapter REQUIRES `mariadb://` scheme (NOT `mysql://`).
+- **Schema migration policy:** NO `prisma migrate` (DB is drift-prone; migrate resets data).
+  Apply prod schema changes via manual `ALTER TABLE` (e.g. `ADD COLUMN duration VARCHAR(255) NULL`).
+- **Known prod gotcha — `DYNAMIC_SERVER_USAGE` 500s (production only):** static routes
+  (`generateStaticParams`+`revalidate`) that render the layout 500 on demand because
+  `PublicHeader` (`src/shared/components/public-header.tsx`) called `cookies()`/`getCurrentUser()`.
+  **FIXED (local, 23 Sept 2026 — deploys with the next release):** `PublicHeader` is now a `"use client"`
+  component using `useSession()` + `useLocale()`, so the whole `(public)` tree prerenders (`/[locale]`
+  SSG+ISR). The old `export const dynamic = "force-dynamic";` workaround on
+  `src/app/[locale]/(public)/tours/[slug]/page.tsx` was REMOVED (cause eliminated). If you ever re-mark a
+  public route `force-dynamic` because of header cookies, you are re-introducing this bug. Routes that
+  legitimately need `force-dynamic`: dashboard/admin/book (`requireUser()`). Dev server does NOT reproduce it.
+- **Tour content:** 31 tours live (seeded 1 Oct 2026 from `docs/trips.txt` via `prisma/seed-tours.ts`,
+  all USD, catalog images in `public/uploads/tours/catalog/` — 22 CC0/PD webp + `CREDITS.json`, no
+  attribution-required images. Original migrated gallery URLs remain in `docs/tours_seed.json`).
 
 <!-- BEGIN:nextjs-agent-rules -->
 

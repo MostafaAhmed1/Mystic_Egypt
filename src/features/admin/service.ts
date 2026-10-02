@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@/core/lib/prisma";
+import { deleteTourImageFile } from "@/features/admin/tour-image-upload";
 import type { Currency } from "@/core/constants/currencies";
 import type { BookingStatus } from "@/core/constants/booking";
 import bcrypt from "bcryptjs";
@@ -27,6 +28,7 @@ export interface TourDetail {
   inclusions: string | null;
   exclusions: string | null;
   base_price: number;
+  group_prices: { min_people: number; max_people: number; price_per_person: number }[] | null;
   currency: Currency;
   status: string;
   created_by: string;
@@ -44,6 +46,7 @@ export interface CreateTourParams {
   inclusions?: string;
   exclusions?: string;
   base_price: number;
+  group_prices?: { min_people: number; max_people: number; price_per_person: number }[] | null;
   currency?: Currency;
   status?: string;
   itinerary: { day_number: number; title: string; description: string }[];
@@ -123,6 +126,23 @@ export interface CreateAdminParams {
 
 function toCurrency(v: string): Currency {
   return v === "USD" || v === "GBP" || v === "EUR" ? v : "USD";
+}
+
+function parseGroupPrices(raw: unknown): { min_people: number; max_people: number; price_per_person: number }[] | null {
+  if (!raw || !Array.isArray(raw)) return null;
+  const tiers = raw as Record<string, unknown>[];
+  return tiers
+    .filter(
+      (t) =>
+        typeof t.min_people === "number" &&
+        typeof t.max_people === "number" &&
+        typeof t.price_per_person === "number",
+    )
+    .map((t) => ({
+      min_people: t.min_people as number,
+      max_people: t.max_people as number,
+      price_per_person: t.price_per_person as number,
+    }));
 }
 
 function toBookingStatus(v: string): BookingStatus {
@@ -233,6 +253,7 @@ export async function getTourById(id: string): Promise<TourDetail | null> {
     inclusions: tour.inclusions,
     exclusions: tour.exclusions,
     base_price: tour.base_price,
+    group_prices: parseGroupPrices(tour.group_prices),
     currency: toCurrency(tour.currency),
     status: tour.status,
     created_by: tour.created_by,
@@ -276,6 +297,7 @@ export async function createTour(
       inclusions: params.inclusions ?? null,
       exclusions: params.exclusions ?? null,
       base_price: params.base_price,
+      group_prices: params.group_prices ?? undefined,
       currency: params.currency ?? "USD",
       status: params.status ?? "open",
       created_by: adminId,
@@ -318,6 +340,7 @@ export async function createTour(
     inclusions: tour.inclusions,
     exclusions: tour.exclusions,
     base_price: tour.base_price,
+    group_prices: parseGroupPrices(tour.group_prices),
     currency: toCurrency(tour.currency),
     status: tour.status,
     created_by: tour.created_by,
@@ -360,6 +383,7 @@ export async function updateTour(
   if (params.inclusions !== undefined) data.inclusions = params.inclusions ?? null;
   if (params.exclusions !== undefined) data.exclusions = params.exclusions ?? null;
   if (params.base_price !== undefined) data.base_price = params.base_price;
+  if (params.group_prices !== undefined) data.group_prices = params.group_prices ?? undefined;
   if (params.currency !== undefined) data.currency = params.currency;
   if (params.status !== undefined) data.status = params.status;
 
@@ -418,6 +442,7 @@ export async function updateTour(
     inclusions: updated.inclusions,
     exclusions: updated.exclusions,
     base_price: updated.base_price,
+    group_prices: parseGroupPrices(updated.group_prices),
     currency: toCurrency(updated.currency),
     status: updated.status,
     created_by: updated.created_by,
@@ -459,6 +484,40 @@ export async function toggleTourStatus(id: string): Promise<string> {
   const newStatus = tour.status === "open" ? "closed" : "open";
   await prisma.tour.update({ where: { id }, data: { status: newStatus } });
   return newStatus;
+}
+
+/**
+ * Deletes a tour image: removes the record for the given tour (create-mode
+ * passes no tourId — there is no record yet) and deletes the underlying file
+ * from disk once no other tour references the same URL. Deleting the file
+ * happens BEFORE the record so a failed disk delete leaves everything intact.
+ * Promotes a replacement primary when the removed image was the primary.
+ */
+export async function removeTourImage(url: string, tourId?: string): Promise<void> {
+  const others = await prisma.tourImage.count({
+    where: { image_url: url, ...(tourId ? { tour_id: { not: tourId } } : {}) },
+  });
+  if (others === 0) {
+    await deleteTourImageFile(url);
+  }
+
+  if (tourId) {
+    const removed = await prisma.tourImage.deleteMany({
+      where: { image_url: url, tour_id: tourId },
+    });
+    if (removed.count > 0) {
+      const remaining = await prisma.tourImage.findMany({
+        where: { tour_id: tourId },
+        orderBy: { is_primary: "desc" },
+      });
+      if (remaining.length > 0 && !remaining.some((img) => img.is_primary)) {
+        await prisma.tourImage.update({
+          where: { id: remaining[0].id },
+          data: { is_primary: true },
+        });
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1061,4 +1120,16 @@ export async function getPublishedCmsPage(slug: string): Promise<{ title: string
   const page = await prisma.cmsPage.findFirst({ where: { slug, published: true } });
   if (!page) return null;
   return { title: page.title, content: page.content };
+}
+
+/** All published CMS page slugs + last update time, used by the sitemap. */
+export async function listPublishedCmsPages(): Promise<
+  { slug: string; updated_at: Date }[]
+> {
+  const pages = await prisma.cmsPage.findMany({
+    where: { published: true },
+    select: { slug: true, updated_at: true },
+    orderBy: { updated_at: "desc" },
+  });
+  return pages;
 }

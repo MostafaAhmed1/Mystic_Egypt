@@ -9,6 +9,7 @@ import {
   Heart,
   UserRound,
 } from "lucide-react";
+import { cn } from "@/core/utils";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
@@ -35,13 +36,20 @@ export function DashboardNav() {
             key={item.href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={
+            className={cn(
+              "group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-300",
               active
-                ? "flex items-center gap-3 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
-                : "flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-            }
+                ? "border border-gold/20 bg-gold/10 text-gold shadow-[0_2px_12px_rgba(212,175,55,0.1)]"
+                : "text-obsidian/50 hover:bg-sand hover:text-obsidian"
+            )}
           >
-            <Icon className="size-4" aria-hidden />
+            <Icon
+              className={cn(
+                "size-4 transition-colors duration-300",
+                active ? "text-gold" : "text-obsidian/30 group-hover:text-obsidian/60"
+              )}
+              aria-hidden
+            />
             {item.label}
           </Link>
         );

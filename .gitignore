@@ -20,6 +20,9 @@
 # production
 /build
 
+# deploy artifacts (package-release.ps1 output)
+/releases/
+
 # misc
 .DS_Store
 *.pem
@@ -46,6 +49,13 @@ yarn-error.log*
 
 # user-uploaded booking receipts (data + test artifacts)
 /public/uploads/receipts/
+
+# local database backups (mirror of server data/backup_*.sql)
+/backups/
 dev-server.*.log
 cookies.txt
 next-env.d.ts
+
+# rendered marketing media (440 MB) — kept on disk, never in git
+docs/marketing/assets/
+docs/marketing/materials/

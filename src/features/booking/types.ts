@@ -17,6 +17,7 @@ export interface BookableTour {
   title: string;
   slug: string;
   base_price: number;
+  group_prices: { min_people: number; max_people: number; price_per_person: number }[] | null;
   currency: Currency;
 }
 

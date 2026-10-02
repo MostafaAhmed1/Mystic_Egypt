@@ -23,6 +23,7 @@ export default async function AdminTourEditPage({
     inclusions: tour.inclusions ?? "",
     exclusions: tour.exclusions ?? "",
     base_price: tour.base_price,
+    group_prices: (tour.group_prices as { min_people: number; max_people: number; price_per_person: number }[] | null) ?? [],
     currency: tour.currency,
     status: tour.status,
     itinerary: tour.itinerary.map((d) => ({

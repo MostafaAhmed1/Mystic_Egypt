@@ -9,18 +9,41 @@ export function HeaderNavLinks() {
   const { href } = useLocale();
 
   return (
-    <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+    <nav className="hidden items-center gap-1 text-sm font-medium md:flex">
+      <Link
+        href={href("/#services")}
+        className="group relative px-4 py-2 text-obsidian/70 transition-colors duration-300 hover:text-obsidian"
+      >
+        {t("nav.services")}
+        <span className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gold transition-all duration-300 group-hover:w-3/4" />
+      </Link>
+      <Link
+        href={href("/#categories")}
+        className="group relative px-4 py-2 text-obsidian/70 transition-colors duration-300 hover:text-obsidian"
+      >
+        {t("nav.categories")}
+        <span className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gold transition-all duration-300 group-hover:w-3/4" />
+      </Link>
       <Link
         href={href("/tours")}
-        className="text-foreground/80 transition-colors hover:text-foreground"
+        className="group relative px-4 py-2 text-obsidian/70 transition-colors duration-300 hover:text-obsidian"
       >
         {t("nav.tours")}
+        <span className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gold transition-all duration-300 group-hover:w-3/4" />
       </Link>
       <Link
         href={href("/#why-us")}
-        className="text-foreground/80 transition-colors hover:text-foreground"
+        className="group relative px-4 py-2 text-obsidian/70 transition-colors duration-300 hover:text-obsidian"
       >
         {t("nav.whyUs")}
+        <span className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gold transition-all duration-300 group-hover:w-3/4" />
+      </Link>
+      <Link
+        href={href("/contact")}
+        className="group relative px-4 py-2 text-obsidian/70 transition-colors duration-300 hover:text-obsidian"
+      >
+        {t("nav.contact")}
+        <span className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gold transition-all duration-300 group-hover:w-3/4" />
       </Link>
     </nav>
   );
