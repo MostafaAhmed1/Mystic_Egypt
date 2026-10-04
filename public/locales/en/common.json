@@ -39,7 +39,16 @@
     "title": "Hot offers",
     "subtitle": "Handpicked savings on Egypt's most loved experiences.",
     "cta": "View offer",
-    "badge": "OFFER"
+    "badge": "OFFER",
+    "popup": {
+      "eyebrow": "Limited-time deals",
+      "title": "Hot offers",
+      "subtitle": "Handpicked savings on Egypt's most loved experiences — tap any card to view the tour.",
+      "close": "Close offers",
+      "prev": "Previous offer",
+      "next": "Next offer",
+      "goTo": "Go to offer {{n}}"
+    }
   },
   "seo": {
     "site": {

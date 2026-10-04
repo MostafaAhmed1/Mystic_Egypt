@@ -25,6 +25,7 @@ import { ProcessSection } from "@/shared/components/process-section";
 import { ServicesSection } from "@/features/homepage/components/services-section";
 import { CategoriesSection } from "@/features/homepage/components/categories-section";
 import { OffersHeroBar, OffersSection } from "@/features/homepage/components/offers";
+import { OffersPopup } from "@/features/homepage/components/offers-popup";
 import type {
   HomepageCategory,
   HomepageService,
@@ -117,6 +118,9 @@ export function HomePageClient({
       <ServicesSection services={services} />
       <CategoriesSection categories={categories} />
       <OffersSection offers={offers} />
+
+      {/* First-visit-per-session offers popup (complements the bar + section above) */}
+      <OffersPopup offers={offers} />
 
       {/* Featured tours */}
       {tours.length > 0 && (

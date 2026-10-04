@@ -56,6 +56,14 @@ export const API_ENDPOINTS = {
       LIST: "/api/admin/bookings",
       UPDATE_STATUS: (id: string) => `/api/admin/bookings/${id}/status`,
     },
+    ADDONS: {
+      LIST: "/api/admin/addons",
+      CREATE: "/api/admin/addons",
+      BY_ID: (id: string) => `/api/admin/addons/${id}`,
+    },
+    CUSTOMERS: {
+      RESET_PASSWORD: (id: string) => `/api/admin/customers/${id}/reset-password`,
+    },
     DASHBOARD: "/api/admin/dashboard",
     ADMINS: "/api/admin/admins",
   },

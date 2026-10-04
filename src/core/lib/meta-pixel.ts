@@ -55,14 +55,20 @@ export function createEventId(): string {
 
 /**
  * Inject the Meta Pixel loader snippet (it defines `fbq` and queues calls
- * until fbevents.js finishes loading), starting with consent revoked.
+ * until fbevents.js finishes loading).
+ *
+ * NOTE: the snippet must NOT start with `fbq('consent','revoke')`. A leading
+ * revoke in the pre-load queue poisons the flush: the queued `consent grant`
+ * + `init` behind it are dropped and the pixel never registers (verified:
+ * `fbq.getState().pixels` stays empty). The snippet is only injected AFTER
+ * the visitor accepts cookies anyway, so default (granted) consent is correct.
  */
 function ensurePixelSnippet(): void {
   if (snippetLoaded || typeof document === "undefined") return;
   snippetLoaded = true;
   const inline = document.createElement("script");
   inline.async = true;
-  inline.textContent = `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','${FBQ_SOURCE}');fbq('consent','revoke');`;
+  inline.textContent = `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','${FBQ_SOURCE}');`;
   document.head.appendChild(inline);
 }
 

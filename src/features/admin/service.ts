@@ -1,8 +1,12 @@
 import "server-only";
 import { prisma } from "@/core/lib/prisma";
 import { deleteTourImageFile } from "@/features/admin/tour-image-upload";
-import type { Currency } from "@/core/constants/currencies";
+import { CURRENCIES, type Currency } from "@/core/constants/currencies";
 import type { BookingStatus } from "@/core/constants/booking";
+import { createOtpCode } from "@/core/lib/otp";
+import { sendEmail } from "@/core/lib/resend";
+import { passwordResetEmailHtml } from "@/features/auth/emails";
+import { OtpType } from "@/core/generated/prisma/enums";
 import bcrypt from "bcryptjs";
 
 // ---------------------------------------------------------------------------
@@ -1139,4 +1143,196 @@ export async function listPublishedCmsPages(): Promise<
     orderBy: { updated_at: "desc" },
   });
   return pages;
+}
+
+// ---------------------------------------------------------------------------
+// Add-ons (admin CRUD)
+// ---------------------------------------------------------------------------
+
+export interface AddonListItem {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  currency: Currency;
+  booking_count: number;
+}
+
+export interface AddonInput {
+  name: string;
+  description: string | null;
+  price: number;
+  currency: Currency;
+}
+
+export class AddonValidationError extends Error {}
+
+/** Thrown when deleting an add-on that is referenced by existing bookings. */
+export class AddonInUseError extends Error {
+  constructor(public readonly bookingCount: number) {
+    super(`Add-on is used by ${bookingCount} booking(s).`);
+  }
+}
+
+export function parseAddonInput(body: unknown): AddonInput {
+  const b = (body ?? {}) as Record<string, unknown>;
+  const name = typeof b.name === "string" ? b.name.trim() : "";
+  const description =
+    typeof b.description === "string" && b.description.trim()
+      ? b.description.trim()
+      : null;
+  const price = typeof b.price === "number" ? b.price : Number(b.price);
+  const currency = typeof b.currency === "string" ? b.currency : CURRENCIES.USD;
+
+  if (!name) throw new AddonValidationError("Name is required.");
+  if (name.length > 120) {
+    throw new AddonValidationError("Name must be 120 characters or fewer.");
+  }
+  if (!Number.isFinite(price) || price < 0) {
+    throw new AddonValidationError("Price must be zero or more.");
+  }
+  if (!(currency in CURRENCIES)) {
+    throw new AddonValidationError("Invalid currency.");
+  }
+
+  return { name, description, price, currency: currency as Currency };
+}
+
+const ADDON_SELECT = {
+  id: true,
+  name: true,
+  description: true,
+  price: true,
+  currency: true,
+  _count: { select: { booking_addons: true } },
+} as const;
+
+function toAddonDto(row: {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  currency: Currency;
+  _count: { booking_addons: number };
+}): AddonListItem {
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    price: row.price,
+    currency: row.currency,
+    booking_count: row._count.booking_addons,
+  };
+}
+
+export async function listAdminAddons(): Promise<AddonListItem[]> {
+  const addons = await prisma.addon.findMany({
+    select: ADDON_SELECT,
+    orderBy: { name: "asc" },
+  });
+  return addons.map(toAddonDto);
+}
+
+export async function createAddon(input: AddonInput): Promise<AddonListItem> {
+  const created = await prisma.addon.create({
+    data: { name: input.name, description: input.description, price: input.price, currency: input.currency },
+    select: { id: true, name: true, description: true, price: true, currency: true },
+  });
+  return { ...created, booking_count: 0 };
+}
+
+export async function updateAddon(
+  id: string,
+  input: AddonInput,
+): Promise<AddonListItem | null> {
+  const exists = await prisma.addon.findUnique({ where: { id }, select: { id: true } });
+  if (!exists) return null;
+  const updated = await prisma.addon.update({
+    where: { id },
+    data: { name: input.name, description: input.description, price: input.price, currency: input.currency },
+    select: ADDON_SELECT,
+  });
+  return toAddonDto(updated);
+}
+
+/**
+ * Deletes an add-on. Throws AddonInUseError when bookings reference it
+ * (booking history keeps price_at_time snapshots and must never break).
+ */
+export async function deleteAddon(id: string): Promise<boolean> {
+  const addon = await prisma.addon.findUnique({
+    where: { id },
+    select: { id: true, _count: { select: { booking_addons: true } } },
+  });
+  if (!addon) return false;
+  const bookingCount = addon._count.booking_addons;
+  if (bookingCount > 0) throw new AddonInUseError(bookingCount);
+  await prisma.addon.delete({ where: { id } });
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// Customers (registered CLIENT users — admin view-only + password reset)
+// ---------------------------------------------------------------------------
+
+export interface CustomerListItem {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  email_verified: boolean;
+  created_at: Date;
+  booking_count: number;
+  total_spent: number;
+}
+
+export async function listCustomers(): Promise<CustomerListItem[]> {
+  const customers = await prisma.user.findMany({
+    where: { role: "CLIENT" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      email_verified: true,
+      created_at: true,
+      bookings: { select: { total_amount: true } },
+    },
+    orderBy: { created_at: "desc" },
+  });
+
+  return customers.map((c) => ({
+    id: c.id,
+    name: c.name,
+    email: c.email,
+    phone: c.phone,
+    email_verified: c.email_verified,
+    created_at: c.created_at,
+    booking_count: c.bookings.length,
+    total_spent: c.bookings.reduce((sum, b) => sum + b.total_amount, 0),
+  }));
+}
+
+/**
+ * Sends a PASSWORD_RESET OTP code (same flow as the public forgot-password
+ * form) so the customer can reset their own password from /reset-password.
+ * Only CLIENT accounts — admins never receive codes from here.
+ */
+export async function sendPasswordResetCodeForCustomer(
+  customerId: string,
+): Promise<"not_found" | "forbidden" | "sent"> {
+  const user = await prisma.user.findUnique({
+    where: { id: customerId },
+    select: { id: true, email: true, name: true, role: true },
+  });
+  if (!user) return "not_found";
+  if (user.role !== "CLIENT") return "forbidden";
+
+  const { code } = await createOtpCode(user.id, OtpType.PASSWORD_RESET);
+  await sendEmail({
+    to: user.email,
+    subject: "Reset your Mystic Egypt password",
+    html: passwordResetEmailHtml(code, user.name),
+  });
+  return "sent";
 }

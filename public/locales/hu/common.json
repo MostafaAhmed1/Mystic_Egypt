@@ -39,7 +39,16 @@
     "title": "Forró ajánlatok",
     "subtitle": "Gondosan kiválasztott megtakarítások Egyiptom legkedveltebb élményeihez.",
     "cta": "Ajánlat megtekintése",
-    "badge": "AJÁNLAT"
+    "badge": "AJÁNLAT",
+    "popup": {
+      "eyebrow": "Időszakos ajánlatok",
+      "title": "Forró ajánlatok",
+      "subtitle": "Gondosan kiválasztott megtakarítások Egyiptom legkedveltebb élményeihez — kattints egy kártyára a túrához.",
+      "close": "Ajánlatok bezárása",
+      "prev": "Előző ajánlat",
+      "next": "Következő ajánlat",
+      "goTo": "Ugrás a(z) {{n}}. ajánlathoz"
+    }
   },
   "seo": {
     "site": {

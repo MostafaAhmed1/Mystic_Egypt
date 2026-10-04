@@ -1,8 +1,8 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
 ## Status: PRODUCTION DEPLOYED — 2 RELEASES LIVE 2 Oct 2026 (A+B+C+D: images fix · language switcher · nginx 12M · Hot Offers v1; then Hot Offers REDESIGN: `Tour.isOffer`, `offers` table dropped, bar moved to hero top)
-## Active plan: execution complete for A+B+C+D and the Offers redesign (tracker: `docs/PROGRESS-2026-10-01.md`); X6 commit pending user request. Performance plan M2–M5 still awaiting order.
-**Last Updated:** Oct 2, 2026
+## Active plan: **Admin Add-ons CRUD + Customers management + Offers Popup** — **COMPLETE (4 Oct 2026)**, all M1–M5 below verified; NOT yet deployed (uncommitted, awaiting PM deploy/commit order). Prior work (A+B+C+D, Offers redesign, Meta pixel fix) complete; X6 commit pending user request. Performance plan M2–M5 still awaiting order.
+**Last Updated:** Oct 4, 2026
 
 ---
 
@@ -21,6 +21,26 @@
 | 9 | Luxury Visual Overhaul | ✅ COMPLETE | 12-phase visual redesign — All phases complete |
 | 10 | UI/UX Testing | ✅ COMPLETE | 10-phase browser testing — 80% coverage (2 phases skipped due to 2FA) |
 | 11 | Tours Migration & Production Rollout | ✅ COMPLETE | 16 old-site tours migrated live (18 total), duration field, prod-only bugs fixed |
+
+### Plan: 3 Features (approved 2 Oct 2026 — PM request, extends PRD §4.4)
+
+**Context:** PM could not find (a) any place to edit/add/delete **Add-ons**, (b) any place to
+manage **registered customers** (only Admins exist), and (c) wants **offers as popup cards**
+for visitors (non-intrusive, clear X). PRD §4.4 never listed these — the PM is authorizing
+them explicitly. **No schema changes** (Addon + User models already exist).
+
+| # | Milestone | Scope | Status |
+|---|-----------|-------|--------|
+| M1 | **Add-ons CRUD** | `/admin/addons` page (table + inline add/edit + guarded delete), `api/admin/addons` + `[id]` routes (`requireAdmin`), service fns in `features/admin/service.ts`, AdminNav "Manage" group, `ADMIN.ADDONS` endpoints. DELETE returns 409 if the addon is referenced by `booking_addons` (booking history protection). Fields: name*, description, price, currency (USD/GBP/EUR, default USD). | ✅ E2E: POST 201, PUT 200 ($11→$22), DELETE in-use → 409 JSON + row kept, DELETE free row → removed |
+| M2 | **Customers (view-only + password reset)** | `/admin/customers` page: CLIENT-role users with bookings count + total spent (Prisma `_count`/`_sum`, read directly in page like Admins — no GET route). Row actions: link → `/admin/bookings?search=<email>` (existing search covers user.email), and **Send reset code** → `POST /api/admin/customers/[id]/reset-password` reusing the EXISTING OTP flow (`createOtpCode(PASSWORD_RESET)` + `passwordResetEmailHtml` + Resend) so the customer resets via `/reset-password`. CLIENT role only, never ADMIN. | ✅ E2E: 4 CLIENT users listed (ADMIN excluded), bookings/total spent correct, reset POST → 200 + toast, 404 JSON on missing id, 401 unauth. `sendEmail` result ignored — matches `forgotPasswordAction` pattern |
+| M3 | **Offers Popup** | New `offers-popup.tsx` (shadcn Dialog, frontend-design skill, gold/obsidian system): offer cards inside popup, clear X close (aria-label), vertical scroll on mobile. Opens ~1.8s after homepage load ONCE PER SESSION (`sessionStorage me_offers_popup_seen`), only if offers exist. Existing hero marquee bar + `#offers` section stay untouched (PM choice: popup + both). i18n keys `offers.popup.*` in en/ar/de/hu. Verify z-index vs cookie banner. | ✅ E2E: opens 1.8s, single X (`showCloseButton={false}`), close→session set, reload→no popup, fresh session→reappears, bar+`#offers` intact, AR RTL X left + localized, labels en/ar. **Celebration pass 4 Oct 2026:** CSS confetti rain (48 pcs, gold+party palette, pure `hash01` render — React Compiler rejects `Math.random`) inside backdrop via NEW optional `overlayClassName`/`overlayChildren` props on `dialog.tsx` `DialogContent`; backdrop darkened `bg-black/55`; Gift icon at eyebrow + Sparkles at title + static corner dots (lucide, no new deps/images). Verified EN+AR in isolated browser ctx (main ctx had stale immutable dev CSS — server was always fresh). **Carousel pass 4 Oct 2026:** grid replaced by auto-advancing slide carousel (CSS track `translateX(±i*100%)` 500ms, NO carousel lib) — one offer/slide = wide image (h-44/52 + OFFER badge) + title + `line-clamp-2` description + duration/price + CTA (mirrors `#offers` cards); autoplay 4.5s loops, **first manual nav (arrows/dots/swipe/arrow-keys) stops autoplay permanently** (`autoOn` state); touch swipe (Δ≥50px horizontal, `touch-pan-y`); RTL mirrored (`isRtl` flips transform sign + chevrons + start/end); offscreen slides `inert` (a11y + no focus-scroll); keys `offers.popup.prev/next/goTo` in en/ar/de/hu. E2E: autoplay advanced, click→frozen, synthetic swipe→moved, EN+AR screenshots. |
+| M4 | **Verification** | `npx tsc --noEmit`, `npm run lint` (baseline: 7 errors — no new), dev-server E2E: addons CRUD incl. blocked delete, customers list + reset email, popup show/close/once-per-session, bar+section intact. | ✅ tsc exit 0; lint exactly baseline 29 (7e/22w); all E2E above on `next dev` with seeded admin (2FA-less local login); routes 307/401/405 unauth |
+| M5 | **Docs** | PROJECT_MAP.md only (no server changes → no MANUAL_STEPS edit; PRD untouched). | ✅ This update (incl. `hu` locale + verification evidence) |
+
+**Planned files:** new — `admin/addons/{page,addons-client}.tsx`, `api/admin/addons/{route,[id]/route}.ts`,
+`admin/customers/{page,customers-client}.tsx`, `api/admin/customers/[id]/reset-password/route.ts`,
+`features/homepage/components/offers-popup.tsx`; modified — `AdminNav.tsx`, `endpoints.ts`,
+`features/admin/service.ts`, `home-page-client.tsx`, `public/locales/{en,ar,de,hu}.json`, `PROJECT_MAP.md`.
 
 ---
 
@@ -873,6 +893,23 @@ Modify `src/proxy.ts` to:
       preserved. Remaining: owner verifies via Pixel Helper / Meta Test Events (URL
       `https://business.facebook.com/events_manager2/test_events/1510981584397229`) and marks
       `Lead`/`InitiateCheckout`/`Purchase` as conversions.
+- [x] **Meta events showed ONLY localhost — fixed + DEPLOYED (2 Oct 2026, tag
+      `2026-10-02-meta-pixel-fix`)** — 3 root causes (full detail in MANUAL_STEPS §5b-fix):
+      (A) **quoted values in server `.env.container`** — docker `--env-file` passes quotes
+      literally (dotenv strips them) → `META_CAPI_TOKEN` reached Graph as `"EAA…"` →
+      `Invalid OAuth access token`, **25/25 prod CAPI events failed**; fixed by stripping
+      quotes (rule: `.env.container` values must be unquoted). (B) **`fbq('consent','revoke')`
+      as the first queued call in the pixel loader snippet poisoned the fbevents.js queue
+      flush** — queued `grant`+`init` were dropped, pixel never registered
+      (`getState().pixels=[]` in every prod flow); removed (snippet only injects post-consent).
+      (C) **initial PageView lost on full page loads** — provider's `pathname` effect ran
+      before init; fixed by adding `consent` to its deps. Why localhost worked: dev dotenv
+      strips quotes → dev CAPI succeeded with localhost URLs. Verified live: pixel registers
+      (`eventCount:1` on load), `facebook.com/tr/?ev=PageView&dl=https://mysticegypt.net/en`,
+      `POST /api/analytics/meta` clean, zero `[meta-capi]` errors. **Server hygiene same day:**
+      now PRODUCTION-ONLY (old releases/docs/src/md removed, releases 1.4G→136M — keep-list in
+      MANUAL_STEPS hygiene runbook). Remaining: owner confirms Events Manager shows
+      `mysticegypt.net` events + dedup.
 - [ ] Resend — **ACTIVE Sept 2026**: real API key deployed to server `.env` + `.env.container`;
       domain `mysticegypt.net` fully **verified** (DKIM, SPF×2, Tracking CNAME `links → links1.resend-dns.com`);
       Open+Click tracking LIVE on `links.mysticegypt.net`; **user rotates the interim key after final confirmation**

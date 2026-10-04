@@ -270,14 +270,23 @@ No code is written until:
   JS. The packaging script fetches the LIVE server values first and injects them as build-time env vars
   (server GA_ID sha `5CEB...84BF`, WHATSAPP sha `6FC6...365A`) so a local build ships the SAME public
   values as the deployed image. Never build locally for prod with a stale/different local `.env.production`.
-- **Source dir:** `/var/www/mysticegypt` (git checkout). Keep `scripts/release.sh` and `Dockerfile.deploy`
-  there (docker build uses `-f $APP/Dockerfile.deploy` against the bundle dir, which has NO `.dockerignore`).
-- **Env files on server:** `.env` (real creds, source of truth), `.env.container` (passed to
-  docker run), `.env.production` (placeholder template — never use for the container).
-- **Container run command (keep ALL flags):**
-  `docker run -d --name mystic-egypt --restart unless-stopped -p 3100:3000 --add-host host.docker.internal:host-gateway --env-file /var/www/mysticegypt/.env.container mystic-egypt-new:latest`
+- **Server dir is PRODUCTION-ONLY** (`/var/www/mysticegypt`): `.env` files + `Dockerfile.deploy` +
+  `scripts/release.sh` + `data/` (uploads + SQL backups) + `releases/<current-tag>/` ONLY — no
+  source/.git/docs/md (cleaned 2 Oct 2026; full keep-list in MANUAL_STEPS → hygiene runbook).
+  Keep `scripts/release.sh` and `Dockerfile.deploy` there (docker build uses
+  `-f $APP/Dockerfile.deploy` against the bundle dir, which has NO `.dockerignore`).
+  Delete old `releases/*` dirs once the new release is verified (rollback = image `:previous`).
+- **Env files on server:** `.env` (real creds, source of truth; also the only source of
+  `NEXT_PUBLIC_*` for `package-release.ps1`), `.env.container` (passed to docker run).
+  **NO `.env.production` on server** (placeholder deleted 2 Oct 2026 — the packaging script's
+  grep tolerates its absence). **RULE: values in `.env.container` must be UNQUOTED** — docker
+  `--env-file` passes quotes literally (dotenv strips them, docker does NOT); a quoted
+  `META_CAPI_TOKEN="EAA…"` broke all prod CAPI with `Invalid OAuth access token` (fixed 2 Oct 2026).
+- **Container run command (keep ALL flags — exact form in `scripts/release.sh`):**
+  `docker run -d --name mystic-egypt --restart unless-stopped -p 3100:3000 --add-host host.docker.internal:host-gateway --env-file /var/www/mysticegypt/.env.container -v /var/www/mysticegypt/data/uploads:/app/public/uploads mystic-egypt-new:latest`
   - `--add-host` is REQUIRED: on this host `host.docker.internal` does not resolve otherwise,
     and the app 500s with Prisma `pool timeout` (P2039, DB unreachable).
+  - `-v …data/uploads` is REQUIRED: it is the ONLY uploads source (host `public/` is stale/unused).
 - **DB access:** user `mystic_app` (host `%`), password only in `/var/www/mysticegypt/.env`
   (`DATABASE_URL`). Prisma 7 adapter REQUIRES `mariadb://` scheme (NOT `mysql://`).
 - **Schema migration policy:** NO `prisma migrate` (DB is drift-prone; migrate resets data).

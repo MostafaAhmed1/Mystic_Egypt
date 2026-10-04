@@ -202,6 +202,31 @@ ssh root@72.61.209.105 'rm -rf /root/.cache /root/.npm/_cacache && apt-get clean
 - Local repo hygiene also applied: root-level `dev-server.err.log` + `dev-server.out.log`
   deleted (AGENTS.md §10).
 
+###### Server is PRODUCTION-ONLY (policy set 2 Oct 2026, executed the same day)
+**Policy:** `/var/www/mysticegypt` holds ONLY production runtime files + the CURRENT release.
+Old releases are deleted the moment the new one is verified working; docs/plans/source/
+dev-config never live on the server (they belong to the repo, not the VPS).
+
+**Keep-list (everything else is fair game):**
+```
+.env  .env.container  (+ current .bak safety copies)
+Dockerfile.deploy          # release.sh docker build -f target
+scripts/release.sh         # deploy entrypoint (artifact-based, §6)
+data/                      # bind-mount source: uploads/ + backup_*.sql (NEVER delete)
+releases/<current-tag>/    # exactly ONE release dir (rollback = image :previous, not a dir)
+```
+**Removed 2 Oct 2026 (after `2026-10-02-meta-pixel-fix` verified live):** 9 old release dirs
+(releases/ 1.4G → 136M), `docs/` (PRD/plans/social posts), root `*.md` (AGENTS/PROJECT_MAP/
+MANUAL_STEPS/README/EXECUTION_PLAN/UI_TEST_PLAN), `src/`, `prisma/`, `public/` (stale —
+live uploads live in `data/uploads`, bind-mounted), stray `srcfeatures*` dirs, `nginx/` (empty),
+dev configs (`package.json`, `tsconfig`, `next.config.ts`, `eslint/postcss/components`,
+`.env.example`, `.env.production` placeholder, `.gitignore`, `.dockerignore`), retired
+build-on-server `Dockerfile`, `docker-compose.yml`, old `deploy.sh` ×2, `prisma.config.ts(.bak)`,
+`scripts/deploy.sh`, `/tmp` tarballs.
+- `.env.production` deleted is SAFE: `package-release.ps1` greps it + `.env` with
+  `2>/dev/null` — all 5 `NEXT_PUBLIC_*` keys exist in `.env`, so builds keep working.
+- Post-cleanup health: container Up, `/en` `/en/tours` → 200, bind mount untouched.
+
 ###### DB migration pattern (when schema.prisma changes)
 ```bash
 # Backup first (keep ONLY the latest; mirror to repo `backups/`):
@@ -498,6 +523,41 @@ Go to **Admin > Conversions > New conversion event** and add:
   then Events Manager → **Test Events** (`1510981584397229`) to confirm CAPI dedup
   (`event_id` match), and mark `Lead`/`InitiateCheckout`/`Purchase` as conversions in the
   Pixel settings.
+
+#### 5b-fix. EVENTS ONLY FROM LOCALHOST — root causes + fix (✅ DEPLOYED 2 Oct 2026, tag `2026-10-02-meta-pixel-fix`)
+> Symptom: Events Manager showed events ONLY with `localhost` URLs; zero from `mysticegypt.net`.
+
+- **Root cause A — server CAPI (every prod server event failed):** the 4 Meta lines in the
+  server `.env.container` (+ `.env`) were written with surrounding double quotes
+  (`META_CAPI_TOKEN="EAA…"`). **Docker `--env-file` passes values LITERALLY — it does NOT
+  strip quotes** (unlike dotenv/Next in dev) → container env held `"EAA…"` → Graph API
+  `HTTP 400 Invalid OAuth access token - Cannot parse access token` (25/25 attempts failed
+  in the week before the fix; token itself was valid — `debug_token is_valid:true`).
+  `META_TEST_EVENT_CODE=""` was similarly a literal 2-char `""` (truthy → would have routed
+  events to Test Events with a garbage code once auth worked).
+  **FIX:** quotes stripped from all 4 lines in both server files → `META_CAPI_TOKEN` 203 chars
+  (unquoted), `META_TEST_EVENT_CODE=` empty; container recreated. **RULE (permanent):**
+  **values in `.env.container` must NEVER be quoted** — only dotenv-read files (`.env`) may
+  use quotes. Local dev never reproduced this because dotenv strips quotes.
+- **Root cause B — browser pixel never registered:** the loader snippet in
+  `src/core/lib/meta-pixel.ts` started with `fbq('consent','revoke')`. When that is the FIRST
+  queued call before `fbevents.js` loads, the flush DROPS the queued `consent grant` + `init`
+  behind it → `fbq.getState().pixels` stays `[]`, `pixelInitializationTime: -1`, no `_fbp`,
+  no `facebook.com/tr` beacons — in ALL prod flows (first-visit accept AND returning
+  consented visitor). Proven by isolated A/B tests: `[revoke,grant,init]` fails /
+  `[grant,init]` succeeds. The revoke was pointless anyway (snippet only injects AFTER
+  consent). **FIX:** removed from the snippet; `consent grant` before `init` retained.
+- **Root cause C — initial PageView lost:** the `pathname` effect in `meta-pixel-provider.tsx`
+  ran before pixel init and never re-ran, so the first view of every FULL page load fired no
+  PageView until an internal route change. **FIX:** `consent` added to that effect's deps
+  (the init effect is declared above it → runs first in the same commit).
+- **Verified post-deploy (2 Oct 2026):** prod accept → `pixels:[{id:1510981584397229,
+  eventCount:1}]`, `_fbp` set, `GET www.facebook.com/tr/?ev=PageView&dl=https://mysticegypt.net/en`,
+  `POST /api/analytics/meta` 200, zero `[meta-capi]` errors in container logs (was 100% failing).
+  Local dev verified the same (tsc clean, lint at baseline 7 errors — none in touched files).
+- **Owner check:** open Events Manager → events now appear with `mysticegypt.net` URLs;
+  confirm browser+server dedup in Test Events (shared `event_id`), and confirm **Purchase**
+  lands (Stripe webhook CAPI also unblocked by the token fix).
 
 ### 6. Google Search Console (GSC) — ✅ OWNERSHIP VERIFIED (DNS, Sept 2026) — بيانات الأداء لا تزال مطلوبة
 

@@ -39,7 +39,16 @@
     "title": "Hot Angebote",
     "subtitle": "Ausgewählte Ersparnisse bei den beliebtesten Ägypten-Erlebnissen.",
     "cta": "Angebot ansehen",
-    "badge": "ANGEBOT"
+    "badge": "ANGEBOT",
+    "popup": {
+      "eyebrow": "Zeitlich begrenzte Angebote",
+      "title": "Hot Angebote",
+      "subtitle": "Ausgewählte Ersparnisse bei den beliebtesten Ägypten-Erlebnissen — Karte anklicken, um die Tour zu sehen.",
+      "close": "Angebote schließen",
+      "prev": "Vorheriges Angebot",
+      "next": "Nächstes Angebot",
+      "goTo": "Zu Angebot {{n}} gehen"
+    }
   },
   "seo": {
     "site": {

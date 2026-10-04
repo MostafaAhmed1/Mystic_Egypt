@@ -9,6 +9,8 @@ import {
   CalendarDays,
   FileText,
   Users,
+  UsersRound,
+  Puzzle,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -36,6 +38,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/tours", label: "Tours", icon: Map },
       { href: "/admin/bookings", label: "Bookings", icon: CalendarDays },
+      { href: "/admin/addons", label: "Add-ons", icon: Puzzle },
+      { href: "/admin/customers", label: "Customers", icon: UsersRound },
     ],
   },
   {

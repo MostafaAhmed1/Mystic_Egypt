@@ -52,12 +52,17 @@ export function MetaPixelProvider({ pixelId }: { pixelId?: string }) {
     }
   }, [session, consented]);
 
-  // PageView on every route change (browser Pixel + CAPI, shared event_id).
+  // PageView on the current page + every route change (browser Pixel + CAPI,
+  // shared event_id). `consented` is a dependency so the view that just
+  // initialized the pixel (an effect declared ABOVE this one, so it runs
+  // first within the same commit) is counted too — a full page load mounts
+  // this provider before the pixel exists, and without this the first view
+  // of every load was silently lost until an internal route change.
   useEffect(() => {
-    if (isMetaPixelEnabled()) {
+    if (consented && isMetaPixelEnabled()) {
       sendMetaEvent("PageView");
     }
-  }, [pathname]);
+  }, [pathname, consented]);
 
   return null;
 }

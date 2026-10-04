@@ -314,6 +314,27 @@
   animation: shimmer 3s linear infinite;
 }
 
+/* Celebration confetti rain — offers popup backdrop (see offers-popup.tsx).
+   Per-piece values (color/size/timing/sway) come from inline CSS custom
+   properties. prefers-reduced-motion kills it via the global rule below. */
+@keyframes confettiFall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate3d(var(--confetti-sway, 30px), 50vh, 0) rotate(360deg);
+  }
+  100% {
+    transform: translate3d(calc(var(--confetti-sway, 30px) * -0.5), 112vh, 0)
+      rotate(760deg);
+    opacity: 1;
+  }
+}
+
 /* Subtle gold border animation */
 @keyframes borderGlow {
   0%, 100% {
