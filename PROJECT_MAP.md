@@ -1,7 +1,7 @@
 # PROJECT_MAP.md - Mystic Egypt Tourism Platform
 
-## Status: PRODUCTION DEPLOYED — 2 RELEASES LIVE 2 Oct 2026 (A+B+C+D: images fix · language switcher · nginx 12M · Hot Offers v1; then Hot Offers REDESIGN: `Tour.isOffer`, `offers` table dropped, bar moved to hero top)
-## Active plan: **Admin Add-ons CRUD + Customers management + Offers Popup** — **COMPLETE (4 Oct 2026)**, all M1–M5 below verified; NOT yet deployed (uncommitted, awaiting PM deploy/commit order). Prior work (A+B+C+D, Offers redesign, Meta pixel fix) complete; X6 commit pending user request. Performance plan M2–M5 still awaiting order.
+## Status: PRODUCTION DEPLOYED — tag `2026-10-04-ad700af` LIVE (4 Oct 2026, 14:01 UTC): Admin Add-ons CRUD + Customers management + Offers Popup (session-once, confetti celebration, auto-carousel) — prod E2E verified (popup/confetti/auto-advance/manual-stop on mysticegypt.net; routes /admin/addons 307, /api/admin/addons 401). Previous releases retired (rollback = image `:previous`).
+## Active plan: **Admin Add-ons CRUD + Customers management + Offers Popup** — **COMPLETE & DEPLOYED (4 Oct 2026)**, all M1–M5 below verified; commit `ad700af` (24 files), artifact `releases/mystic-egypt-2026-10-04-ad700af.tar.gz` deployed. Prior work (A+B+C+D, Offers redesign, Meta pixel fix) complete and committed; X6 commit pending user request. Performance plan M2–M5 still awaiting order.
 **Last Updated:** Oct 4, 2026
 
 ---
