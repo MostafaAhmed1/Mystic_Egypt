@@ -180,6 +180,9 @@ Maintain feature coherence and never lose context between steps.
 - Create a **Milestone-based plan** with verifiable goals.
 - **DO NOT start execution** until explicit approval is received.
 - Execute each phase independently and wait for approval before moving to the next.
+- **Git push rule (standing order, 4 Oct 2026):** committing still requires an explicit
+  order — but **ALWAYS `git push origin main` immediately after EVERY commit, without
+  waiting to be asked**. The repo must never accumulate unpushed commits.
 
 ---
 
