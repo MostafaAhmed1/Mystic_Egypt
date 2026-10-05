@@ -1336,3 +1336,25 @@ export async function sendPasswordResetCodeForCustomer(
   });
   return "sent";
 }
+
+/**
+ * Promotes an existing CLIENT account to ADMIN (full panel access; the new
+ * admin enrolls 2FA from Settings on next login). Only CLIENT accounts —
+ * already-admin ids return "forbidden" so the route can answer 403.
+ */
+export async function promoteCustomerToAdmin(
+  customerId: string,
+): Promise<"not_found" | "forbidden" | "promoted"> {
+  const user = await prisma.user.findUnique({
+    where: { id: customerId },
+    select: { id: true, role: true },
+  });
+  if (!user) return "not_found";
+  if (user.role !== "CLIENT") return "forbidden";
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { role: "ADMIN" },
+  });
+  return "promoted";
+}

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, KeyRound, MailCheck } from "lucide-react";
+import { CalendarDays, KeyRound, MailCheck, UserCog } from "lucide-react";
 import { toast } from "sonner";
 import { API_ENDPOINTS } from "@/core/api/endpoints";
 import { formatCurrency } from "@/core/utils";
@@ -35,15 +36,48 @@ function responseError(payload: unknown, fallback: string): string {
 export function AdminCustomersClient({ initialCustomers }: AdminCustomersClientProps) {
   const { t } = useTranslation("common");
   const { href } = useLocale();
+  const router = useRouter();
   const [sendingId, setSendingId] = useState<string | null>(null);
+
+  async function promoteToAdmin(customer: CustomerItem) {
+    if (
+      !window.confirm(
+        t("admin.promoteConfirm", {
+          defaultValue: "Give {{name}} full administrator access?",
+          name: customer.name,
+        }),
+      )
+    ) {
+      return;
+    }
+
+    setSendingId(customer.id);
+    const response = await fetch(API_ENDPOINTS.ADMIN.CUSTOMERS.PROMOTE(customer.id), {
+      method: "POST",
+    });
+    const payload: unknown = await response.json().catch(() => null);
+    setSendingId(null);
+
+    if (!response.ok) {
+      toast.error(responseError(payload, t("admin.promoteFailed", "Could not promote this account.")));
+      return;
+    }
+    toast.success(
+      t("admin.promoteSuccess", {
+        defaultValue: "{{name}} is now an administrator.",
+        name: customer.name,
+      }),
+    );
+    router.refresh();
+  }
 
   async function sendResetCode(customer: CustomerItem) {
     if (
       !window.confirm(
-        t(
-          "admin.sendResetCodeConfirm",
-          `Send a password-reset code to ${customer.email}?`,
-        ),
+        t("admin.sendResetCodeConfirm", {
+          defaultValue: "Send a password-reset code to {{email}}?",
+          email: customer.email,
+        }),
       )
     ) {
       return;
@@ -151,6 +185,17 @@ export function AdminCustomersClient({ initialCustomers }: AdminCustomersClientP
                           title={t("admin.sendResetCode", "Send password-reset code")}
                         >
                           <KeyRound aria-hidden />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => promoteToAdmin(customer)}
+                          disabled={sendingId === customer.id}
+                          aria-label={t("admin.promoteToAdmin", "Make administrator")}
+                          title={t("admin.promoteToAdmin", "Make administrator")}
+                        >
+                          <UserCog aria-hidden />
                         </Button>
                       </div>
                     </td>

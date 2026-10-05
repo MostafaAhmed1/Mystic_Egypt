@@ -63,6 +63,7 @@ export const API_ENDPOINTS = {
     },
     CUSTOMERS: {
       RESET_PASSWORD: (id: string) => `/api/admin/customers/${id}/reset-password`,
+      PROMOTE: (id: string) => `/api/admin/customers/${id}/promote`,
     },
     DASHBOARD: "/api/admin/dashboard",
     ADMINS: "/api/admin/admins",
