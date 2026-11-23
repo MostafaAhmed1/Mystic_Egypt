@@ -60,9 +60,11 @@ if (-not $parsed.ContainsKey("NEXT_PUBLIC_GA_ID")) {
 }
 
 # --- 2. Build locally ---
-Write-Host "[3/5] npm run build ..." -ForegroundColor Cyan
+Write-Host "[3/5] npm run build -- --webpack ..." -ForegroundColor Cyan
 Remove-Item ".next" -Recurse -Force -ErrorAction SilentlyContinue
-npm run build
+# Turbopack's next/font/google internal is broken in this build environment;
+# webpack is the verified compiler for production bundles (see AGENTS.md).
+npm run build -- --webpack
 if ($LASTEXITCODE -ne 0) { throw "build failed" }
 
 # --- 3. Assemble the release bundle (exports only what the runtime needs) ---
