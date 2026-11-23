@@ -1,4 +1,4 @@
-# scripts/package-release.ps1 — LOCAL build + packaging (artifact-based deploy, Sept 2026).
+# scripts/package-release.ps1 - LOCAL build + packaging (artifact-based deploy, Sept 2026).
 #
 # Builds the Next.js app locally, then packages ONLY the compiled standalone bundle
 # (server.js + .next/server + .next/static + public/ + traced node_modules) into a
@@ -56,7 +56,7 @@ foreach ($k in $nextPublicKeys) {
     }
 }
 if (-not $parsed.ContainsKey("NEXT_PUBLIC_GA_ID")) {
-    throw "Could not fetch NEXT_PUBLIC_* from $Server — refusing to build with local (possibly wrong) values."
+    throw "Could not fetch NEXT_PUBLIC_* from $Server - refusing to build with local (possibly wrong) values."
 }
 
 # --- 2. Build locally ---
@@ -79,13 +79,13 @@ Copy-Item ".next\standalone\*" $work -Recurse -Force
 # static assets (NOT included in standalone output)
 New-Item -ItemType Directory -Path "$work\.next" -Force | Out-Null
 Copy-Item ".next\static" "$work\.next\static" -Recurse -Force
-# public assets (llms.txt, .well-known, locales, favicons) — EXCEPT uploads,
+# public assets (llms.txt, .well-known, locales, favicons) - EXCEPT uploads,
 # which are bind-mounted from the host at runtime and must stay local-only.
 if (Test-Path "$work\public") { Remove-Item "$work\public" -Recurse -Force }
 Copy-Item "public" "$work\public" -Recurse -Force
 if (Test-Path "$work\public\uploads") { Remove-Item "$work\public\uploads" -Recurse -Force }
 
-# NEVER ship .env files (they were copied by next build into standalone) — the
+# NEVER ship .env files (they were copied by next build into standalone) - the
 # container receives env at runtime via --env-file .env.container.
 Get-ChildItem $work -Force -File -Filter ".env*" | Remove-Item -Force
 Remove-Item "$work\.git" -Recurse -Force -ErrorAction SilentlyContinue
