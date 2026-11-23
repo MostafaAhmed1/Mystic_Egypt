@@ -298,7 +298,7 @@ npm run db:seed
 - [x] `DROP TABLE IF EXISTS offers;` (PRD-compliant removal; code no longer references it)
 - [x] Verified: column present, `offer_count = 5`, `offers` gone; old API `/api/admin/homepage/offers` → 404.
 
-###### Tour ↔ Category DDL — target server `2.25.4.127` (`newvps`, srv2153453), never `prisma migrate`
+###### Tour ↔ Category DDL - EXECUTED 2026-11-23 on `2.25.4.127` (`newvps`, srv2153453), never `prisma migrate`
 Schema change: `Tour.category_id String?` + FK `onDelete: SetNull` + index `[category_id, status]`.
 Prisma-generated names confirmed with `prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script`
 (`tours_category_id_fkey`, `tours_category_id_status_idx`). Backup first per pattern above, then run
@@ -338,7 +338,18 @@ ALTER TABLE tours ADD CONSTRAINT `tours_category_id_fkey`
 
 Verify: `SELECT COUNT(*) FROM tours WHERE category_id IS NULL;` → **0** (37/37 assigned).
 `private-yacht-tours` intentionally has no matching tours (empty state on its category page).
-Do NOT run `npm run db:seed` against prod — it also upserts admin/users/add-ons.
+Do NOT run `npm run db:seed` against prod - it also upserts admin/users/add-ons.
+
+Execution record 2026-11-23:
+- [x] Full DB backup: `/var/www/mysticegypt/data/backup_full_20261123-141313_pre_category.sql` (67,845 bytes).
+- [x] DDL + assignment applied via `mariadb` as `mystic_app`; verified 37/37 assigned, 0 NULL.
+      Distribution: city 15, desert 8, entertainment 2, island 6, water 6, private yacht 0.
+- [x] Released locally built webpack bundles from `newvps` NEXT_PUBLIC parity:
+      `2026-11-23-tour-categories` then `2026-11-23-tour-categories-2` (encoded-slug fix).
+- [x] Verified over HTTP on the container: homepage + 4 locales, category pages (6), empty state,
+      detail pages (including the three legacy slugs containing spaces), sitemap, 0 container errors.
+- [ ] **Manual / outside SSH:** `mysticegypt.net` DNS still resolves to legacy `72.61.209.105`.
+      Point the A record to `2.25.4.127` when traffic cutover is intended.
 
 ### 8. Nginx / SSL facts
 ```
