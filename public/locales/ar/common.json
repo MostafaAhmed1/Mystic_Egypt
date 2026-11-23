@@ -70,6 +70,10 @@
     },
     "tour": {
       "description": "احجز «{{title}}» — جولة مصرية أصيلة بأسعار محلية شفافة وبضمانات شركة مسجلة في المملكة المتحدة."
+    },
+    "tourCategory": {
+      "title": "جولات {{name}}",
+      "description": "تصفح جميع جولات {{name}} في مصر بأسعار محلية شفافة وبضمانات شركة مسجلة في المملكة المتحدة."
     }
   },
   "tours": {
@@ -96,7 +100,10 @@
     "allStatuses": "جميع الحالات",
     "filter": "تصفية",
     "noToursFound": "لم يتم العثور على جولات.",
-    "relatedTours": "قد يعجبك أيضاً"
+    "relatedTours": "قد يعجبك أيضاً",
+    "categoryEyebrow": "استكشف حسب التصنيف",
+    "categorySubtitle": "تصفح جميع تجاربنا في {{name}} عبر مصر.",
+    "categoryExplore": "استكشف جولات {{name}}"
   },
   "whyUs": {
     "title": "لماذا تختارنا",
@@ -391,6 +398,15 @@
     "payment": "الدفع",
     "addTour": "إضافة جولة",
     "manageTours": "إدارة مخزون الجولات والأسعار والتوفر.",
+    "tourCategory": "التصنيف",
+    "uncategorized": "بدون تصنيف",
+    "deleteTour": "حذف الرحلة",
+    "deleteTourTitle": "حذف الرحلة نهائيًا؟",
+    "deleteTourConfirm": "سيتم حذف «{{name}}» مع كل خط سيرها وصورها وتواريخها. لا يمكن التراجع عن هذا الإجراء. لا يمكن حذف الرحلات التي لها حجوزات.",
+    "deleteTourConfirmButton": "حذف نهائي",
+    "deleteTourBlocked": "هذه الرحلة لها حجوزات؛ عطّلها بدلًا من حذفها.",
+    "deleteTourSuccess": "تم حذف الرحلة.",
+    "deleteTourFailed": "تعذر حذف الرحلة.",
     "edit": "تعديل",
     "closeBookings": "إغلاق الحجوزات",
     "openBookings": "فتح الحجوزات",

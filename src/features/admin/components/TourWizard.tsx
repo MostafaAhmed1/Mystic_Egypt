@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Check, Plus, Trash2, Upload } from "lucide-react";
 import { useLocale } from "@/shared/hooks/use-locale";
 import { API_ENDPOINTS } from "@/core/api/endpoints";
+import { CategoryPicker } from "@/features/admin/components/CategoryPicker";
+import type { TourCategoryOption } from "@/features/admin/service";
 
 interface ItineraryDay {
   day_number: number;
@@ -49,6 +51,7 @@ interface TourData {
   currency: string;
   status: string;
   isOffer: boolean;
+  category_id: string;
   itinerary: ItineraryDay[];
   images: TourImage[];
   route: TourRoute[];
@@ -57,7 +60,13 @@ interface TourData {
 
 const STEPS = ["Basic Info", "Itinerary", "Images", "Pricing & Dates"];
 
-export function TourWizard({ tour }: { tour?: TourData }) {
+export function TourWizard({
+  tour,
+  categories,
+}: {
+  tour?: TourData;
+  categories: TourCategoryOption[];
+}) {
   const router = useRouter();
   const { href } = useLocale();
   const [step, setStep] = useState(0);
@@ -76,6 +85,7 @@ export function TourWizard({ tour }: { tour?: TourData }) {
       currency: "USD",
       status: "open",
       isOffer: false,
+      category_id: "",
       itinerary: [],
       images: [],
       route: [],
@@ -225,14 +235,16 @@ export function TourWizard({ tour }: { tour?: TourData }) {
   }
 
   async function handleSubmit() {
-    if (!data.title || !data.slug || !data.description || data.base_price <= 0) {
+    if (!data.title || !data.slug || !data.description || data.base_price <= 0 || !data.category_id) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
     setSaving(true);
     try {
-      const url = isEdit ? `/api/admin/tours/${tour!.id}` : "/api/admin/tours";
+      const url = isEdit
+        ? API_ENDPOINTS.ADMIN.TOURS.UPDATE(tour?.id ?? "")
+        : API_ENDPOINTS.ADMIN.TOURS.CREATE;
       const method = isEdit ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -308,6 +320,14 @@ export function TourWizard({ tour }: { tour?: TourData }) {
                   placeholder="e.g. classic-nile-cruise"
                 />
               </div>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium">Category *</label>
+              <CategoryPicker
+                categories={categories}
+                value={data.category_id}
+                onChange={(categoryId) => updateField("category_id", categoryId)}
+              />
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium">Description *</label>

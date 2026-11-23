@@ -70,6 +70,10 @@
     },
     "tour": {
       "description": "Foglalja le: {{title}} — autentikus egyiptomi túra átlátható helyi árakkal és UK-bejegyzési garanciával."
+    },
+    "tourCategory": {
+      "title": "{{name}} túrák",
+      "description": "Böngésszen az összes {{name}} túra között Egyiptomban, átlátható helyi árakkal és UK-bejegyzési garanciával."
     }
   },
   "tours": {
@@ -96,7 +100,10 @@
     "allStatuses": "Minden státusz",
     "filter": "Szűrés",
     "noToursFound": "Nem találhatók turnék.",
-    "relatedTours": "Hasonló ajánlatok"
+    "relatedTours": "Hasonló ajánlatok",
+    "categoryEyebrow": "Fedezzen fel kategóriánként",
+    "categorySubtitle": "Böngésszen az összes {{name}} élményünkben Egyiptomban.",
+    "categoryExplore": "{{name}} túrák felfedezése"
   },
   "whyUs": {
     "title": "Miért válasszon minket",
@@ -391,6 +398,15 @@
     "payment": "Fizetés",
     "addTour": "Túra hozzáadása",
     "manageTours": "A túrák készletének, árainak és elérhetőségének kezelése.",
+    "tourCategory": "Kategória",
+    "uncategorized": "Nincs kategória",
+    "deleteTour": "Túra törlése",
+    "deleteTourTitle": "Véglegesen törli a túrát?",
+    "deleteTourConfirm": "A(z) „{{name}}” az útvonalával, képeivel és dátumaival együtt törlésre kerül. Ez nem vonható vissza. Foglalással rendelkező túrák nem törölhetők.",
+    "deleteTourConfirmButton": "Végleges törlés",
+    "deleteTourBlocked": "Ennek a túrának vannak foglalásai. Inkább tiltsa le.",
+    "deleteTourSuccess": "Túra törölve.",
+    "deleteTourFailed": "A túra törlése nem sikerült.",
     "edit": "Szerkesztés",
     "closeBookings": "Foglalások lezárása",
     "openBookings": "Foglalások megnyitása",

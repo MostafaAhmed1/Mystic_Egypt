@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Check, X, CalendarCheck, Map as MapIcon } from "lucide-react";
 import { formatCurrency } from "@/core/utils";
 import { TourGallery } from "@/features/tour/components/TourGallery";
+import { CategoryBadge } from "@/features/tour/components/CategoryBadge";
 import { ItineraryAccordion } from "@/features/tour/components/ItineraryAccordion";
 import { TourMapClient } from "@/features/tour/components/TourMapClient";
 import { CustomizeTourDialog } from "@/features/tour/components/CustomizeTourDialog";
@@ -93,6 +94,9 @@ export function TourContent({ tour, relatedTours, relatedHeading }: TourContentP
               <h1 className="font-heading text-3xl font-bold tracking-wider text-obsidian sm:text-4xl">
                 {tour.title}
               </h1>
+              <div className="mt-3">
+                <CategoryBadge category={tour.category} />
+              </div>
               <p className="mt-4 leading-relaxed text-obsidian/50">{tour.description}</p>
             </div>
 

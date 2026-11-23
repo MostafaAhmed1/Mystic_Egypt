@@ -107,9 +107,11 @@ model Tour {
   currency      Currency  @default(USD)
   status        String    @default("open") // open, closed
   isOffer       Boolean   @default(false) // shown in homepage hot-offers bar & section
+  category_id   String? // Assigned from the existing homepage categories
   created_by    String // Admin ID
   created_at    DateTime  @default(now())
 
+  category         Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
   itinerary        TourItinerary[]
   images           TourImage[]
   route            TourPoint[]
@@ -118,6 +120,7 @@ model Tour {
   wishlist_users   User[]  @relation("UserWishlist")
   custom_requests  CustomizationRequest[]
 
+  @@index([category_id, status])
   @@map("tours")
 }
 
@@ -272,6 +275,8 @@ model Category {
   is_active   Boolean  @default(true)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+
+  tours Tour[]
 
   @@index([is_active, sort_order])
   @@map("categories")

@@ -31,6 +31,14 @@ export interface TourImageDto {
   is_primary: boolean;
 }
 
+/** Localized category labels attached to a public tour. */
+export interface TourCategoryDto {
+  slug: string;
+  name_en: string;
+  name_ar: string;
+  name_de: string;
+}
+
 /** Public-facing representation of a tour (never exposes admin/DB internals). */
 export interface TourSummary {
   id: string;
@@ -45,6 +53,8 @@ export interface TourSummary {
   duration: string | null;
   /** Primary image URL, or null when none has been uploaded yet. */
   primary_image: string | null;
+  /** Assigned homepage category, or null for legacy/unassigned tours. */
+  category: TourCategoryDto | null;
 }
 
 /** Full tour detail (single tour page), including itineraries and route. */
@@ -65,6 +75,8 @@ export interface TourDetail {
   inclusions: string | null;
   /** Newline-delimited "what's not included" items, or null when unset. */
   exclusions: string | null;
+  /** Assigned homepage category, or null for legacy/unassigned tours. */
+  category: TourCategoryDto | null;
   images: TourImageDto[];
   itinerary: ItineraryDto[];
   route: TourPointDto[];

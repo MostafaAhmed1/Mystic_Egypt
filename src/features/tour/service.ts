@@ -3,7 +3,12 @@ import { cache } from "react";
 import { prisma } from "@/core/lib/prisma";
 import { CURRENCIES } from "@/core/constants/currencies";
 import type { Currency } from "@/core/constants/currencies";
-import type { TourDetail, TourSummary, GroupPriceTier } from "@/features/tour/types";
+import type {
+  TourDetail,
+  TourSummary,
+  GroupPriceTier,
+  TourCategoryDto,
+} from "@/features/tour/types";
 
 // Tours are created via the admin panel (M6) and are only public when "open".
 const PUBLIC_TOUR_STATUS = "open";
@@ -40,8 +45,13 @@ type TourWithPrimaryImage = {
   currency: string;
   status: string;
   duration: string | null;
+  category: TourCategoryDto | null;
   images: { image_url: string }[];
 };
+
+const CATEGORY_SELECT = {
+  select: { slug: true, name_en: true, name_ar: true, name_de: true },
+} as const;
 
 function mapCurrency(value: string): Currency {
   if (value === CURRENCIES.GBP || value === CURRENCIES.EUR || value === CURRENCIES.USD) {
@@ -62,6 +72,7 @@ function toTourSummary(tour: TourWithPrimaryImage): TourSummary {
     status: tour.status,
     duration: tour.duration,
     primary_image: tour.images[0]?.image_url ?? null,
+    category: tour.category,
   };
 }
 
@@ -90,6 +101,7 @@ export const listPublicTours = cache(async (): Promise<TourSummary[]> => {
   const tours = await prisma.tour.findMany({
     where: { status: PUBLIC_TOUR_STATUS },
     include: {
+      category: CATEGORY_SELECT,
       images: {
         where: { is_primary: true },
         take: 1,
@@ -110,6 +122,40 @@ export const listPublicTourSlugs = cache(async (): Promise<string[]> => {
   return tours.map((tour) => tour.slug);
 });
 
+/** Active category slugs, used by generateStaticParams for category pages. */
+export const listPublicCategorySlugs = cache(async (): Promise<string[]> => {
+  const categories = await prisma.category.findMany({
+    where: { is_active: true },
+    select: { slug: true },
+    orderBy: [{ sort_order: "asc" }, { name_en: "asc" }],
+  });
+  return categories.map((category) => category.slug);
+});
+
+/** One active category and its public tours, or null for an unknown slug. */
+export const getPublicCategoryTours = cache(
+  async (
+    slug: string,
+  ): Promise<{ category: TourCategoryDto; tours: TourSummary[] } | null> => {
+    const category = await prisma.category.findFirst({
+      where: { slug, is_active: true },
+      select: CATEGORY_SELECT.select,
+    });
+    if (!category) return null;
+
+    const tours = await prisma.tour.findMany({
+      where: { status: PUBLIC_TOUR_STATUS, category: { is: { slug } } },
+      include: {
+        category: CATEGORY_SELECT,
+        images: { where: { is_primary: true }, take: 1 },
+      },
+      orderBy: { created_at: "asc" },
+    });
+
+    return { category, tours: tours.map(toTourSummary) };
+  },
+);
+
 /**
  * Open tours flagged as homepage offers (admin `isOffer` toggle), used by the
  * hero offers bar and the homepage offers section. Both render bookable tours.
@@ -118,6 +164,7 @@ export const listPublicOfferTours = cache(async (): Promise<TourSummary[]> => {
   const tours = await prisma.tour.findMany({
     where: { isOffer: true, status: PUBLIC_TOUR_STATUS },
     include: {
+      category: CATEGORY_SELECT,
       images: {
         where: { is_primary: true },
         take: 1,
@@ -135,6 +182,7 @@ export const getPublicTourBySlug = cache(
     const tour = await prisma.tour.findUnique({
       where: { slug },
       include: {
+        category: CATEGORY_SELECT,
         images: { orderBy: { is_primary: "desc" } },
         itinerary: { orderBy: { day_number: "asc" } },
         route: { orderBy: { order: "asc" } },
@@ -158,6 +206,7 @@ export const getPublicTourBySlug = cache(
       duration: tour.duration,
       inclusions: tour.inclusions,
       exclusions: tour.exclusions,
+      category: tour.category,
       images: tour.images.map((img) => ({
         id: img.id,
         image_url: img.image_url,
@@ -213,7 +262,7 @@ export const listRelatedTours = cache(
             slug: { not: slug },
             OR: tokens.map((token) => ({ slug: { contains: token } })),
           },
-          include: { images: { where: { is_primary: true }, take: 1 } },
+          include: { category: CATEGORY_SELECT, images: { where: { is_primary: true }, take: 1 } },
           orderBy: { created_at: "desc" },
           take: RELATED_CANDIDATE_LIMIT,
         })
@@ -229,7 +278,7 @@ export const listRelatedTours = cache(
               status: PUBLIC_TOUR_STATUS,
               slug: { notIn: pickedSlugs },
             },
-            include: { images: { where: { is_primary: true }, take: 1 } },
+            include: { category: CATEGORY_SELECT, images: { where: { is_primary: true }, take: 1 } },
             orderBy: { created_at: "desc" },
             take: limit - matches.length,
           })

@@ -88,6 +88,41 @@ const catalog: CatalogTour[] = [
   { slug: "hurghada-airport-hotel-transfer", title: "Hurghada Airport to Hotel Transfer", description: "Transfer from Hurghada airport to your hotel on arrival.", duration: "Varies by hotel location", price: 5, image: image("hurghada-airport") },
 ];
 
+/** One primary category per tour, keyed by tour slug (matches prisma/seed.ts categories). */
+export const TOUR_CATEGORIES: Record<string, string> = {
+  "cairo": "city-cultural-tours",
+  "nile-trip-cairo": "island-boat-trips",
+  "luxor": "city-cultural-tours",
+  "aswan": "city-cultural-tours",
+  "abydos-dendera-temples": "city-cultural-tours",
+  "alexandria": "city-cultural-tours",
+  "hurghada": "water-activities",
+  "sharm-el-sheikh": "water-activities",
+  "marsa-alam": "water-activities",
+  "dahab": "water-activities",
+  "white-desert-bahariya": "desert-safari",
+  "fayoum": "desert-safari",
+  "siwa-oasis": "desert-safari",
+  "classic-nile-cruise-cairo": "island-boat-trips",
+  "hurghada-cairo-trip-program": "city-cultural-tours",
+  "hurghada-luxor-excursions-program": "city-cultural-tours",
+  "hurghada-luxor-cairo-excursions-program": "city-cultural-tours",
+  "hurghada-excursions-program": "water-activities",
+  "hurghada-beginner-diving-two-stops": "water-activities",
+  "hurghada-dolphin-show": "entertainment-nightlife",
+  "hurghada-desert-jeep-safari": "desert-safari",
+  "hurghada-buggy-camel-safari": "desert-safari",
+  "hurghada-family-quad-buggy-dinner": "desert-safari",
+  "hurghada-horse-riding-beach-swim": "desert-safari",
+  "hurghada-two-hour-horse-riding": "desert-safari",
+  "hurghada-luxor-bus-tour": "city-cultural-tours",
+  "luxor-hot-air-balloon": "entertainment-nightlife",
+  "hurghada-cairo-pyramids-bus-tour": "city-cultural-tours",
+  "hurghada-city-crafts-shopping": "city-cultural-tours",
+  "el-gouna-private-tour-transfer": "city-cultural-tours",
+  "hurghada-airport-hotel-transfer": "city-cultural-tours",
+};
+
 function isLocalImage(url: string): boolean {
   if (!url.startsWith("/uploads/") || url.includes("..") || !/\.(webp|png|jpe?g)$/i.test(url)) return false;
   const path = join(fileURLToPath(new URL("../public/", import.meta.url)), url.slice(1));
@@ -96,11 +131,13 @@ function isLocalImage(url: string): boolean {
 
 export async function seedTours(prisma: PrismaClient, adminId: string): Promise<void> {
   for (const item of catalog) {
+    const categorySlug = TOUR_CATEGORIES[item.slug];
+    if (!categorySlug) throw new Error(`Missing category mapping for tour "${item.slug}".`);
     await prisma.$transaction(async (tx) => {
       const tour = await tx.tour.upsert({
         where: { slug: item.slug },
-        update: { title: item.title, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, ...(item.isOffer !== undefined ? { isOffer: item.isOffer } : {}) },
-        create: { title: item.title, slug: item.slug, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, isOffer: item.isOffer ?? false, created_by: adminId },
+        update: { title: item.title, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, category: { connect: { slug: categorySlug } }, ...(item.isOffer !== undefined ? { isOffer: item.isOffer } : {}) },
+        create: { title: item.title, slug: item.slug, description: item.description, duration: item.duration, base_price: item.price, currency: "USD", inclusions: item.inclusions ?? null, exclusions: item.exclusions ?? null, isOffer: item.isOffer ?? false, category: { connect: { slug: categorySlug } }, created_by: adminId },
       });
 
       if (item.itinerary) {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Clock } from "lucide-react";
 import { TourImage } from "@/features/tour/components/TourImage";
+import { CategoryBadge } from "@/features/tour/components/CategoryBadge";
 import { formatCurrency } from "@/core/utils";
 import { useLocale } from "@/shared/hooks/use-locale";
 import { sendMetaEvent } from "@/core/lib/meta-pixel";
@@ -80,6 +81,8 @@ export function TourCard({ tour }: TourCardProps) {
             {tour.title}
           </Link>
         </h3>
+
+        <CategoryBadge category={tour.category} />
 
         <p className="line-clamp-2 text-sm leading-relaxed text-obsidian/50">{tour.description}</p>
 

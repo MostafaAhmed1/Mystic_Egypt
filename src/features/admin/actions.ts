@@ -3,6 +3,8 @@
 import { requireAdmin } from "@/core/lib/session";
 import {
   toggleTourStatus,
+  deleteTour,
+  TourDeleteConflictError,
   updateBookingStatus,
   createAdmin,
   createCmsPage,
@@ -28,6 +30,22 @@ export async function toggleTourStatusAction(
     const msg = e instanceof Error ? e.message : "Unknown error";
     console.error("[toggleTourStatusAction]", msg);
     return { ok: false, error: msg };
+  }
+}
+
+export async function deleteTourAction(
+  tourId: string,
+): Promise<{ ok: boolean; reason?: "bookings" | "not_found" | "unknown"; error?: string }> {
+  try {
+    await requireAdmin();
+    await deleteTour(tourId);
+    return { ok: true };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Unknown error";
+    console.error("[deleteTourAction]", msg);
+    const reason =
+      e instanceof TourDeleteConflictError ? "bookings" : msg === "Tour not found." ? "not_found" : "unknown";
+    return { ok: false, reason, error: msg };
   }
 }
 

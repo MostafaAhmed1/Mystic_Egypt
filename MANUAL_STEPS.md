@@ -298,6 +298,48 @@ npm run db:seed
 - [x] `DROP TABLE IF EXISTS offers;` (PRD-compliant removal; code no longer references it)
 - [x] Verified: column present, `offer_count = 5`, `offers` gone; old API `/api/admin/homepage/offers` → 404.
 
+###### Tour ↔ Category DDL — target server `2.25.4.127` (`newvps`, srv2153453), never `prisma migrate`
+Schema change: `Tour.category_id String?` + FK `onDelete: SetNull` + index `[category_id, status]`.
+Prisma-generated names confirmed with `prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script`
+(`tours_category_id_fkey`, `tours_category_id_status_idx`). Backup first per pattern above, then run
+this SQL as `mystic_app` on `mystic_egypt`. The target DB has **37** tours: 28 match `prisma/seed-tours.ts`,
+3 approved seed slugs do not exist in prod (`hurghada-desert-jeep-safari`, `hurghada-buggy-camel-safari`,
+`hurghada-family-quad-buggy-dinner`), and 9 prod-only tours are assigned by title (owner-approved 2026-11-23):
+`3Hours Quad Safari`, `5Hours Safari`, `Super Safari` → desert-safari;
+`Hula Hula Island Trip`, `Orange Bay Island`, `Paradise Island Trip`, `Pinka_Island_Trip` → island-boat-trips;
+`Hurghada-City-Tour ` (trailing space), `Sharm-El-Sheikh-City-Tour` → city-cultural-tours.
+
+```sql
+ALTER TABLE tours ADD COLUMN category_id VARCHAR(191) NULL;
+CREATE INDEX `tours_category_id_status_idx` ON tours (`category_id`, `status`);
+
+UPDATE tours t JOIN categories c ON c.slug = 'city-cultural-tours'
+  SET t.category_id = c.id WHERE t.slug IN ('cairo','luxor','aswan','abydos-dendera-temples','alexandria','hurghada-city-crafts-shopping','el-gouna-private-tour-transfer','hurghada-airport-hotel-transfer','hurghada-luxor-bus-tour','hurghada-cairo-pyramids-bus-tour','hurghada-cairo-trip-program','hurghada-luxor-excursions-program','hurghada-luxor-cairo-excursions-program');
+UPDATE tours t JOIN categories c ON c.slug = 'desert-safari'
+  SET t.category_id = c.id WHERE t.slug IN ('white-desert-bahariya','fayoum','siwa-oasis','hurghada-desert-jeep-safari','hurghada-buggy-camel-safari','hurghada-family-quad-buggy-dinner','hurghada-horse-riding-beach-swim','hurghada-two-hour-horse-riding');
+UPDATE tours t JOIN categories c ON c.slug = 'water-activities'
+  SET t.category_id = c.id WHERE t.slug IN ('hurghada','sharm-el-sheikh','marsa-alam','dahab','hurghada-beginner-diving-two-stops','hurghada-excursions-program');
+UPDATE tours t JOIN categories c ON c.slug = 'island-boat-trips'
+  SET t.category_id = c.id WHERE t.slug IN ('nile-trip-cairo','classic-nile-cruise-cairo');
+UPDATE tours t JOIN categories c ON c.slug = 'entertainment-nightlife'
+  SET t.category_id = c.id WHERE t.slug IN ('hurghada-dolphin-show','luxor-hot-air-balloon');
+
+-- 9 production-only tours (approved mapping above)
+UPDATE tours t JOIN categories c ON c.slug = 'desert-safari'
+  SET t.category_id = c.id WHERE t.slug IN ('3Hours Quad Safari','5Hours Safari','Super Safari');
+UPDATE tours t JOIN categories c ON c.slug = 'island-boat-trips'
+  SET t.category_id = c.id WHERE t.slug IN ('Hula Hula Island Trip','Orange Bay Island','Paradise Island Trip','Pinka_Island_Trip');
+UPDATE tours t JOIN categories c ON c.slug = 'city-cultural-tours'
+  SET t.category_id = c.id WHERE TRIM(t.slug) IN ('Hurghada-City-Tour','Sharm-El-Sheikh-City-Tour');
+
+ALTER TABLE tours ADD CONSTRAINT `tours_category_id_fkey`
+  FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+```
+
+Verify: `SELECT COUNT(*) FROM tours WHERE category_id IS NULL;` → **0** (37/37 assigned).
+`private-yacht-tours` intentionally has no matching tours (empty state on its category page).
+Do NOT run `npm run db:seed` against prod — it also upserts admin/users/add-ons.
+
 ### 8. Nginx / SSL facts
 ```
 Config files : /etc/nginx/sites-enabled/mysticegypt  (server_name mysticegypt.net)

@@ -70,6 +70,10 @@
     },
     "tour": {
       "description": "Book {{title}} — an authentic Egyptian tour with transparent local pricing and UK-registered guarantees."
+    },
+    "tourCategory": {
+      "title": "{{name}} tours",
+      "description": "Browse all {{name}} tours in Egypt with transparent local pricing and UK-registered guarantees."
     }
   },
   "tours": {
@@ -96,7 +100,10 @@
     "allStatuses": "All statuses",
     "filter": "Filter",
     "noToursFound": "No tours found.",
-    "relatedTours": "You May Also Like"
+    "relatedTours": "You May Also Like",
+    "categoryEyebrow": "Explore by category",
+    "categorySubtitle": "Browse all of our {{name}} experiences across Egypt.",
+    "categoryExplore": "Explore {{name}} tours"
   },
   "whyUs": {
     "title": "Why choose us",
@@ -391,6 +398,15 @@
     "payment": "Payment",
     "addTour": "Add Tour",
     "manageTours": "Manage tour inventory, pricing, and availability.",
+    "tourCategory": "Category",
+    "uncategorized": "Uncategorized",
+    "deleteTour": "Delete tour",
+    "deleteTourTitle": "Delete tour permanently?",
+    "deleteTourConfirm": "“{{name}}” and all of its itinerary, images and dates will be deleted. This cannot be undone. Tours with bookings cannot be deleted.",
+    "deleteTourConfirmButton": "Delete permanently",
+    "deleteTourBlocked": "This tour has bookings. Disable it instead of deleting it.",
+    "deleteTourSuccess": "Tour deleted.",
+    "deleteTourFailed": "Could not delete the tour.",
     "edit": "Edit",
     "closeBookings": "Close bookings",
     "openBookings": "Open bookings",

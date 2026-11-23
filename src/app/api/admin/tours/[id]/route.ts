@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/core/lib/session";
-import { getTourById, updateTour, deleteTour } from "@/features/admin/service";
+import {
+  getTourById,
+  updateTour,
+  deleteTour,
+  TourValidationError,
+  TourDeleteConflictError,
+} from "@/features/admin/service";
 
 export async function GET(
   _request: Request,
@@ -47,22 +53,30 @@ export async function PUT(
   if (typeof b.currency === "string") data.currency = b.currency;
   if (typeof b.status === "string") data.status = b.status;
   if (typeof b.isOffer === "boolean") data.isOffer = b.isOffer;
+  if (typeof b.category_id === "string") data.category_id = b.category_id;
   if (Array.isArray(b.group_prices)) data.group_prices = b.group_prices;
 
-  const tour = await updateTour(id, {
-    ...data,
-    itinerary: Array.isArray(b.itinerary)
-      ? (b.itinerary as { day_number: number; title: string; description: string }[])
-      : undefined,
-    images: Array.isArray(b.images)
-      ? (b.images as { image_url: string; is_primary: boolean }[])
-      : undefined,
-    route: Array.isArray(b.route)
-      ? (b.route as { order: number; label: string; lat: number; lng: number; is_stop: boolean }[])
-      : undefined,
-  } as Parameters<typeof updateTour>[1]);
+  try {
+    const tour = await updateTour(id, {
+      ...data,
+      itinerary: Array.isArray(b.itinerary)
+        ? (b.itinerary as { day_number: number; title: string; description: string }[])
+        : undefined,
+      images: Array.isArray(b.images)
+        ? (b.images as { image_url: string; is_primary: boolean }[])
+        : undefined,
+      route: Array.isArray(b.route)
+        ? (b.route as { order: number; label: string; lat: number; lng: number; is_stop: boolean }[])
+        : undefined,
+    } as Parameters<typeof updateTour>[1]);
 
-  return NextResponse.json({ ok: true, tour });
+    return NextResponse.json({ ok: true, tour });
+  } catch (error) {
+    if (error instanceof TourValidationError) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+    }
+    throw error;
+  }
 }
 
 export async function DELETE(
@@ -75,6 +89,16 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  await deleteTour(id);
-  return NextResponse.json({ ok: true });
+  try {
+    await deleteTour(id);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    if (error instanceof TourDeleteConflictError) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 409 });
+    }
+    if (error instanceof TourValidationError) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 404 });
+    }
+    throw error;
+  }
 }

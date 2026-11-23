@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { Plus, Pencil } from "lucide-react";
 import { CURRENCY_SYMBOLS, type Currency } from "@/core/constants/currencies";
-import { ToggleTourStatusButton } from "@/features/admin/components/TourActions";
+import {
+  DeleteTourButton,
+  ToggleTourStatusButton,
+} from "@/features/admin/components/TourActions";
+import type { TourCategoryOption } from "@/features/admin/service";
 import { useLocale } from "@/shared/hooks/use-locale";
 
 interface TourListItem {
@@ -14,6 +18,7 @@ interface TourListItem {
   base_price: number;
   currency: Currency;
   status: string;
+  category: TourCategoryOption | null;
   booking_count: number;
   created_at: Date | string;
 }
@@ -36,7 +41,14 @@ export function AdminToursClient({
   status,
 }: AdminToursClientProps) {
   const { t } = useTranslation("common");
-  const { href } = useLocale();
+  const { locale, href } = useLocale();
+
+  function categoryName(category: TourCategoryOption | null): string {
+    if (!category) return t("admin.uncategorized", "Uncategorized");
+    if (locale === "ar") return category.name_ar || category.name_en;
+    if (locale === "de") return category.name_de || category.name_en;
+    return category.name_en;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -89,6 +101,7 @@ export function AdminToursClient({
             <thead>
               <tr className="border-b text-start text-muted-foreground">
                 <th className="px-4 py-3 font-medium">{t("admin.tour")}</th>
+                <th className="px-4 py-3 font-medium">{t("admin.tourCategory", "Category")}</th>
                 <th className="px-4 py-3 text-end font-medium">{t("tours.from")}</th>
                 <th className="px-4 py-3 font-medium">{t("admin.status")}</th>
                 <th className="px-4 py-3 text-end font-medium">{t("admin.bookingsCount")}</th>
@@ -99,7 +112,7 @@ export function AdminToursClient({
             <tbody>
               {tours.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
                     {t("tours.noToursFound")}
                   </td>
                 </tr>
@@ -112,6 +125,7 @@ export function AdminToursClient({
                         <p className="text-xs text-muted-foreground">/{tour.slug}</p>
                       </div>
                     </td>
+                    <td className="px-4 py-3">{categoryName(tour.category)}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-end tabular-nums">
                       {CURRENCY_SYMBOLS[tour.currency] ?? "$"}
                       {tour.base_price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
@@ -150,6 +164,7 @@ export function AdminToursClient({
                           tourId={tour.id}
                           currentStatus={tour.status}
                         />
+                        <DeleteTourButton tourId={tour.id} tourTitle={tour.title} />
                       </div>
                     </td>
                   </tr>

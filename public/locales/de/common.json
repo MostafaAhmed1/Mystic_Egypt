@@ -70,6 +70,10 @@
     },
     "tour": {
       "description": "Buchen Sie {{title}} — eine authentische Ägypten-Tour mit transparenten lokalen Preisen und UK-Registrierungsgarantien."
+    },
+    "tourCategory": {
+      "title": "{{name}}-Touren",
+      "description": "Entdecken Sie alle {{name}}-Touren in Ägypten mit transparenten lokalen Preisen und UK-Registrierungsgarantien."
     }
   },
   "tours": {
@@ -96,7 +100,10 @@
     "allStatuses": "Alle Status",
     "filter": "Filtern",
     "noToursFound": "Keine Touren gefunden.",
-    "relatedTours": "Das könnte Ihnen auch gefallen"
+    "relatedTours": "Das könnte Ihnen auch gefallen",
+    "categoryEyebrow": "Nach Kategorie entdecken",
+    "categorySubtitle": "Entdecken Sie alle unsere {{name}}-Erlebnisse in Ägypten.",
+    "categoryExplore": "{{name}}-Touren entdecken"
   },
   "whyUs": {
     "title": "Warum Sie uns wählen",
@@ -391,6 +398,15 @@
     "payment": "Zahlung",
     "addTour": "Tour hinzufügen",
     "manageTours": "Tour-Inventar, Preise und Verfügbarkeit verwalten.",
+    "tourCategory": "Kategorie",
+    "uncategorized": "Ohne Kategorie",
+    "deleteTour": "Tour löschen",
+    "deleteTourTitle": "Tour dauerhaft löschen?",
+    "deleteTourConfirm": "„{{name}}“ wird zusammen mit dem gesamten Reiseplan, den Bildern und Terminen gelöscht. Dies kann nicht rückgängig gemacht werden. Touren mit Buchungen können nicht gelöscht werden.",
+    "deleteTourConfirmButton": "Dauerhaft löschen",
+    "deleteTourBlocked": "Diese Tour hat Buchungen. Deaktivieren Sie sie statt sie zu löschen.",
+    "deleteTourSuccess": "Tour gelöscht.",
+    "deleteTourFailed": "Tour konnte nicht gelöscht werden.",
     "edit": "Bearbeiten",
     "closeBookings": "Buchungen schließen",
     "openBookings": "Buchungen öffnen",

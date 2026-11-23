@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { listPublicTourSlugs } from "@/features/tour/service";
+import { listPublicTourSlugs, listPublicCategorySlugs } from "@/features/tour/service";
 import { listPublishedCmsPages } from "@/features/admin/service";
 import { POLICY_TYPES } from "@/features/policy/content";
 import { SITE_URL } from "@/core/utils/seo";
@@ -18,9 +18,11 @@ function alternatesFor(suffix: string): { languages: Record<string, string> } {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let tourSlugs: string[] = [];
+  let categorySlugs: string[] = [];
   let cmsPages: { slug: string; updated_at: Date }[] = [];
   try {
     tourSlugs = await listPublicTourSlugs();
+    categorySlugs = await listPublicCategorySlugs();
     cmsPages = await listPublishedCmsPages();
   } catch {
     // DB not available during Docker build
@@ -58,6 +60,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: alternatesFor(`/tours/${slug}`),
   }));
 
+  const categoryPages: MetadataRoute.Sitemap = categorySlugs.map((slug) => ({
+    url: `${SITE_URL}/${defaultLocale}/tours/category/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+    alternates: alternatesFor(`/tours/category/${slug}`),
+  }));
+
   const cmsPageEntries: MetadataRoute.Sitemap = cmsPages.map((page) => ({
     url: `${SITE_URL}/${defaultLocale}/${page.slug}`,
     lastModified: page.updated_at,
@@ -79,6 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     toursIndex,
     contactPage,
     ...tourPages,
+    ...categoryPages,
     ...cmsPageEntries,
     ...policyPages,
   ];

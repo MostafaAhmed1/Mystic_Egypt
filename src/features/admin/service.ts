@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@/core/lib/prisma";
 import { deleteTourImageFile } from "@/features/admin/tour-image-upload";
 import { CURRENCIES, type Currency } from "@/core/constants/currencies";
+import { TOUR_IMAGE_URL_PREFIX } from "@/core/constants/uploads";
 import type { BookingStatus } from "@/core/constants/booking";
 import { createOtpCode } from "@/core/lib/otp";
 import { sendEmail } from "@/core/lib/resend";
@@ -13,6 +14,17 @@ import bcrypt from "bcryptjs";
 // Types
 // ---------------------------------------------------------------------------
 
+export interface TourCategoryOption {
+  id: string;
+  slug: string;
+  name_en: string;
+  name_ar: string;
+  name_de: string;
+}
+
+export class TourValidationError extends Error {}
+export class TourDeleteConflictError extends Error {}
+
 export interface TourListItem {
   id: string;
   title: string;
@@ -20,6 +32,7 @@ export interface TourListItem {
   base_price: number;
   currency: Currency;
   status: string;
+  category: TourCategoryOption | null;
   booking_count: number;
   created_at: Date;
 }
@@ -36,6 +49,7 @@ export interface TourDetail {
   currency: Currency;
   status: string;
   isOffer: boolean;
+  category_id: string | null;
   created_by: string;
   created_at: Date;
   itinerary: { id: string; day_number: number; title: string; description: string }[];
@@ -55,6 +69,7 @@ export interface CreateTourParams {
   currency?: Currency;
   status?: string;
   isOffer?: boolean;
+  category_id: string;
   itinerary: { day_number: number; title: string; description: string }[];
   images: { image_url: string; is_primary: boolean }[];
   route: { order: number; label: string; lat: number; lng: number; is_stop: boolean }[];
@@ -169,6 +184,7 @@ const TOUR_LIST_SELECT = {
   base_price: true,
   currency: true,
   status: true,
+  category: { select: { id: true, slug: true, name_en: true, name_ar: true, name_de: true } },
   created_at: true,
   _count: { select: { bookings: true } },
 } as const;
@@ -190,6 +206,24 @@ const BOOKING_LIST_SELECT = {
 // ---------------------------------------------------------------------------
 // Tour Management
 // ---------------------------------------------------------------------------
+
+export async function listTourCategoryOptions(): Promise<TourCategoryOption[]> {
+  return prisma.category.findMany({
+    where: { is_active: true },
+    select: { id: true, slug: true, name_en: true, name_ar: true, name_de: true },
+    orderBy: [{ sort_order: "asc" }, { name_en: "asc" }],
+  });
+}
+
+async function assertActiveCategory(categoryId: string): Promise<void> {
+  const category = await prisma.category.findUnique({
+    where: { id: categoryId },
+    select: { is_active: true },
+  });
+  if (!category?.is_active) {
+    throw new TourValidationError("Select a valid category.");
+  }
+}
 
 export async function listTours(params: {
   search?: string;
@@ -231,6 +265,7 @@ export async function listTours(params: {
       base_price: r.base_price,
       currency: toCurrency(r.currency),
       status: r.status,
+      category: r.category,
       booking_count: r._count.bookings,
       created_at: r.created_at,
     })),
@@ -244,6 +279,7 @@ export async function getTourById(id: string): Promise<TourDetail | null> {
   const tour = await prisma.tour.findUnique({
     where: { id },
     include: {
+      category: { select: { id: true, slug: true, name_en: true, name_ar: true, name_de: true } },
       itinerary: { orderBy: { day_number: "asc" } },
       images: { orderBy: { is_primary: "desc" } },
       route: { orderBy: { order: "asc" } },
@@ -263,6 +299,7 @@ export async function getTourById(id: string): Promise<TourDetail | null> {
     currency: toCurrency(tour.currency),
     status: tour.status,
     isOffer: tour.isOffer,
+    category_id: tour.category_id,
     created_by: tour.created_by,
     created_at: tour.created_at,
     itinerary: tour.itinerary.map((i) => ({
@@ -296,6 +333,7 @@ export async function createTour(
   params: CreateTourParams,
   adminId: string,
 ): Promise<TourDetail> {
+  await assertActiveCategory(params.category_id);
   const tour = await prisma.tour.create({
     data: {
       title: params.title,
@@ -308,6 +346,7 @@ export async function createTour(
       currency: params.currency ?? "USD",
       status: params.status ?? "open",
       isOffer: params.isOffer ?? false,
+      category_id: params.category_id,
       created_by: adminId,
       itinerary: {
         create: params.itinerary.map((i) => ({
@@ -352,6 +391,7 @@ export async function createTour(
     currency: toCurrency(tour.currency),
     status: tour.status,
     isOffer: tour.isOffer,
+    category_id: tour.category_id,
     created_by: tour.created_by,
     created_at: tour.created_at,
     itinerary: tour.itinerary.map((i) => ({
@@ -396,6 +436,10 @@ export async function updateTour(
   if (params.currency !== undefined) data.currency = params.currency;
   if (params.status !== undefined) data.status = params.status;
   if (params.isOffer !== undefined) data.isOffer = params.isOffer;
+  if (params.category_id !== undefined) {
+    await assertActiveCategory(params.category_id);
+    data.category_id = params.category_id;
+  }
 
   // Replace nested relations if provided
   if (params.itinerary) {
@@ -456,6 +500,7 @@ export async function updateTour(
     currency: toCurrency(updated.currency),
     status: updated.status,
     isOffer: updated.isOffer,
+    category_id: updated.category_id,
     created_by: updated.created_by,
     created_at: updated.created_at,
     itinerary: updated.itinerary.map((i) => ({
@@ -486,7 +531,34 @@ export async function updateTour(
 }
 
 export async function deleteTour(id: string): Promise<void> {
-  await prisma.tour.delete({ where: { id } });
+  const tour = await prisma.tour.findUnique({
+    where: { id },
+    select: {
+      _count: { select: { bookings: true } },
+      images: { select: { image_url: true } },
+    },
+  });
+  if (!tour) throw new TourValidationError("Tour not found.");
+  if (tour._count.bookings > 0) {
+    throw new TourDeleteConflictError(
+      "This tour has bookings. Disable it instead of deleting it.",
+    );
+  }
+
+  // Catalog images are shared by other tours; only remove uploaded admin files
+  // that no other tour references, so no orphan images are left behind.
+  for (const image of tour.images) {
+    if (!image.image_url.startsWith(TOUR_IMAGE_URL_PREFIX)) continue;
+    const otherOwners = await prisma.tourImage.count({
+      where: { image_url: image.image_url, tour_id: { not: id } },
+    });
+    if (otherOwners === 0) await deleteTourImageFile(image.image_url);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.customizationRequest.deleteMany({ where: { tour_id: id } });
+    await tx.tour.delete({ where: { id } });
+  });
 }
 
 export async function toggleTourStatus(id: string): Promise<string> {

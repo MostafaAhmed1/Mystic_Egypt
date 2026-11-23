@@ -1,12 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import type { HomepageCategory } from "@/features/homepage/types";
 import { ScrollReveal } from "@/shared/components/ScrollReveal";
+import { useLocale } from "@/shared/hooks/use-locale";
 
 export function CategoriesSection({ categories }: { categories: HomepageCategory[] }) {
   const { t } = useTranslation("common");
+  const { href } = useLocale();
 
   if (categories.length === 0) return null;
 
@@ -23,7 +26,11 @@ export function CategoriesSection({ categories }: { categories: HomepageCategory
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category, index) => (
             <ScrollReveal key={category.id} delay={index * 0.08}>
-              <article className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-obsidian shadow-[0_16px_40px_rgba(26,26,24,0.12)]">
+              <Link
+                href={href(`/tours/category/${category.slug}`)}
+                className="group relative block aspect-[4/3] overflow-hidden rounded-2xl bg-obsidian shadow-[0_16px_40px_rgba(26,26,24,0.12)]"
+                aria-label={t("tours.categoryExplore", { name: category.name, defaultValue: "Explore {{name}} tours" })}
+              >
                 <Image
                   src={category.imageUrl}
                   alt={category.name}
@@ -32,10 +39,11 @@ export function CategoriesSection({ categories }: { categories: HomepageCategory
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-5 text-white">
                   <h3 className="font-heading text-xl font-semibold">{category.name}</h3>
+                  <span aria-hidden className="text-gold transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </div>
-              </article>
+              </Link>
             </ScrollReveal>
           ))}
         </div>

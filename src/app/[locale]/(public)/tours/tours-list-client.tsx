@@ -7,7 +7,22 @@ import { TourCard } from "@/features/tour/components/TourCard";
 import { TourSearchBar } from "@/features/tour/components/TourSearchBar";
 import type { TourSummary } from "@/features/tour/types";
 
-export function ToursListClient({ tours }: { tours: TourSummary[] }) {
+interface ToursListClientProps {
+  tours: TourSummary[];
+  /** Overrides for category-specific listings; defaults to the tours index copy. */
+  eyebrow?: string;
+  heading?: string;
+  subtitle?: string;
+  showSearch?: boolean;
+}
+
+export function ToursListClient({
+  tours,
+  eyebrow,
+  heading,
+  subtitle,
+  showSearch = true,
+}: ToursListClientProps) {
   const { t } = useTranslation("common");
 
   return (
@@ -29,25 +44,27 @@ export function ToursListClient({ tours }: { tours: TourSummary[] }) {
           >
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/20 bg-gold/10 px-4 py-2 text-sm text-gold">
               <Compass className="size-4" aria-hidden />
-              {t("tours.exploreCollection", "Explore our collection")}
+              {eyebrow ?? t("tours.exploreCollection", "Explore our collection")}
             </div>
             <h1 className="font-heading text-4xl font-bold tracking-wider text-white sm:text-5xl">
-              {t("nav.tours")}
+              {heading ?? t("nav.tours")}
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-lg text-white/50">
-              {t("tours.featuredSubtitle")}
+              {subtitle ?? t("tours.featuredSubtitle")}
             </p>
           </motion.div>
 
           {/* Search bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-10 flex justify-center"
-          >
-            <TourSearchBar />
-          </motion.div>
+          {showSearch && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-10 flex justify-center"
+            >
+              <TourSearchBar />
+            </motion.div>
+          )}
         </div>
       </div>
 

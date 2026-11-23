@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/core/lib/session";
-import { listTours, createTour } from "@/features/admin/service";
+import { listTours, createTour, TourValidationError } from "@/features/admin/service";
 
 export async function GET(request: Request) {
   const user = await requireAdmin();
@@ -36,35 +36,44 @@ export async function POST(request: Request) {
   const slug = typeof b.slug === "string" ? b.slug : "";
   const description = typeof b.description === "string" ? b.description : "";
   const base_price = typeof b.base_price === "number" ? b.base_price : 0;
+  const category_id = typeof b.category_id === "string" ? b.category_id : "";
 
-  if (!title || !slug || !description || base_price <= 0) {
+  if (!title || !slug || !description || base_price <= 0 || !category_id) {
     return NextResponse.json({ ok: false, error: "Missing or invalid required fields." }, { status: 400 });
   }
 
-  const tour = await createTour(
-    {
-      title,
-      slug,
-      description,
-      inclusions: typeof b.inclusions === "string" ? b.inclusions : undefined,
-      exclusions: typeof b.exclusions === "string" ? b.exclusions : undefined,
-      base_price,
-      currency: typeof b.currency === "string" ? (b.currency as "USD" | "GBP" | "EUR") : undefined,
-      status: typeof b.status === "string" ? b.status : undefined,
-      isOffer: typeof b.isOffer === "boolean" ? b.isOffer : undefined,
-      group_prices: Array.isArray(b.group_prices) ? b.group_prices as { min_people: number; max_people: number; price_per_person: number }[] : undefined,
-      itinerary: Array.isArray(b.itinerary)
-        ? (b.itinerary as { day_number: number; title: string; description: string }[])
-        : [],
-      images: Array.isArray(b.images)
-        ? (b.images as { image_url: string; is_primary: boolean }[])
-        : [],
-      route: Array.isArray(b.route)
-        ? (b.route as { order: number; label: string; lat: number; lng: number; is_stop: boolean }[])
-        : [],
-    },
-    user.id,
-  );
+  try {
+    const tour = await createTour(
+      {
+        title,
+        slug,
+        description,
+        inclusions: typeof b.inclusions === "string" ? b.inclusions : undefined,
+        exclusions: typeof b.exclusions === "string" ? b.exclusions : undefined,
+        base_price,
+        currency: typeof b.currency === "string" ? (b.currency as "USD" | "GBP" | "EUR") : undefined,
+        status: typeof b.status === "string" ? b.status : undefined,
+        isOffer: typeof b.isOffer === "boolean" ? b.isOffer : undefined,
+        category_id,
+        group_prices: Array.isArray(b.group_prices) ? b.group_prices as { min_people: number; max_people: number; price_per_person: number }[] : undefined,
+        itinerary: Array.isArray(b.itinerary)
+          ? (b.itinerary as { day_number: number; title: string; description: string }[])
+          : [],
+        images: Array.isArray(b.images)
+          ? (b.images as { image_url: string; is_primary: boolean }[])
+          : [],
+        route: Array.isArray(b.route)
+          ? (b.route as { order: number; label: string; lat: number; lng: number; is_stop: boolean }[])
+          : [],
+      },
+      user.id,
+    );
 
-  return NextResponse.json({ ok: true, tour }, { status: 201 });
+    return NextResponse.json({ ok: true, tour }, { status: 201 });
+  } catch (error) {
+    if (error instanceof TourValidationError) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
+    }
+    throw error;
+  }
 }

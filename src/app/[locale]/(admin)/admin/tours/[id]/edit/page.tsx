@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getTourById } from "@/features/admin/service";
+import { getTourById, listTourCategoryOptions } from "@/features/admin/service";
 import { TourWizard } from "@/features/admin/components/TourWizard";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default async function AdminTourEditPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const tour = await getTourById(id);
+  const [tour, categories] = await Promise.all([getTourById(id), listTourCategoryOptions()]);
   if (!tour) notFound();
 
   const wizardData = {
@@ -27,6 +27,7 @@ export default async function AdminTourEditPage({
     currency: tour.currency,
     status: tour.status,
     isOffer: tour.isOffer,
+    category_id: tour.category_id ?? "",
     itinerary: tour.itinerary.map((d) => ({
       day_number: d.day_number,
       title: d.title,
@@ -52,7 +53,7 @@ export default async function AdminTourEditPage({
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">Edit: {tour.title}</h1>
-      <TourWizard tour={wizardData} />
+      <TourWizard tour={wizardData} categories={categories} />
     </div>
   );
 }
