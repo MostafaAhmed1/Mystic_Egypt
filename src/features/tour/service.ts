@@ -176,11 +176,25 @@ export const listPublicOfferTours = cache(async (): Promise<TourSummary[]> => {
   return tours.map(toTourSummary);
 });
 
+/**
+ * Next.js hands the page component a raw path segment while metadata receives
+ * the decoded one for slugs containing spaces (e.g. legacy "5Hours Safari").
+ * Decode once here so both lookups resolve the same stored slug.
+ */
+function normalizeTourSlug(slug: string): string {
+  if (!slug.includes("%")) return slug;
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
+}
+
 /** A single public tour by slug, or null when not found / not open. */
 export const getPublicTourBySlug = cache(
   async (slug: string): Promise<TourDetail | null> => {
     const tour = await prisma.tour.findUnique({
-      where: { slug },
+      where: { slug: normalizeTourSlug(slug) },
       include: {
         category: CATEGORY_SELECT,
         images: { orderBy: { is_primary: "desc" } },
