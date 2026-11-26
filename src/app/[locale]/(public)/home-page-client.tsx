@@ -46,9 +46,9 @@ export function HomePageClient({
   const { href } = useLocale();
 
   return (
-    <main id="main-content">
+    <div>
       {/* Hero — Cinematic Full-Screen */}
-      <section className="relative h-screen min-h-[700px] overflow-hidden">
+      <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-28 sm:min-h-[700px] sm:py-20">
         {/* Background image with Ken Burns */}
         <div className="absolute inset-0">
           <Image
@@ -72,7 +72,7 @@ export function HomePageClient({
         <OffersHeroBar offers={offers} />
 
         {/* Content */}
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center px-4 text-center sm:px-6">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 text-center sm:px-6">
           <span
             className="animate-fade-in-up mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold backdrop-blur-sm"
             style={{ animationDelay: "0s" }}
@@ -139,7 +139,7 @@ export function HomePageClient({
               className="group inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-gold transition-colors duration-300 hover:text-gold-dark"
             >
               {t("tours.viewAll")}
-              <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+              <span className="transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" aria-hidden>
                 →
               </span>
             </Link>
@@ -155,7 +155,7 @@ export function HomePageClient({
       )}
 
       {/* Why us */}
-      <section id="why-us" className="bg-sandstone-dark/50">
+      <section id="why-us" className="scroll-mt-24 bg-sandstone-dark/50 lg:scroll-mt-28">
         <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
           <ScrollReveal className="mb-16 text-center">
             <h2 className="font-heading text-2xl font-bold tracking-wider text-obsidian sm:text-3xl">
@@ -165,7 +165,7 @@ export function HomePageClient({
               {t("whyUs.subtitle")}
             </p>
           </ScrollReveal>
-          <div className="grid gap-8 sm:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
             <ScrollReveal delay={0}>
               <WhyUsCard
                 icon={<ShieldCheck className="size-6" aria-hidden />}
@@ -217,7 +217,7 @@ export function HomePageClient({
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 
@@ -235,7 +235,7 @@ function WhyUsCard({
   statLabel: string;
 }) {
   return (
-    <div className="group rounded-2xl border border-gold/10 bg-white p-8 text-center transition-all duration-500 hover:border-gold/30 hover:shadow-[0_8px_40px_rgba(212,175,55,0.12)]">
+    <div className="group rounded-2xl border border-gold/10 bg-white p-6 text-center transition-all duration-500 hover:border-gold/30 hover:shadow-[0_8px_40px_rgba(212,175,55,0.12)] sm:p-8">
       <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-gold/10 text-gold transition-all duration-500 group-hover:bg-gold group-hover:text-obsidian group-hover:gold-glow">
         {icon}
       </div>

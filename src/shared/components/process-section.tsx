@@ -69,7 +69,7 @@ function ProcessCard({
     <div className="group relative">
       {/* Connector line */}
       {!isLast && (
-        <div className="absolute top-10 left-[calc(50%+40px)] hidden h-0.5 w-[calc(100%-80px)] bg-gradient-to-r from-gold/40 to-gold/10 lg:block" />
+        <div className="absolute top-10 start-[calc(50%+40px)] hidden h-0.5 w-[calc(100%-80px)] bg-gradient-to-r from-gold/40 to-gold/10 lg:block rtl:bg-gradient-to-l" />
       )}
 
       <div className="relative flex flex-col items-center text-center">
@@ -78,7 +78,7 @@ function ProcessCard({
           <div className="flex size-20 items-center justify-center rounded-full border-2 border-gold/20 bg-white transition-all duration-500 group-hover:border-gold group-hover:gold-glow">
             <Icon className="size-8 text-gold transition-transform duration-500 group-hover:scale-110" aria-hidden />
           </div>
-          <span className="absolute -top-2 -right-2 flex size-7 items-center justify-center rounded-full bg-gold text-xs font-bold text-obsidian">
+          <span className="absolute -top-2 -end-2 flex size-7 items-center justify-center rounded-full bg-gold text-xs font-bold text-obsidian">
             {step.number}
           </span>
         </div>

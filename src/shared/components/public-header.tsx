@@ -31,14 +31,14 @@ export function PublicHeader() {
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <BrandLogo href={`/${locale}`} />
 
-          <div className="hidden items-center md:flex">
+          <div className="hidden items-center lg:flex">
             <HeaderNavLinks />
             <LanguageSwitcher variant="light" />
           </div>
 
           {/* Language + Mobile Menu */}
           <div className="flex items-center gap-4">
-            <span className="md:hidden">
+            <span className="lg:hidden">
               <LanguageSwitcher variant="light" />
             </span>
             <MobileNav user={user} whatsapp={whatsapp} phoneUK={phoneUK} phoneEG={phoneEG} />

@@ -98,10 +98,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply overflow-x-clip bg-background text-foreground;
   }
   html {
-    @apply font-sans scroll-smooth;
+    @apply overflow-x-clip font-sans scroll-smooth;
   }
   /* Arabic: use Noto Kufi Arabic for headings when dir=rtl */
   [dir="rtl"] {

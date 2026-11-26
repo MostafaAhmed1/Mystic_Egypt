@@ -50,16 +50,16 @@ export function CookieConsent() {
             {t("cookieConsent.message")}
           </p>
         </div>
-        <div className="flex shrink-0 gap-3">
+        <div className="flex w-full flex-wrap justify-center gap-2 sm:w-auto sm:gap-3">
           <button
             onClick={handleReject}
-            className="inline-flex h-9 items-center justify-center rounded-xl border border-border bg-background px-4 text-sm font-medium hover:bg-accent"
+            className="inline-flex min-h-10 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-center text-sm font-medium leading-tight hover:bg-accent"
           >
             {t("cookieConsent.rejectNonEssential")}
           </button>
           <button
             onClick={handleAccept}
-            className="inline-flex h-9 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex min-h-10 items-center justify-center rounded-xl bg-primary px-4 py-2 text-center text-sm font-medium leading-tight text-primary-foreground hover:bg-primary/90"
           >
             {t("cookieConsent.acceptAll")}
           </button>

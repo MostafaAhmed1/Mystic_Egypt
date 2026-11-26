@@ -85,12 +85,12 @@ export function TourGallery({
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-obsidian/5" />
 
           {/* Counter */}
-          <div className="absolute bottom-3 right-3 rounded-full bg-obsidian/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+          <div className="absolute bottom-3 end-3 rounded-full bg-obsidian/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
             {activeIdx + 1} / {images.length}
           </div>
 
           {/* Zoom hint */}
-          <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full bg-obsidian/60 px-3 py-1 text-xs font-medium text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+          <div className="absolute bottom-3 start-3 flex items-center gap-1.5 rounded-full bg-obsidian/60 px-3 py-1 text-xs font-medium text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
             <ZoomIn className="size-3" />
             Click to zoom
           </div>
@@ -101,18 +101,18 @@ export function TourGallery({
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); go(-1); }}
-                className="absolute left-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-obsidian shadow-lg backdrop-blur-sm opacity-0 transition-all duration-300 group-hover:opacity-100 hover:bg-white"
+                className="absolute start-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-obsidian shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white sm:size-10 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Previous image"
               >
-                <ChevronLeft className="size-5" />
+                <ChevronLeft className="size-5 rtl:rotate-180" />
               </button>
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); go(1); }}
-                className="absolute right-3 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-obsidian shadow-lg backdrop-blur-sm opacity-0 transition-all duration-300 group-hover:opacity-100 hover:bg-white"
+                className="absolute end-3 top-1/2 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-obsidian shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white sm:size-10 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Next image"
               >
-                <ChevronRight className="size-5" />
+                <ChevronRight className="size-5 rtl:rotate-180" />
               </button>
             </>
           )}
@@ -126,10 +126,10 @@ export function TourGallery({
               <button
                 type="button"
                 onClick={() => setThumbOffset((o) => Math.max(0, o - 1))}
-                className="absolute -left-1 z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-white/90 text-obsidian shadow-md hover:bg-white"
+                className="absolute start-0 z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-white/90 text-obsidian shadow-md hover:bg-white"
                 aria-label="Scroll thumbnails left"
               >
-                <ChevronLeft className="size-4" />
+                <ChevronLeft className="size-4 rtl:rotate-180" />
               </button>
             )}
 
@@ -166,10 +166,10 @@ export function TourGallery({
               <button
                 type="button"
                 onClick={() => setThumbOffset((o) => Math.min(images.length - VISIBLE_THUMBS, o + 1))}
-                className="absolute -right-1 z-10 flex size-7 shrink-0 items-center justify-center rounded-full bg-white/90 text-obsidian shadow-md hover:bg-white"
+                className="absolute end-0 z-10 flex size-9 shrink-0 items-center justify-center rounded-full bg-white/90 text-obsidian shadow-md hover:bg-white"
                 aria-label="Scroll thumbnails right"
               >
-                <ChevronRight className="size-4" />
+                <ChevronRight className="size-4 rtl:rotate-180" />
               </button>
             )}
           </div>
@@ -185,7 +185,7 @@ export function TourGallery({
           <button
             type="button"
             onClick={() => setLightbox(false)}
-            className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            className="absolute end-4 top-4 flex size-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
             aria-label="Close"
           >
             <X className="size-5" />
@@ -194,14 +194,14 @@ export function TourGallery({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); go(-1); }}
-            className="absolute left-4 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            className="absolute start-4 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
             aria-label="Previous"
           >
-            <ChevronLeft className="size-6" />
+            <ChevronLeft className="size-6 rtl:rotate-180" />
           </button>
 
           <div
-            className="relative max-h-[85vh] max-w-[90vw]"
+            className="relative h-[70vh] w-[90vw] max-h-[85vh] max-w-[90vw] sm:h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <TourImage
@@ -217,10 +217,10 @@ export function TourGallery({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); go(1); }}
-            className="absolute right-4 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            className="absolute end-4 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
             aria-label="Next"
           >
-            <ChevronRight className="size-6" />
+            <ChevronRight className="size-6 rtl:rotate-180" />
           </button>
 
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">

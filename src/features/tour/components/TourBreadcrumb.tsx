@@ -19,18 +19,18 @@ export function TourBreadcrumb({ locale, title }: TourBreadcrumbProps) {
 
   return (
     <nav
-      className="mb-8 flex items-center gap-2 text-sm text-obsidian/40"
+      className="mb-8 flex flex-wrap items-center gap-2 text-sm text-obsidian/40"
       aria-label="Breadcrumb"
     >
       <Link href={localizedPath(locale, "/")} className="transition-colors hover:text-gold">
         {t("nav.home")}
       </Link>
-      <ChevronRight className="size-3" aria-hidden />
+      <ChevronRight className="size-3 rtl:rotate-180" aria-hidden />
       <Link href={localizedPath(locale, "/tours")} className="transition-colors hover:text-gold">
         {t("nav.tours")}
       </Link>
-      <ChevronRight className="size-3" aria-hidden />
-      <span className="text-obsidian/70">{title}</span>
+      <ChevronRight className="size-3 rtl:rotate-180" aria-hidden />
+      <span className="min-w-0 break-words text-obsidian/70">{title}</span>
     </nav>
   );
 }

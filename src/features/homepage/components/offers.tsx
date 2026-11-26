@@ -104,7 +104,7 @@ export function OffersSection({ offers }: { offers: TourSummary[] }) {
   if (offers.length === 0) return null;
 
   return (
-    <section id="offers" className="bg-sandstone-dark/50" aria-labelledby="offers-title">
+    <section id="offers" className="scroll-mt-24 bg-sandstone-dark/50 lg:scroll-mt-28" aria-labelledby="offers-title">
       <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
         <ScrollReveal className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>

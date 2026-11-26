@@ -14,7 +14,7 @@ export function CategoriesSection({ categories }: { categories: HomepageCategory
   if (categories.length === 0) return null;
 
   return (
-    <section id="categories" className="bg-sandstone" aria-labelledby="categories-title">
+    <section id="categories" className="scroll-mt-24 bg-sandstone lg:scroll-mt-28" aria-labelledby="categories-title">
       <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
         <ScrollReveal className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -41,7 +41,7 @@ export function CategoriesSection({ categories }: { categories: HomepageCategory
                 <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-5 text-white">
                   <h3 className="font-heading text-xl font-semibold">{category.name}</h3>
-                  <span aria-hidden className="text-gold transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  <span aria-hidden className="text-gold transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">→</span>
                 </div>
               </Link>
             </ScrollReveal>

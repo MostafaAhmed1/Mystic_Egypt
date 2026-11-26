@@ -18,7 +18,7 @@ export function ServicesSection({ services }: { services: HomepageService[] }) {
   if (services.length === 0) return null;
 
   return (
-    <section id="services" className="overflow-hidden bg-obsidian py-20 text-white" aria-labelledby="services-title">
+    <section id="services" className="scroll-mt-24 overflow-hidden bg-obsidian py-20 text-white lg:scroll-mt-28" aria-labelledby="services-title">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <ScrollReveal className="mb-10 text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold">{t("homepage.servicesEyebrow", "Travel services")}</p>
@@ -27,7 +27,9 @@ export function ServicesSection({ services }: { services: HomepageService[] }) {
       </div>
       <div className="services-marquee" aria-label={t("homepage.servicesTitle", "Services")}>
         <div className="services-marquee__track">
-          <ServiceGroup services={services} />
+          <div className="services-marquee__group">
+            <ServiceGroup services={services} />
+          </div>
           <div aria-hidden="true" className="services-marquee__group">
             <ServiceGroup services={services} />
           </div>
@@ -39,7 +41,7 @@ export function ServicesSection({ services }: { services: HomepageService[] }) {
 
 function ServiceGroup({ services }: { services: HomepageService[] }) {
   return (
-    <div className="services-marquee__group">
+    <>
       {services.map((service) => {
         const Icon = SERVICE_ICONS[service.icon] ?? Compass;
         return (
@@ -53,6 +55,6 @@ function ServiceGroup({ services }: { services: HomepageService[] }) {
           </article>
         );
       })}
-    </div>
+    </>
   );
 }

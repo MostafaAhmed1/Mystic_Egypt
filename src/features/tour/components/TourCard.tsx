@@ -51,10 +51,10 @@ export function TourCard({ tour }: TourCardProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-obsidian/20 via-transparent to-obsidian/20 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
         {/* Gold accent line at top */}
-        <div className="absolute top-0 left-0 h-1 w-0 bg-gradient-to-r from-gold to-gold-light transition-all duration-500 group-hover:w-full" />
+        <div className="absolute start-0 top-0 h-1 w-0 bg-gradient-to-r from-gold to-gold-light transition-all duration-500 group-hover:w-full" />
 
         {/* Price badge on image */}
-        <div className="absolute bottom-4 left-4 rounded-xl bg-obsidian/80 px-4 py-2 backdrop-blur-sm">
+        <div className="absolute bottom-4 start-4 rounded-xl bg-obsidian/80 px-4 py-2 backdrop-blur-sm">
           <span className="text-xs text-sandstone/60">{t("tours.from")}</span>
           <span className="ml-1.5 font-heading text-lg font-bold text-gold">
             {formatCurrency(tour.base_price, tour.currency)}
@@ -65,7 +65,7 @@ export function TourCard({ tour }: TourCardProps) {
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-500 group-hover:opacity-100">
           <span className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-semibold text-obsidian shadow-lg transition-transform duration-300 group-hover:scale-100 scale-90">
             {t("favourites.viewTour")}
-            <ArrowRight className="size-4" aria-hidden />
+            <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
           </span>
         </div>
       </div>
@@ -103,7 +103,7 @@ export function TourCard({ tour }: TourCardProps) {
             className="group/link inline-flex items-center gap-2 text-sm font-semibold text-gold transition-all duration-300"
           >
             {t("favourites.viewTour")}
-            <ArrowRight className="size-4 transition-transform duration-300 group-hover/link:translate-x-1" aria-hidden />
+            <ArrowRight className="size-4 transition-transform duration-300 group-hover/link:translate-x-1 rtl:rotate-180 rtl:group-hover/link:-translate-x-1" aria-hidden />
           </Link>
         </div>
       </div>

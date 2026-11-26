@@ -388,7 +388,7 @@ export function CheckoutForm({
         </div>
 
         {/* Summary */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className="lg:sticky lg:top-[6.5rem] lg:self-start">
           <OrderSummary tour={tour} />
         </div>
       </div>

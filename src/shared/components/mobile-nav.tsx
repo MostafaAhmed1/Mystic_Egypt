@@ -44,7 +44,8 @@ function WhatsAppIcon({ className }: { className?: string }) {
 export function MobileNav({ user, whatsapp, phoneUK, phoneEG }: MobileNavProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const { href } = useLocale();
+  const { locale, href } = useLocale();
+  const isRtl = locale === "ar";
 
   useEffect(() => {
     if (open) {
@@ -66,7 +67,7 @@ export function MobileNav({ user, whatsapp, phoneUK, phoneEG }: MobileNavProps) 
   ];
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -76,165 +77,181 @@ export function MobileNav({ user, whatsapp, phoneUK, phoneEG }: MobileNavProps) 
         <Menu className="size-5" />
       </button>
 
-      {/* Slide-in panel from right */}
+      {/* Fixed clipping layer: the closed panel must not widen the document. */}
       <div
+        aria-hidden={!open}
+        inert={!open}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-sandstone shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          open ? "translate-x-0" : "translate-x-full"
+          "fixed inset-0 z-50 overflow-hidden",
+          open ? "pointer-events-auto" : "pointer-events-none"
         )}
       >
-        <div className="flex h-full flex-col">
-          {/* Panel header */}
-          <div className="flex h-16 items-center justify-between border-b border-gold/10 px-6">
-            <Link href={href("/")} onClick={() => setOpen(false)} className="font-heading text-lg font-bold tracking-wider text-obsidian">
-              Mystic Egypt
-            </Link>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="inline-flex size-10 items-center justify-center rounded-xl border border-gold/20 text-obsidian/60 transition-colors duration-300 hover:bg-gold/10 hover:text-gold"
-              aria-label="Close menu"
-            >
-              <X className="size-5" />
-            </button>
-          </div>
-
-          {/* Nav links */}
-          <nav className="flex-1 overflow-y-auto px-6 py-8">
-            <div className="space-y-1">
-              {navLinks.map((link, i) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "group flex items-center justify-between rounded-xl py-4 text-lg font-heading font-semibold text-obsidian transition-all duration-300 hover:bg-gold/5 hover:text-gold",
-                    open ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
-                  )}
-                  style={{ transitionDelay: open ? `${100 + i * 80}ms` : "0ms" }}
-                >
-                  {link.label}
-                  <ChevronRight className="size-5 text-gold/40 transition-all duration-300 group-hover:translate-x-1 group-hover:text-gold" />
-                </Link>
-              ))}
+        <div
+          role="dialog"
+          aria-modal={open || undefined}
+          aria-label={t("nav.menu", { defaultValue: "Navigation menu" })}
+          className={cn(
+            "absolute inset-y-0 end-0 z-10 w-full max-w-sm bg-sandstone shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            open ? "translate-x-0" : isRtl ? "-translate-x-full" : "translate-x-full"
+          )}
+        >
+          <div className="flex h-full flex-col">
+            {/* Panel header */}
+            <div className="flex h-16 items-center justify-between border-b border-gold/10 px-6">
+              <Link href={href("/")} onClick={() => setOpen(false)} className="font-heading text-lg font-bold tracking-wider text-obsidian">
+                Mystic Egypt
+              </Link>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="inline-flex size-10 items-center justify-center rounded-xl border border-gold/20 text-obsidian/60 transition-colors duration-300 hover:bg-gold/10 hover:text-gold"
+                aria-label="Close menu"
+              >
+                <X className="size-5" />
+              </button>
             </div>
 
-            {/* Auth links */}
-            <div
-              className={cn(
-                "mt-8 space-y-3",
-                open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-              )}
-              style={{ transitionDelay: open ? "300ms" : "0ms" }}
-            >
-              {user ? (
-                <Link
-                  href={href(user.role === "ADMIN" ? "/admin" : "/dashboard")}
-                  onClick={() => setOpen(false)}
-                  className="flex h-14 items-center justify-center rounded-xl bg-obsidian text-lg font-medium text-gold transition-all duration-300 hover:bg-obsidian/90"
-                >
-                  {user.role === "ADMIN" ? t("nav.adminPanel") : t("nav.myAccount")}
-                </Link>
-              ) : (
-                <>
+            {/* Nav links */}
+            <nav className="flex-1 overflow-y-auto px-6 py-8">
+              <div className="space-y-1">
+                {navLinks.map((link, i) => (
                   <Link
-                    href={href("/login")}
+                    key={link.href}
+                    href={link.href}
                     onClick={() => setOpen(false)}
-                    className="flex h-14 items-center justify-center rounded-xl border-2 border-obsidian/20 text-lg font-medium text-obsidian transition-all duration-300 hover:border-gold hover:text-gold"
+                    className={cn(
+                      "group flex items-center justify-between rounded-xl py-4 text-lg font-heading font-semibold text-obsidian transition-all duration-300 hover:bg-gold/5 hover:text-gold",
+                      open
+                        ? "translate-x-0 opacity-100"
+                        : isRtl
+                          ? "-translate-x-8 opacity-0"
+                          : "translate-x-8 opacity-0"
+                    )}
+                    style={{ transitionDelay: open ? `${100 + i * 80}ms` : "0ms" }}
                   >
-                    {t("nav.login")}
+                    {link.label}
+                    <ChevronRight className="size-5 text-gold/40 transition-all duration-300 group-hover:translate-x-1 group-hover:text-gold rtl:rotate-180 rtl:group-hover:-translate-x-1" />
                   </Link>
-                  <Link
-                    href={href("/register")}
-                    onClick={() => setOpen(false)}
-                    className="flex h-14 items-center justify-center rounded-xl border-2 border-gold bg-gold/10 text-lg font-semibold text-gold transition-all duration-300 hover:bg-gold hover:text-obsidian"
-                  >
-                    {t("nav.signup")}
-                  </Link>
-                </>
-              )}
-            </div>
+                ))}
+              </div>
 
-            {/* Contact & Social */}
-            <div
-              className={cn(
-                "mt-8 space-y-4 border-t border-gold/10 pt-6",
-                open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-              )}
-              style={{ transitionDelay: open ? "450ms" : "0ms" }}
-            >
-              {/* Phone & WhatsApp */}
-              <div className="space-y-3 text-sm text-obsidian/60">
-                {phoneUK && (
-                  <a
-                    href={`tel:${phoneUK}`}
-                    className="flex items-center gap-3 rounded-lg py-2 transition-colors hover:text-gold"
-                  >
-                    <Phone className="size-4" aria-hidden />
-                    UK: {phoneUK}
-                  </a>
+              {/* Auth links */}
+              <div
+                className={cn(
+                  "mt-8 space-y-3",
+                  open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
                 )}
-                {phoneEG && (
-                  <a
-                    href={`tel:${phoneEG}`}
-                    className="flex items-center gap-3 rounded-lg py-2 transition-colors hover:text-gold"
+                style={{ transitionDelay: open ? "300ms" : "0ms" }}
+              >
+                {user ? (
+                  <Link
+                    href={href(user.role === "ADMIN" ? "/admin" : "/dashboard")}
+                    onClick={() => setOpen(false)}
+                    className="flex h-14 items-center justify-center rounded-xl bg-obsidian text-lg font-medium text-gold transition-all duration-300 hover:bg-obsidian/90"
                   >
-                    <Phone className="size-4" aria-hidden />
-                    Egypt: {phoneEG}
-                  </a>
-                )}
-                {whatsapp && (
-                  <a
-                    href={`https://wa.me/${whatsapp}?text=${encodeURIComponent("Hello Mystic Egypt!")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackEvent("whatsapp_click", { location: "mobile_nav" })}
-                    className="flex items-center gap-3 rounded-lg py-2 text-green-600 transition-colors hover:text-green-700"
-                  >
-                    <WhatsAppIcon className="size-4" />
-                    WhatsApp
-                  </a>
+                    {user.role === "ADMIN" ? t("nav.adminPanel") : t("nav.myAccount")}
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href={href("/login")}
+                      onClick={() => setOpen(false)}
+                      className="flex h-14 items-center justify-center rounded-xl border-2 border-obsidian/20 text-lg font-medium text-obsidian transition-all duration-300 hover:border-gold hover:text-gold"
+                    >
+                      {t("nav.login")}
+                    </Link>
+                    <Link
+                      href={href("/register")}
+                      onClick={() => setOpen(false)}
+                      className="flex h-14 items-center justify-center rounded-xl border-2 border-gold bg-gold/10 text-lg font-semibold text-gold transition-all duration-300 hover:bg-gold hover:text-obsidian"
+                    >
+                      {t("nav.signup")}
+                    </Link>
+                  </>
                 )}
               </div>
 
-              {/* Social & Language */}
-              <div className="flex items-center justify-between pt-2">
-                <LanguageSwitcher />
-                <div className="flex items-center gap-2">
-                  <a
-                    href={BUSINESS.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex size-9 items-center justify-center rounded-lg bg-obsidian/5 text-obsidian/40 transition-colors hover:text-gold"
-                    aria-label="Facebook"
-                  >
-                    <FacebookIcon className="size-4" />
-                  </a>
-                  <a
-                    href={BUSINESS.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex size-9 items-center justify-center rounded-lg bg-obsidian/5 text-obsidian/40 transition-colors hover:text-gold"
-                    aria-label="Instagram"
-                  >
-                    <InstagramIcon className="size-4" />
-                  </a>
+              {/* Contact & Social */}
+              <div
+                className={cn(
+                  "mt-8 space-y-4 border-t border-gold/10 pt-6",
+                  open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+                )}
+                style={{ transitionDelay: open ? "450ms" : "0ms" }}
+              >
+                {/* Phone & WhatsApp */}
+                <div className="space-y-3 text-sm text-obsidian/60">
+                  {phoneUK && (
+                    <a
+                      href={`tel:${phoneUK}`}
+                      className="flex items-center gap-3 rounded-lg py-2 transition-colors hover:text-gold"
+                    >
+                      <Phone className="size-4" aria-hidden />
+                      UK: {phoneUK}
+                    </a>
+                  )}
+                  {phoneEG && (
+                    <a
+                      href={`tel:${phoneEG}`}
+                      className="flex items-center gap-3 rounded-lg py-2 transition-colors hover:text-gold"
+                    >
+                      <Phone className="size-4" aria-hidden />
+                      Egypt: {phoneEG}
+                    </a>
+                  )}
+                  {whatsapp && (
+                    <a
+                      href={`https://wa.me/${whatsapp}?text=${encodeURIComponent("Hello Mystic Egypt!")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackEvent("whatsapp_click", { location: "mobile_nav" })}
+                      className="flex items-center gap-3 rounded-lg py-2 text-green-600 transition-colors hover:text-green-700"
+                    >
+                      <WhatsAppIcon className="size-4" />
+                      WhatsApp
+                    </a>
+                  )}
+                </div>
+
+                {/* Social & Language */}
+                <div className="flex items-center justify-between pt-2">
+                  <LanguageSwitcher />
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={BUSINESS.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex size-9 items-center justify-center rounded-lg bg-obsidian/5 text-obsidian/40 transition-colors hover:text-gold"
+                      aria-label="Facebook"
+                    >
+                      <FacebookIcon className="size-4" />
+                    </a>
+                    <a
+                      href={BUSINESS.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex size-9 items-center justify-center rounded-lg bg-obsidian/5 text-obsidian/40 transition-colors hover:text-gold"
+                      aria-label="Instagram"
+                    >
+                      <InstagramIcon className="size-4" />
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-          </nav>
-        </div>
+            </nav>
+          </div>
       </div>
 
-      {/* Backdrop */}
-      <div
-        className={cn(
-          "fixed inset-0 z-40 bg-obsidian/50 backdrop-blur-sm transition-opacity duration-500",
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        )}
-        onClick={() => setOpen(false)}
-        aria-hidden="true"
-      />
+        {/* Backdrop */}
+        <div
+          className={cn(
+            "absolute inset-0 z-0 bg-obsidian/50 backdrop-blur-sm transition-opacity duration-500",
+            open ? "opacity-100" : "pointer-events-none opacity-0"
+          )}
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      </div>
     </div>
   );
 }
